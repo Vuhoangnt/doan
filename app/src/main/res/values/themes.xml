@@ -1,0 +1,47 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <style name="Base.Theme.Doan" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorOnPrimary">@color/white</item>
+    </style>
+
+    <!-- Mặc định manifest — trùng green; đổi theme runtime qua ThemeManager -->
+    <style name="Theme.Doan" parent="Theme.Doan.Green" />
+
+    <style name="Theme.Doan.Green" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/theme_green_primary</item>
+        <item name="colorOnPrimary">@color/white</item>
+    </style>
+    <style name="Theme.Doan.Blue" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/theme_blue_primary</item>
+        <item name="colorOnPrimary">@color/white</item>
+    </style>
+    <style name="Theme.Doan.Purple" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/theme_purple_primary</item>
+        <item name="colorOnPrimary">@color/white</item>
+    </style>
+    <style name="Theme.Doan.Orange" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/theme_orange_primary</item>
+        <item name="colorOnPrimary">@color/white</item>
+    </style>
+    <style name="Theme.Doan.Teal" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/theme_teal_primary</item>
+        <item name="colorOnPrimary">@color/white</item>
+    </style>
+
+    <style name="TextAppearance.Guest.BottomNav.Active" parent="TextAppearance.MaterialComponents.Caption">
+        <item name="android:textSize">12sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:letterSpacing">0.01</item>
+    </style>
+    <style name="TextAppearance.Guest.BottomNav.Inactive" parent="TextAppearance.MaterialComponents.Caption">
+        <item name="android:textSize">12sp</item>
+        <item name="android:letterSpacing">0.01</item>
+    </style>
+
+    <!-- Tắt vùng nền pill sau icon (tránh chồng/mờ chữ khi có nhãn) -->
+    <style name="Widget.Doan.BottomNavigation.ActiveIndicator" parent="Widget.Material3.BottomNavigationView.ActiveIndicator">
+        <item name="android:width">0dp</item>
+        <item name="android:height">0dp</item>
+        <item name="android:color">@android:color/transparent</item>
+    </style>
+</resources>

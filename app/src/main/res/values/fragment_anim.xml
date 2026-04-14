@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer name="fragment_anim_duration_ms">220</integer>
+    <integer name="fragment_anim_duration_short_ms">160</integer>
+    <integer name="fragment_anim_slide_ms">280</integer>
+</resources>

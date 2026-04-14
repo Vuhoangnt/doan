@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/action_thong_bao"
+        android:icon="@drawable/ic_notifications_24"
+        android:title="@string/thong_bao_title"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/action_tim_phong"
+        android:icon="@drawable/ic_search_toolbar_24"
+        android:title="@string/toolbar_search_phong"
+        app:actionViewClass="androidx.appcompat.widget.SearchView"
+        app:showAsAction="always|collapseActionView" />
+</menu>

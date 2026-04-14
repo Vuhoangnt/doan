@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:id="@+id/grp_chung" android:checkableBehavior="none">
+        <item
+            android:id="@+id/nav_drawer_home"
+            android:icon="@drawable/ic_nav_home"
+            android:title="@string/nav_home" />
+        <item
+            android:id="@+id/nav_drawer_phong"
+            android:icon="@drawable/ic_nav_bed"
+            android:title="@string/nav_phong" />
+        <item
+            android:id="@+id/nav_drawer_tin_tuc"
+            android:icon="@drawable/ic_nav_article"
+            android:title="@string/nav_tin_tuc" />
+        <item
+            android:id="@+id/nav_drawer_homestay"
+            android:icon="@drawable/ic_nav_info"
+            android:title="@string/nav_homestay" />
+        <item
+            android:id="@+id/nav_drawer_danh_gia"
+            android:icon="@drawable/ic_nav_star"
+            android:title="@string/nav_danh_gia" />
+    </group>
+
+    <group android:id="@+id/grp_khach" android:checkableBehavior="none">
+        <item
+            android:id="@+id/nav_drawer_don_toi"
+            android:icon="@drawable/ic_nav_receipt"
+            android:title="@string/nav_don_cua_toi" />
+    </group>
+
+    <group android:id="@+id/grp_quan" android:checkableBehavior="none">
+        <item
+            android:id="@+id/nav_drawer_ql_dat"
+            android:icon="@drawable/ic_nav_calendar"
+            android:title="@string/nav_ql_dat_phong" />
+        <item
+            android:id="@+id/nav_drawer_ql_tk"
+            android:icon="@drawable/ic_nav_people"
+            android:title="@string/nav_ql_tai_khoan" />
+        <item
+            android:id="@+id/nav_drawer_ql_dv"
+            android:icon="@drawable/ic_room_services"
+            android:title="@string/nav_ql_dich_vu" />
+        <item
+            android:id="@+id/nav_drawer_ql_nv"
+            android:icon="@drawable/ic_nav_people"
+            android:title="@string/nav_ql_nhan_vien" />
+        <item
+            android:id="@+id/nav_drawer_thong_ke"
+            android:icon="@drawable/ic_nav_chart"
+            android:title="@string/nav_thong_ke" />
+        <item
+            android:id="@+id/nav_drawer_trang_chu_cai_dat"
+            android:icon="@drawable/ic_nav_settings"
+            android:title="@string/nav_trang_chu_cai_dat" />
+        <item
+            android:id="@+id/nav_drawer_duyet_danh_gia"
+            android:icon="@drawable/ic_nav_star"
+            android:title="@string/nav_duyet_danh_gia" />
+    </group>
+
+    <group android:id="@+id/grp_tuy_chon" android:checkableBehavior="none">
+        <item
+            android:id="@+id/nav_drawer_cai_dat"
+            android:icon="@drawable/ic_nav_settings"
+            android:title="@string/nav_cai_dat" />
+    </group>
+
+    <group android:id="@+id/grp_tai_khoan" android:checkableBehavior="none">
+        <item
+            android:id="@+id/nav_login"
+            android:icon="@drawable/ic_nav_login"
+            android:title="@string/nav_login" />
+        <item
+            android:id="@+id/nav_register"
+            android:icon="@drawable/ic_nav_register"
+            android:title="@string/nav_register" />
+        <item
+            android:id="@+id/nav_logout"
+            android:icon="@drawable/ic_nav_logout"
+            android:title="@string/nav_logout" />
+    </group>
+</menu>

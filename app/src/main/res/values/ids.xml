@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Điều hướng không gắn menu bottom (chỉ dùng trong code) -->
+    <item name="nav_homestay" type="id" />
+</resources>

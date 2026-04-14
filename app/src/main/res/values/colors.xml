@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+
+    <color name="primary">#2E7D32</color>
+    <color name="primary_dark">#1B5E20</color>
+    <!-- Nền chung — ấm, dễ đọc (khách & quản lý) -->
+    <color name="admin_background">#F3F0EA</color>
+    <!-- Trang chủ khách — hơi sáng, tách lớp với thẻ trắng -->
+    <color name="home_screen_bg">#F3F0EA</color>
+    <color name="home_service_icon_bg">#E8F5E9</color>
+
+    <!-- Khách — hero & thanh điều hướng -->
+    <color name="guest_hero_start">#2A6B5B</color>
+    <color name="guest_hero_end">#0D3D35</color>
+    <color name="guest_map_placeholder">#E8E4DD</color>
+    <color name="guest_nav_inactive">#424242</color>
+    <color name="guest_card_soft">#FFFDFB</color>
+    <color name="guest_nav_indicator_bg">#18000000</color>
+    <color name="guest_nav_ripple">#12000000</color>
+    <color name="badge_notification">#E53935</color>
+    <color name="admin_text_primary">#1B1B1B</color>
+    <color name="admin_text_secondary">#5F6368</color>
+    <color name="admin_card_stroke">#E0E0E0</color>
+
+    <!-- Phòng — trạng thái & thẻ thống kê -->
+    <color name="room_scrim_bottom">#CC1B1B1B</color>
+    <color name="room_price_on_image">#FFFFFF</color>
+    <color name="room_chip_trong_bg">#C8E6C9</color>
+    <color name="room_chip_trong_text">#1B5E20</color>
+    <color name="room_chip_dang_bg">#FFE0B2</color>
+    <color name="room_chip_dang_text">#E65100</color>
+    <color name="room_chip_khac_bg">#ECEFF1</color>
+    <color name="room_chip_khac_text">#455A64</color>
+    <color name="room_stat_card_bg">#FFFFFF</color>
+    <color name="room_stat_accent">#2E7D32</color>
+    <!-- Thẻ phòng — vùng meta admin/nhân viên -->
+    <color name="phong_ql_meta_bg">#E8F2EA</color>
+</resources>

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingTop="6dp"
+    android:paddingBottom="8dp">
+
+    <TextView
+        android:id="@+id/txtReviewHeader"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/admin_text_primary"
+        android:textSize="13sp"
+        android:textStyle="bold"
+        tools:text="Nguyễn A · ★★★★★ · 2026-02-01" />
+
+    <TextView
+        android:id="@+id/txtReviewBody"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:ellipsize="end"
+        android:lineSpacingExtra="2dp"
+        android:maxLines="5"
+        android:textColor="@color/admin_text_secondary"
+        android:textSize="13sp"
+        tools:text="Nội dung đánh giá…" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="8dp"
+        android:background="#1F000000" />
+</LinearLayout>
