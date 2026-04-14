@@ -333,8 +333,15 @@ public class TrangChuCaiDatFragment extends Fragment implements DataRefreshable 
         h.setAppNenKhach(edtAppNenKhach != null ? textOf(edtAppNenKhach) : "");
         h.setAppNenNhanVien(edtAppNenNhanVien != null ? textOf(edtAppNenNhanVien) : "");
         h.setAppNenAdmin(edtAppNenAdmin != null ? textOf(edtAppNenAdmin) : "");
+        String expectedGuestHero = h.getTrangChuAnhNen() != null ? h.getTrangChuAnhNen().trim() : "";
         if (dao.updateTrangChuCaiDat(h)) {
-            Toast.makeText(requireContext(), R.string.trang_chu_cai_dat_saved, Toast.LENGTH_SHORT).show();
+            HomestayThongTin latest = dao.getHomestay();
+            String actualGuestHero = latest.getTrangChuAnhNen() != null ? latest.getTrangChuAnhNen().trim() : "";
+            if (!expectedGuestHero.equals(actualGuestHero)) {
+                Toast.makeText(requireContext(), "Đã lưu nhưng ảnh banner chưa đồng bộ. Vui lòng lưu lại.", Toast.LENGTH_LONG).show();
+            } else {
+                Toast.makeText(requireContext(), R.string.trang_chu_cai_dat_saved, Toast.LENGTH_SHORT).show();
+            }
             refreshData();
             View v = getView();
             if (v != null) {

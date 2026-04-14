@@ -89,14 +89,37 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Ngày nhận phòng *"
+            android:text="@string/dat_phong_label_checkin"
             android:textSize="12sp" />
+
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:scrollbars="none">
+
+            <LinearLayout
+                android:id="@+id/layoutQuickDateRanges"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal" />
+        </HorizontalScrollView>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnPickDateRange"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:text="@string/dat_phong_pick_range_btn" />
 
         <TextView
             android:id="@+id/txtNgayNhan"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="?attr/selectableItemBackground"
+            android:drawableEnd="@android:drawable/arrow_down_float"
+            android:drawablePadding="8dp"
             android:hint="@string/dat_phong_ngay_nhan_hint"
             android:padding="12dp"
             android:textSize="16sp" />
@@ -105,7 +128,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:text="Ngày trả phòng *"
+            android:text="@string/dat_phong_label_checkout"
             android:textSize="12sp" />
 
         <TextView
@@ -113,6 +136,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="?attr/selectableItemBackground"
+            android:drawableEnd="@android:drawable/arrow_down_float"
+            android:drawablePadding="8dp"
             android:hint="@string/dat_phong_ngay_tra_hint"
             android:padding="12dp"
             android:textSize="16sp" />
@@ -121,7 +146,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:text="@string/dat_phong_gio_nhan"
+            android:text="@string/dat_phong_label_checkin_time"
             android:textSize="12sp" />
 
         <TextView
@@ -136,7 +161,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:text="@string/dat_phong_gio_tra"
+            android:text="@string/dat_phong_label_checkout_time"
             android:textSize="12sp" />
 
         <TextView
@@ -165,6 +190,14 @@
             android:textColor="@color/primary"
             android:textSize="14sp"
             android:textStyle="bold" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnToggleDichVuThem"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:text="@string/dat_phong_services_collapse" />
 
         <TextView
             android:layout_width="match_parent"
@@ -208,9 +241,18 @@
             android:id="@+id/edtSoNguoi"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
             android:hint="@string/dat_phong_so_khach_hint_default"
             android:inputType="number"
             android:text="1" />
+
+        <TextView
+            android:id="@+id/txtSoNguoiToiDa"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:textColor="@color/admin_text_secondary"
+            android:textSize="12sp" />
 
         <EditText
             android:id="@+id/edtGhiChu"

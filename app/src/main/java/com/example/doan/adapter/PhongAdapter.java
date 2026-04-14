@@ -20,6 +20,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.PickVisualMediaRequest;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
+import androidx.core.util.Pair;
 import androidx.fragment.app.FragmentActivity;
 
 import com.example.doan.DAO.DanhGiaDAO;
@@ -43,9 +44,13 @@ import com.example.doan.util.TimePickerHelper;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
+import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 
 public class PhongAdapter extends BaseAdapter {
@@ -269,16 +274,15 @@ public class PhongAdapter extends BaseAdapter {
         List<DatPhong> active = dpDao.getActiveBookingsByPhongId(p.getPhongID());
         View scheduleView = LayoutInflater.from(context).inflate(R.layout.dialog_phong_lich_khach, null);
         TextView body = scheduleView.findViewById(R.id.txtPhongLichKhachBody);
-        String intro = context.getString(R.string.dat_phong_schedule_intro) + "\n\n";
         if (active.isEmpty()) {
-            body.setText(intro + context.getString(R.string.dat_phong_schedule_empty));
+            body.setText(context.getString(R.string.dat_phong_schedule_empty));
         } else {
-            StringBuilder sb = new StringBuilder(intro);
+            StringBuilder sb = new StringBuilder();
             for (int i = 0; i < active.size(); i++) {
-                if (i > 0) {
-                    sb.append("\n\n────────\n\n");
+                sb.append("▮ ").append(formatGuestScheduleDateRange(active.get(i)));
+                if (i < active.size() - 1) {
+                    sb.append('\n');
                 }
-                sb.append(formatGuestScheduleLine(active.get(i)));
             }
             body.setText(sb);
         }
@@ -289,25 +293,19 @@ public class PhongAdapter extends BaseAdapter {
                 .show();
     }
 
-    private String formatGuestScheduleLine(DatPhong d) {
+    private String formatGuestScheduleDateRange(DatPhong d) {
         String dn = d.getNgayNhan() != null ? d.getNgayNhan() : "";
         String dt = d.getNgayTra() != null ? d.getNgayTra() : "";
-        String range;
         try {
             SimpleDateFormat in = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
             SimpleDateFormat day = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
             in.setLenient(false);
             String a = dn.length() >= 10 ? day.format(in.parse(dn)) : dn;
             String b = dt.length() >= 10 ? day.format(in.parse(dt)) : dt;
-            range = a + " → " + b;
+            return a + " → " + b;
         } catch (Exception e) {
-            range = dn + " → " + dt;
+            return dn + " → " + dt;
         }
-        String gn = d.getGioNhan() != null && !d.getGioNhan().isEmpty() ? d.getGioNhan() : "—";
-        String gt = d.getGioTra() != null && !d.getGioTra().isEmpty() ? d.getGioTra() : "—";
-        String ma = d.getMaDatPhong() != null ? d.getMaDatPhong() : "—";
-        String tt = DatPhongDAO.normalizeStatus(d.getTrangThai());
-        return context.getString(R.string.dat_phong_schedule_line_fmt, range, gn, gt, tt, ma);
     }
 
     private void openBookingDialog(PhongFull p) {
@@ -336,6 +334,9 @@ public class PhongAdapter extends BaseAdapter {
         view.findViewById(R.id.btnXemLichPhong).setOnClickListener(v -> showGuestRoomScheduleDialog(p));
 
         LinearLayout layoutDichVuThem = view.findViewById(R.id.layoutDichVuThem);
+        LinearLayout layoutQuickDateRanges = view.findViewById(R.id.layoutQuickDateRanges);
+        View btnPickDateRange = view.findViewById(R.id.btnPickDateRange);
+        View btnToggleDichVuThem = view.findViewById(R.id.btnToggleDichVuThem);
         View cardDichVuThem = view.findViewById(R.id.cardDichVuThem);
         TextView txtDichVuThemEmpty = view.findViewById(R.id.txtDichVuThemEmpty);
         DichVuDAO dichVuDAO = new DichVuDAO(context);
@@ -351,18 +352,30 @@ public class PhongAdapter extends BaseAdapter {
         TextView txtGioTra = view.findViewById(R.id.txtGioTra);
         TextView txtTamTinh = view.findViewById(R.id.txtTamTinh);
         EditText edtSoNguoi = view.findViewById(R.id.edtSoNguoi);
+        TextView txtSoNguoiToiDa = view.findViewById(R.id.txtSoNguoiToiDa);
         EditText edtGhiChu = view.findViewById(R.id.edtGhiChu);
         Button btn = view.findViewById(R.id.btnGuiDatPhong);
 
         final int toiDaPhong = Math.max(1, p.getSoNguoiToiDa());
         edtSoNguoi.setHint(context.getString(R.string.dat_phong_so_khach_hint, toiDaPhong));
+        if (txtSoNguoiToiDa != null) {
+            txtSoNguoiToiDa.setText(context.getString(R.string.dat_phong_so_khach_toi_da_label, toiDaPhong));
+        }
 
         final Long[] checkInMs = {null};
         final Long[] checkOutMs = {null};
         final String[] gioNhan = {"14:00"};
         final String[] gioTra = {"12:00"};
+        final Set<Long> blockedUtcDays = collectBlockedUtcDays(p.getPhongID());
         txtGioNhan.setText(gioNhan[0]);
         txtGioTra.setText(gioTra[0]);
+        // Giờ nhận / trả là quy định của homestay (admin), khách chỉ xem và không được đổi.
+        txtGioNhan.setEnabled(false);
+        txtGioTra.setEnabled(false);
+        txtGioNhan.setClickable(false);
+        txtGioTra.setClickable(false);
+
+        final Runnable[] updateQuickRangesRef = new Runnable[1];
 
         Runnable refreshTamTinh = () -> {
             if (txtTamTinh == null) {
@@ -419,12 +432,33 @@ public class PhongAdapter extends BaseAdapter {
                 cardDichVuThem.setVisibility(View.GONE);
             }
             layoutDichVuThem.setVisibility(View.GONE);
+            if (btnToggleDichVuThem != null) {
+                btnToggleDichVuThem.setVisibility(View.GONE);
+            }
         } else {
             txtDichVuThemEmpty.setVisibility(View.GONE);
             if (cardDichVuThem != null) {
                 cardDichVuThem.setVisibility(View.VISIBLE);
             }
             layoutDichVuThem.setVisibility(View.VISIBLE);
+            if (btnToggleDichVuThem instanceof com.google.android.material.button.MaterialButton) {
+                com.google.android.material.button.MaterialButton t =
+                        (com.google.android.material.button.MaterialButton) btnToggleDichVuThem;
+                final boolean[] expanded = {true};
+                t.setText(R.string.dat_phong_services_collapse);
+                t.setOnClickListener(v -> {
+                    expanded[0] = !expanded[0];
+                    if (cardDichVuThem != null) {
+                        cardDichVuThem.setVisibility(expanded[0] ? View.VISIBLE : View.GONE);
+                    }
+                    if (txtDichVuThemEmpty != null) {
+                        txtDichVuThemEmpty.setVisibility(expanded[0] ? View.GONE : View.VISIBLE);
+                    }
+                    t.setText(expanded[0]
+                            ? R.string.dat_phong_services_collapse
+                            : R.string.dat_phong_services_expand);
+                });
+            }
             LayoutInflater infDv = LayoutInflater.from(context);
             for (DichVu dv : extraDv) {
                 CheckBox cb = (CheckBox) infDv.inflate(
@@ -436,6 +470,80 @@ public class PhongAdapter extends BaseAdapter {
                 layoutDichVuThem.addView(cb);
                 dvBoxes.add(cb);
             }
+        }
+
+        java.util.function.BiConsumer<Long, Long> applyDateRangeMs = (startMs, endMs) -> {
+            if (startMs == null || endMs == null) {
+                return;
+            }
+            checkInMs[0] = startMs;
+            checkOutMs[0] = endMs;
+            txtNhan.setText(DatePickerHelper.formatYmdLocal(startMs));
+            txtTra.setText(DatePickerHelper.formatYmdLocal(endMs));
+            refreshTamTinh.run();
+            if (updateQuickRangesRef[0] != null) {
+                updateQuickRangesRef[0].run();
+            }
+        };
+
+        if (layoutQuickDateRanges != null) {
+            Runnable updateQuickRanges = () -> {
+                layoutQuickDateRanges.removeAllViews();
+                long dayMs = 24L * 60L * 60L * 1000L;
+                long base = DatePickerHelper.startOfTodayUtcMillis();
+                LayoutInflater chipInf = LayoutInflater.from(context);
+                for (int k = 0; k < 3; k++) {
+                    final long s = base + k * dayMs;
+                    final long e = s + dayMs;
+                    String label = formatShortDayLabel(s) + "-" + formatShortDayLabel(e);
+                    com.google.android.material.button.MaterialButton b =
+                            (com.google.android.material.button.MaterialButton) chipInf.inflate(
+                                    R.layout.item_booking_quick_range_button, layoutQuickDateRanges, false);
+                    b.setText(label);
+                    String ymdS = DatePickerHelper.formatYmdLocal(s);
+                    String ymdE = DatePickerHelper.formatYmdLocal(e);
+                    boolean overlap = new DatPhongDAO(context).hasOverlap(
+                            p.getPhongID(), ymdS, ymdE, gioNhan[0], gioTra[0], null);
+                    b.setEnabled(!overlap);
+                    if (!overlap) {
+                        b.setOnClickListener(v -> applyDateRangeMs.accept(s, e));
+                    } else {
+                        b.setAlpha(0.45f);
+                    }
+                    if (checkInMs[0] != null && checkOutMs[0] != null
+                            && checkInMs[0].longValue() == s
+                            && checkOutMs[0].longValue() == e) {
+                        b.setStrokeWidth(3);
+                    }
+                    LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                            ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                    lp.setMarginEnd(8);
+                    layoutQuickDateRanges.addView(b, lp);
+                }
+            };
+            updateQuickRangesRef[0] = updateQuickRanges;
+            updateQuickRanges.run();
+        }
+
+        if (btnPickDateRange != null) {
+            btnPickDateRange.setOnClickListener(v -> {
+                long min = DatePickerHelper.startOfTodayUtcMillis();
+                Pair<Long, Long> init = null;
+                if (checkInMs[0] != null && checkOutMs[0] != null) {
+                    init = Pair.create(checkInMs[0], checkOutMs[0]);
+                }
+                Long openAt = checkInMs[0] != null ? checkInMs[0] : min;
+                DatePickerHelper.showPickDateRange(
+                        act,
+                        context.getString(R.string.dat_phong_pick_range_title),
+                        min,
+                        init,
+                        openAt,
+                        blockedUtcDays,
+                        (startUtc, endUtc) -> {
+                            applyDateRangeMs.accept(startUtc, endUtc);
+                        });
+            });
         }
 
         TaiKhoanDAO tkDao = new TaiKhoanDAO(context);
@@ -458,12 +566,16 @@ public class PhongAdapter extends BaseAdapter {
                     min,
                     checkInMs[0],
                     openAt,
+                    blockedUtcDays,
                     sel -> {
                         checkInMs[0] = sel;
                         checkOutMs[0] = null;
                         txtNhan.setText(DatePickerHelper.formatYmdLocal(sel));
                         txtTra.setText("");
                         refreshTamTinh.run();
+                        if (updateQuickRangesRef[0] != null) {
+                            updateQuickRangesRef[0].run();
+                        }
                     });
         });
         txtTra.setOnClickListener(v -> {
@@ -479,29 +591,14 @@ public class PhongAdapter extends BaseAdapter {
                     min,
                     initial,
                     openAt,
+                    blockedUtcDays,
                     sel -> {
                         checkOutMs[0] = sel;
                         txtTra.setText(DatePickerHelper.formatYmdLocal(sel));
                         refreshTamTinh.run();
-                    });
-        });
-
-        txtGioNhan.setOnClickListener(v -> {
-            int[] cur = TimePickerHelper.parseHHmm(gioNhan[0]);
-            TimePickerHelper.showPick24h(act, context.getString(R.string.dat_phong_gio_nhan),
-                    cur[0], cur[1], (h, m) -> {
-                        gioNhan[0] = TimePickerHelper.formatHHmm(h, m);
-                        txtGioNhan.setText(gioNhan[0]);
-                        refreshTamTinh.run();
-                    });
-        });
-        txtGioTra.setOnClickListener(v -> {
-            int[] cur = TimePickerHelper.parseHHmm(gioTra[0]);
-            TimePickerHelper.showPick24h(act, context.getString(R.string.dat_phong_gio_tra),
-                    cur[0], cur[1], (h, m) -> {
-                        gioTra[0] = TimePickerHelper.formatHHmm(h, m);
-                        txtGioTra.setText(gioTra[0]);
-                        refreshTamTinh.run();
+                        if (updateQuickRangesRef[0] != null) {
+                            updateQuickRangesRef[0].run();
+                        }
                     });
         });
 
@@ -764,6 +861,79 @@ public class PhongAdapter extends BaseAdapter {
         } catch (Exception e) {
             return -1;
         }
+    }
+
+    private static String formatShortDayLabel(long utcMillis) {
+        SimpleDateFormat sdf = new SimpleDateFormat("dd", Locale.getDefault());
+        return sdf.format(new Date(utcMillis));
+    }
+
+    private Set<Long> collectBlockedUtcDays(int phongId) {
+        Set<Long> out = new HashSet<>();
+        DatPhongDAO dpDao = new DatPhongDAO(context);
+        List<DatPhong> active = dpDao.getActiveBookingsByPhongId(phongId);
+        for (DatPhong d : active) {
+            addBlockedDays(out, d.getNgayNhan(), d.getNgayTra());
+        }
+        return out;
+    }
+
+    private static void addBlockedDays(Set<Long> target, String fromYmd, String toYmd) {
+        Calendar start = parseYmdLocalStart(fromYmd);
+        Calendar end = parseYmdLocalStart(toYmd);
+        if (start == null || end == null) {
+            return;
+        }
+        Calendar cur = (Calendar) start.clone();
+        while (!cur.after(end)) {
+            target.add(toUtcDayMillis(
+                    cur.get(Calendar.YEAR),
+                    cur.get(Calendar.MONTH),
+                    cur.get(Calendar.DAY_OF_MONTH)));
+            cur.add(Calendar.DAY_OF_MONTH, 1);
+        }
+    }
+
+    @Nullable
+    private static Calendar parseYmdLocalStart(String ymd) {
+        if (ymd == null || ymd.trim().isEmpty()) {
+            return null;
+        }
+        try {
+            String[] p = ymd.trim().split("-");
+            if (p.length != 3) {
+                return null;
+            }
+            int y = Integer.parseInt(p[0]);
+            int m = Integer.parseInt(p[1]);
+            int d = Integer.parseInt(p[2]);
+            Calendar c = Calendar.getInstance(TimeZone.getDefault(), Locale.getDefault());
+            c.setLenient(false);
+            c.set(Calendar.YEAR, y);
+            c.set(Calendar.MONTH, m - 1);
+            c.set(Calendar.DAY_OF_MONTH, d);
+            c.set(Calendar.HOUR_OF_DAY, 0);
+            c.set(Calendar.MINUTE, 0);
+            c.set(Calendar.SECOND, 0);
+            c.set(Calendar.MILLISECOND, 0);
+            c.getTimeInMillis();
+            return c;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    private static long toUtcDayMillis(int year, int monthZeroBased, int dayOfMonth) {
+        Calendar utc = Calendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.getDefault());
+        utc.setLenient(false);
+        utc.set(Calendar.YEAR, year);
+        utc.set(Calendar.MONTH, monthZeroBased);
+        utc.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+        utc.set(Calendar.HOUR_OF_DAY, 0);
+        utc.set(Calendar.MINUTE, 0);
+        utc.set(Calendar.SECOND, 0);
+        utc.set(Calendar.MILLISECOND, 0);
+        return utc.getTimeInMillis();
     }
 
     private void openAdminDialog(@Nullable PhongFull p) {

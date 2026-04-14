@@ -59,7 +59,14 @@ public class HomestayThongTinDAO {
         v.put("TrangChu_AnhNen_NV", nullToEmpty(h.getTrangChuAnhNenNv()));
         v.put("TrangChu_TieuDe_NV", nullToEmpty(h.getTrangChuTieuDeNv()));
         v.put("TrangChu_CamKet_NV", nullToEmpty(h.getTrangChuCamKetNv()));
-        return db.update("HomestayThongTin", v, "ID=?", new String[]{"1"}) > 0;
+        int affected = db.update("HomestayThongTin", v, "ID=?", new String[]{"1"});
+        if (affected > 0) {
+            return true;
+        }
+        // Trường hợp dữ liệu thiếu bản ghi ID=1: upsert để cấu hình (bao gồm banner ảnh từ máy) vẫn được lưu.
+        v.put("ID", 1);
+        long rowId = db.insertWithOnConflict("HomestayThongTin", null, v, SQLiteDatabase.CONFLICT_REPLACE);
+        return rowId != -1;
     }
 
     private static String nullToEmpty(String s) {

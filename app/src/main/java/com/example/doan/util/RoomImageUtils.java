@@ -163,15 +163,41 @@ public final class RoomImageUtils {
         }
         String name = prefix + System.currentTimeMillis() + ".jpg";
         File out = new File(dir, name);
-        try (InputStream in = context.getContentResolver().openInputStream(uri);
-             OutputStream os = new FileOutputStream(out)) {
-            if (in == null) {
-                throw new IOException("Không đọc được ảnh");
+        boolean written = false;
+        Bitmap bm = null;
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                ImageDecoder.Source src = ImageDecoder.createSource(context.getContentResolver(), uri);
+                bm = ImageDecoder.decodeBitmap(src);
+            } else {
+                try (InputStream in = context.getContentResolver().openInputStream(uri)) {
+                    if (in != null) {
+                        bm = BitmapFactory.decodeStream(in);
+                    }
+                }
             }
-            byte[] buf = new byte[8192];
-            int n;
-            while ((n = in.read(buf)) != -1) {
-                os.write(buf, 0, n);
+        } catch (Exception ignored) {
+            bm = null;
+        }
+        if (bm != null) {
+            try (OutputStream os = new FileOutputStream(out)) {
+                written = bm.compress(Bitmap.CompressFormat.JPEG, 92, os);
+                os.flush();
+            } finally {
+                bm.recycle();
+            }
+        }
+        if (!written) {
+            try (InputStream in = context.getContentResolver().openInputStream(uri);
+                 OutputStream os = new FileOutputStream(out)) {
+                if (in == null) {
+                    throw new IOException("Không đọc được ảnh");
+                }
+                byte[] buf = new byte[8192];
+                int n;
+                while ((n = in.read(buf)) != -1) {
+                    os.write(buf, 0, n);
+                }
             }
         }
         if (!out.exists() || out.length() == 0L) {
@@ -375,6 +401,13 @@ public final class RoomImageUtils {
                         imageView.setImageBitmap(bm);
                         return;
                     }
+                    try {
+                        imageView.setImageURI(Uri.fromFile(f));
+                        if (imageView.getDrawable() != null) {
+                            return;
+                        }
+                    } catch (Exception ignored) {
+                    }
                 }
             }
             imageView.setImageResource(R.drawable.bg_guest_hero);
@@ -386,6 +419,13 @@ public final class RoomImageUtils {
             if (bm != null) {
                 imageView.setImageBitmap(bm);
                 return;
+            }
+            try {
+                imageView.setImageURI(Uri.fromFile(f));
+                if (imageView.getDrawable() != null) {
+                    return;
+                }
+            } catch (Exception ignored) {
             }
             imageView.setImageResource(R.drawable.bg_guest_hero);
             return;
