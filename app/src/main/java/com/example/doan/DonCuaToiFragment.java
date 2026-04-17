@@ -1,6 +1,8 @@
 package com.example.doan;
 
 import android.app.AlertDialog;
+
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -108,7 +110,7 @@ public class DonCuaToiFragment extends Fragment implements DataRefreshable {
     }
 
     private void onGuestRequestedCheckout(DatPhong d) {
-        new AlertDialog.Builder(requireContext())
+        new MaterialAlertDialogBuilder(requireContext())
                 .setTitle(R.string.don_cua_toi_btn_tra_phong)
                 .setMessage(R.string.don_cua_toi_tra_phong_confirm)
                 .setNegativeButton(android.R.string.cancel, null)
@@ -133,7 +135,7 @@ public class DonCuaToiFragment extends Fragment implements DataRefreshable {
             getActivity().invalidateOptionsMenu();
         }
         final int phongId = d.getPhongID();
-        new AlertDialog.Builder(requireContext())
+        new MaterialAlertDialogBuilder(requireContext())
                 .setTitle(R.string.don_cua_toi_rate_title)
                 .setMessage(R.string.don_cua_toi_rate_prompt)
                 .setNegativeButton(R.string.don_cua_toi_rate_later, null)

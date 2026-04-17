@@ -15,10 +15,10 @@
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:cardBackgroundColor="@color/white"
+            app:cardBackgroundColor="?attr/colorSurfaceContainerHighest"
             app:cardCornerRadius="20dp"
             app:cardElevation="2dp"
-            app:strokeColor="@color/admin_card_stroke"
+            app:strokeColor="?attr/colorOutlineVariant"
             app:strokeWidth="1dp">
 
             <LinearLayout
@@ -31,7 +31,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/settings_title"
-                    android:textColor="@color/admin_text_primary"
+                    android:textColor="?attr/colorOnSurface"
                     android:textSize="22sp"
                     android:textStyle="bold" />
 
@@ -49,7 +49,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
                     android:text="@string/settings_theme_hint"
-                    android:textColor="@color/admin_text_secondary"
+                    android:textColor="?attr/colorOnSurfaceVariant"
                     android:textSize="13sp" />
 
                 <LinearLayout
@@ -66,10 +66,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            app:cardBackgroundColor="@color/white"
+            app:cardBackgroundColor="?attr/colorSurfaceContainerHighest"
             app:cardCornerRadius="20dp"
             app:cardElevation="2dp"
-            app:strokeColor="@color/admin_card_stroke"
+            app:strokeColor="?attr/colorOutlineVariant"
             app:strokeWidth="1dp">
 
             <LinearLayout
@@ -91,7 +91,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
                     android:text="@string/settings_avatar_hint"
-                    android:textColor="@color/admin_text_secondary"
+                    android:textColor="?attr/colorOnSurfaceVariant"
                     android:textSize="13sp" />
 
                 <ImageView
@@ -120,7 +120,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:text="@string/settings_avatar_need_login"
-                    android:textColor="@color/admin_text_secondary"
+                    android:textColor="?attr/colorOnSurfaceVariant"
                     android:textSize="13sp"
                     android:visibility="gone" />
             </LinearLayout>

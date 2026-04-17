@@ -33,7 +33,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/admin_dashboard_title"
-                    android:textColor="#FFFFFF"
+                    android:textColor="?attr/colorOnPrimary"
                     android:textSize="22sp"
                     android:textStyle="bold" />
 
@@ -42,7 +42,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="6dp"
                     android:text="@string/admin_dashboard_subtitle"
-                    android:textColor="#C8E6C9"
+                    android:textColor="?attr/colorOnPrimary"
+                    android:alpha="0.88"
                     android:textSize="14sp" />
 
                 <com.google.android.material.card.MaterialCardView
@@ -63,7 +64,8 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/admin_doanh_thu_label"
-                            android:textColor="#E8F5E9"
+                            android:textColor="?attr/colorOnPrimary"
+                            android:alpha="0.9"
                             android:textSize="13sp" />
 
                         <TextView
@@ -72,7 +74,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="4dp"
                             android:text="0 đ"
-                            android:textColor="#FFFFFF"
+                            android:textColor="?attr/colorOnPrimary"
                             android:textSize="26sp"
                             android:textStyle="bold" />
                     </LinearLayout>
@@ -86,7 +88,7 @@
             android:layout_marginTop="20dp"
             android:layout_marginBottom="8dp"
             android:text="@string/admin_section_phong"
-            android:textColor="@color/admin_text_primary"
+            android:textColor="?attr/colorOnSurface"
             android:textSize="16sp"
             android:textStyle="bold" />
 
@@ -102,7 +104,7 @@
                 android:layout_weight="1"
                 app:cardCornerRadius="16dp"
                 app:cardElevation="2dp"
-                app:strokeColor="@color/admin_card_stroke"
+                app:strokeColor="?attr/colorOutlineVariant"
                 app:strokeWidth="1dp">
 
                 <LinearLayout
@@ -123,7 +125,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="6dp"
                         android:text="0"
-                        android:textColor="@color/admin_text_primary"
+                        android:textColor="?attr/colorOnSurface"
                         android:textSize="24sp"
                         android:textStyle="bold" />
 
@@ -131,7 +133,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/admin_stat_tong_phong"
-                        android:textColor="@color/admin_text_secondary"
+                        android:textColor="?attr/colorOnSurfaceVariant"
                         android:textSize="12sp" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
@@ -143,7 +145,7 @@
                 android:layout_weight="1"
                 app:cardCornerRadius="16dp"
                 app:cardElevation="2dp"
-                app:strokeColor="@color/admin_card_stroke"
+                app:strokeColor="?attr/colorOutlineVariant"
                 app:strokeWidth="1dp">
 
                 <LinearLayout
@@ -156,7 +158,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="✓"
-                        android:textColor="#2E7D32"
+                        android:textColor="?attr/colorPrimary"
                         android:textSize="22sp" />
 
                     <TextView
@@ -165,7 +167,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="6dp"
                         android:text="0"
-                        android:textColor="@color/admin_text_primary"
+                        android:textColor="?attr/colorOnSurface"
                         android:textSize="24sp"
                         android:textStyle="bold" />
 
@@ -173,7 +175,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/admin_stat_phong_trong"
-                        android:textColor="@color/admin_text_secondary"
+                        android:textColor="?attr/colorOnSurfaceVariant"
                         android:textSize="12sp" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
@@ -192,7 +194,7 @@
                 android:layout_weight="1"
                 app:cardCornerRadius="16dp"
                 app:cardElevation="2dp"
-                app:strokeColor="@color/admin_card_stroke"
+                app:strokeColor="?attr/colorOutlineVariant"
                 app:strokeWidth="1dp">
 
                 <LinearLayout
@@ -213,7 +215,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="6dp"
                         android:text="0"
-                        android:textColor="@color/admin_text_primary"
+                        android:textColor="?attr/colorOnSurface"
                         android:textSize="24sp"
                         android:textStyle="bold" />
 
@@ -221,7 +223,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/admin_stat_phong_dang_o"
-                        android:textColor="@color/admin_text_secondary"
+                        android:textColor="?attr/colorOnSurfaceVariant"
                         android:textSize="12sp" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
@@ -233,7 +235,7 @@
                 android:layout_weight="1"
                 app:cardCornerRadius="16dp"
                 app:cardElevation="2dp"
-                app:strokeColor="@color/admin_card_stroke"
+                app:strokeColor="?attr/colorOutlineVariant"
                 app:strokeWidth="1dp">
 
                 <LinearLayout
@@ -254,7 +256,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="6dp"
                         android:text="0"
-                        android:textColor="@color/admin_text_primary"
+                        android:textColor="?attr/colorOnSurface"
                         android:textSize="24sp"
                         android:textStyle="bold" />
 
@@ -262,7 +264,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/admin_stat_tong_don"
-                        android:textColor="@color/admin_text_secondary"
+                        android:textColor="?attr/colorOnSurfaceVariant"
                         android:textSize="12sp" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
@@ -274,7 +276,7 @@
             android:layout_marginTop="20dp"
             android:layout_marginBottom="8dp"
             android:text="@string/admin_section_don"
-            android:textColor="@color/admin_text_primary"
+            android:textColor="?attr/colorOnSurface"
             android:textSize="16sp"
             android:textStyle="bold" />
 
@@ -283,7 +285,7 @@
             android:layout_height="wrap_content"
             app:cardCornerRadius="16dp"
             app:cardElevation="2dp"
-            app:strokeColor="@color/admin_card_stroke"
+            app:strokeColor="?attr/colorOutlineVariant"
             app:strokeWidth="1dp">
 
             <LinearLayout
@@ -307,7 +309,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/admin_don_cho"
-                            android:textColor="@color/admin_text_secondary"
+                            android:textColor="?attr/colorOnSurfaceVariant"
                             android:textSize="12sp" />
 
                         <TextView
@@ -315,7 +317,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="0"
-                            android:textColor="#F57C00"
+                            android:textColor="?attr/colorSecondary"
                             android:textSize="20sp"
                             android:textStyle="bold" />
                     </LinearLayout>
@@ -330,7 +332,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/admin_don_da_dat"
-                            android:textColor="@color/admin_text_secondary"
+                            android:textColor="?attr/colorOnSurfaceVariant"
                             android:textSize="12sp" />
 
                         <TextView
@@ -338,7 +340,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="0"
-                            android:textColor="#1976D2"
+                            android:textColor="?attr/colorPrimary"
                             android:textSize="20sp"
                             android:textStyle="bold" />
                     </LinearLayout>
@@ -353,7 +355,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/admin_don_dang_o"
-                            android:textColor="@color/admin_text_secondary"
+                            android:textColor="?attr/colorOnSurfaceVariant"
                             android:textSize="12sp" />
 
                         <TextView
@@ -361,7 +363,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="0"
-                            android:textColor="#2E7D32"
+                            android:textColor="?attr/colorPrimary"
                             android:textSize="20sp"
                             android:textStyle="bold" />
                     </LinearLayout>
@@ -375,7 +377,7 @@
             android:layout_marginTop="20dp"
             android:layout_marginBottom="8dp"
             android:text="@string/admin_section_tai_khoan"
-            android:textColor="@color/admin_text_primary"
+            android:textColor="?attr/colorOnSurface"
             android:textSize="16sp"
             android:textStyle="bold" />
 
@@ -402,7 +404,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/admin_khach_count"
-                        android:textColor="@color/admin_text_secondary"
+                        android:textColor="?attr/colorOnSurfaceVariant"
                         android:textSize="12sp" />
 
                     <TextView
@@ -411,7 +413,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
                         android:text="0"
-                        android:textColor="@color/admin_text_primary"
+                        android:textColor="?attr/colorOnSurface"
                         android:textSize="22sp"
                         android:textStyle="bold" />
                 </LinearLayout>
@@ -435,7 +437,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/admin_nv_count"
-                        android:textColor="@color/admin_text_secondary"
+                        android:textColor="?attr/colorOnSurfaceVariant"
                         android:textSize="12sp" />
 
                     <TextView
@@ -444,7 +446,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
                         android:text="0"
-                        android:textColor="@color/admin_text_primary"
+                        android:textColor="?attr/colorOnSurface"
                         android:textSize="22sp"
                         android:textStyle="bold" />
                 </LinearLayout>
@@ -475,7 +477,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/admin_tin_tuc_count"
-                        android:textColor="@color/admin_text_secondary"
+                        android:textColor="?attr/colorOnSurfaceVariant"
                         android:textSize="12sp" />
 
                     <TextView
@@ -484,7 +486,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
                         android:text="0"
-                        android:textColor="@color/admin_text_primary"
+                        android:textColor="?attr/colorOnSurface"
                         android:textSize="22sp"
                         android:textStyle="bold" />
                 </LinearLayout>
@@ -508,7 +510,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/admin_dich_vu_count"
-                        android:textColor="@color/admin_text_secondary"
+                        android:textColor="?attr/colorOnSurfaceVariant"
                         android:textSize="12sp" />
 
                     <TextView
@@ -517,7 +519,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
                         android:text="0"
-                        android:textColor="@color/admin_text_primary"
+                        android:textColor="?attr/colorOnSurface"
                         android:textSize="22sp"
                         android:textStyle="bold" />
                 </LinearLayout>
@@ -530,7 +532,7 @@
             android:layout_marginTop="22dp"
             android:layout_marginBottom="8dp"
             android:text="@string/admin_section_quick"
-            android:textColor="@color/admin_text_primary"
+            android:textColor="?attr/colorOnSurface"
             android:textSize="16sp"
             android:textStyle="bold" />
 

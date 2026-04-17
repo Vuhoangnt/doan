@@ -5,24 +5,33 @@
 
     <color name="primary">#2E7D32</color>
     <color name="primary_dark">#1B5E20</color>
-    <!-- Nền chung — ấm, dễ đọc (khách & quản lý) -->
-    <color name="admin_background">#F3F0EA</color>
-    <!-- Trang chủ khách — hơi sáng, tách lớp với thẻ trắng -->
-    <color name="home_screen_bg">#F3F0EA</color>
+
+    <!-- Semantic (đồng bộ theme Material — dùng chung mọi vai trò; theme chỉ đổi colorPrimary) -->
+    <color name="app_background">#F3F0EA</color>
+    <color name="app_on_surface">#1B1B1B</color>
+    <color name="app_on_surface_variant">#5F6368</color>
+    <color name="app_outline">#C4C0B8</color>
+    <color name="app_outline_variant">#E0DDD6</color>
+    <color name="app_card_soft">#FFFDFB</color>
+    <!-- Thẻ nổi / dialog nền sáng -->
+    <color name="app_surface_card">#FFFFFFFF</color>
+
+    <!-- Alias cũ — tránh vỡ code/Java còn tham chiếu -->
+    <color name="admin_background">@color/app_background</color>
+    <color name="home_screen_bg">@color/app_background</color>
     <color name="home_service_icon_bg">#E8F5E9</color>
 
-    <!-- Khách — hero & thanh điều hướng -->
     <color name="guest_hero_start">#2A6B5B</color>
     <color name="guest_hero_end">#0D3D35</color>
     <color name="guest_map_placeholder">#E8E4DD</color>
-    <color name="guest_nav_inactive">#424242</color>
-    <color name="guest_card_soft">#FFFDFB</color>
+    <color name="guest_nav_inactive">@color/app_on_surface_variant</color>
+    <color name="guest_card_soft">@color/app_card_soft</color>
     <color name="guest_nav_indicator_bg">#18000000</color>
-    <color name="guest_nav_ripple">#12000000</color>
+    <color name="guest_nav_ripple">#1A000000</color>
     <color name="badge_notification">#E53935</color>
-    <color name="admin_text_primary">#1B1B1B</color>
-    <color name="admin_text_secondary">#5F6368</color>
-    <color name="admin_card_stroke">#E0E0E0</color>
+    <color name="admin_text_primary">@color/app_on_surface</color>
+    <color name="admin_text_secondary">@color/app_on_surface_variant</color>
+    <color name="admin_card_stroke">@color/app_outline_variant</color>
 
     <!-- Phòng — trạng thái & thẻ thống kê -->
     <color name="room_scrim_bottom">#CC1B1B1B</color>

@@ -1,6 +1,7 @@
 package com.example.doan;
 
-import android.app.AlertDialog;
+import androidx.appcompat.app.AlertDialog;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -138,7 +139,7 @@ public class QLDatPhongFragment extends Fragment implements DataRefreshable {
 
         txtChiTiet.setText(buildChiTietText(d));
 
-        AlertDialog dlg = new AlertDialog.Builder(requireContext())
+        AlertDialog dlg = new MaterialAlertDialogBuilder(requireContext())
                 .setTitle(d.getMaDatPhong())
                 .setView(dlgView)
                 .setNegativeButton("Đóng", null)
@@ -160,7 +161,7 @@ public class QLDatPhongFragment extends Fragment implements DataRefreshable {
         List<String> next = DatPhongDAO.allowedNextStatuses(d.getTrangThai());
         List<String> items = new ArrayList<>(next);
         items.add(getString(R.string.order_status_other_full));
-        new AlertDialog.Builder(requireContext())
+        new MaterialAlertDialogBuilder(requireContext())
                 .setTitle(d.getMaDatPhong())
                 .setItems(items.toArray(new String[0]), (dialog, which) -> {
                     if (which == items.size() - 1) {
@@ -175,7 +176,7 @@ public class QLDatPhongFragment extends Fragment implements DataRefreshable {
 
     private void showFullTrangThaiDialog(DatPhong d, SessionManager session) {
         String[] all = DatPhongDAO.allOrderStatuses();
-        new AlertDialog.Builder(requireContext())
+        new MaterialAlertDialogBuilder(requireContext())
                 .setTitle(d.getMaDatPhong())
                 .setItems(all, (dialog, which) -> applyTrangThai(d, session, all[which]))
                 .setNegativeButton(android.R.string.cancel, null)
@@ -229,7 +230,7 @@ public class QLDatPhongFragment extends Fragment implements DataRefreshable {
                 android.R.layout.simple_spinner_dropdown_item, methods);
         spinner.setAdapter(spinAdapter);
 
-        AlertDialog payDlg = new AlertDialog.Builder(requireContext())
+        AlertDialog payDlg = new MaterialAlertDialogBuilder(requireContext())
                 .setTitle(R.string.le_tan_action_payment)
                 .setView(payView)
                 .setPositiveButton(R.string.le_tan_payment_btn_ok, null)
@@ -278,7 +279,7 @@ public class QLDatPhongFragment extends Fragment implements DataRefreshable {
     private void showLichSuThanhToan(DatPhong d) {
         List<ThanhToan> rows = ttDao.getByDatPhongId(d.getDatPhongID());
         if (rows.isEmpty()) {
-            new AlertDialog.Builder(requireContext())
+            new MaterialAlertDialogBuilder(requireContext())
                     .setTitle(R.string.le_tan_action_payment_history)
                     .setMessage("Chưa có giao dịch.")
                     .setPositiveButton(android.R.string.ok, null)
@@ -298,7 +299,7 @@ public class QLDatPhongFragment extends Fragment implements DataRefreshable {
                     "• %,.0f đ — %s — %s — %s%s\n",
                     t.getSoTien(), t.getPhuongThuc(), t.getNgayThanhToan(), t.getTrangThai(), nv));
         }
-        new AlertDialog.Builder(requireContext())
+        new MaterialAlertDialogBuilder(requireContext())
                 .setTitle(R.string.le_tan_action_payment_history)
                 .setMessage(sb.toString().trim())
                 .setPositiveButton(android.R.string.ok, null)

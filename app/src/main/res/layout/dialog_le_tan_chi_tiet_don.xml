@@ -16,7 +16,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:lineSpacingExtra="3dp"
-            android:textColor="@color/admin_text_primary"
+            android:textColor="?attr/colorOnSurface"
             android:textSize="14sp" />
 
         <com.google.android.material.button.MaterialButton
@@ -35,7 +35,7 @@
             android:layout_marginTop="8dp"
             android:text="@string/le_tan_action_payment"
             app:cornerRadius="12dp"
-            app:strokeColor="@color/primary" />
+            app:strokeColor="?attr/colorPrimary" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnDonLichSuTT"

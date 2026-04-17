@@ -50,6 +50,9 @@ public class TrangChuCaiDatFragment extends Fragment implements DataRefreshable 
     private MaterialSwitch swViTri;
     private ImageView imgPreview;
     private ImageView imgPreviewNv;
+    private ImageView imgPreviewAppNenKhach;
+    private ImageView imgPreviewAppNenNhanVien;
+    private ImageView imgPreviewAppNenAdmin;
     /** Ảnh hero: null = ô khách; khác = ô đích khi chọn từ máy. */
     private TextInputEditText pendingHeroImageTarget;
     private ActivityResultLauncher<PickVisualMediaRequest> pickHeroImage;
@@ -95,15 +98,54 @@ public class TrangChuCaiDatFragment extends Fragment implements DataRefreshable 
         }
         TextInputEditText edt = pendingAppBgTarget;
         String oldPath = textOf(edt);
+        ImageView thumb = appBgThumbFor(edt);
+        if (thumb != null) {
+            thumb.setVisibility(View.VISIBLE);
+            thumb.setImageDrawable(null);
+            thumb.setImageURI(uri);
+        }
         try {
             String path = RoomImageUtils.copyUriToAppBgDir(requireContext(), uri);
             RoomImageUtils.deleteAppStoredImageIfReplaced(requireContext(), oldPath, path);
             edt.setText(path);
+            refreshAppBgThumb(thumb, path);
             Toast.makeText(requireContext(), R.string.trang_chu_cai_dat_anh_da_chon, Toast.LENGTH_SHORT).show();
         } catch (Exception e) {
             Toast.makeText(requireContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+            refreshAppBgThumb(thumb, oldPath.isEmpty() ? null : oldPath);
         }
         pendingAppBgTarget = null;
+    }
+
+    @Nullable
+    private ImageView appBgThumbFor(@Nullable TextInputEditText edt) {
+        if (edt == null) {
+            return null;
+        }
+        if (edt == edtAppNenKhach) {
+            return imgPreviewAppNenKhach;
+        }
+        if (edt == edtAppNenNhanVien) {
+            return imgPreviewAppNenNhanVien;
+        }
+        if (edt == edtAppNenAdmin) {
+            return imgPreviewAppNenAdmin;
+        }
+        return null;
+    }
+
+    private void refreshAppBgThumb(@Nullable ImageView thumb, @Nullable String ref) {
+        if (thumb == null) {
+            return;
+        }
+        if (ref == null || ref.trim().isEmpty()) {
+            thumb.setImageDrawable(null);
+            thumb.setVisibility(View.GONE);
+            return;
+        }
+        thumb.setVisibility(View.VISIBLE);
+        thumb.setImageDrawable(null);
+        RoomImageUtils.loadInto(thumb, ref);
     }
 
     private void onHeroImagePicked(@Nullable Uri uri) {
@@ -171,6 +213,9 @@ public class TrangChuCaiDatFragment extends Fragment implements DataRefreshable 
         swViTri = v.findViewById(R.id.swHienViTri);
         imgPreview = v.findViewById(R.id.imgPreviewTrangChuHero);
         imgPreviewNv = v.findViewById(R.id.imgPreviewTrangChuHeroNv);
+        imgPreviewAppNenKhach = v.findViewById(R.id.imgPreviewAppNenKhach);
+        imgPreviewAppNenNhanVien = v.findViewById(R.id.imgPreviewAppNenNhanVien);
+        imgPreviewAppNenAdmin = v.findViewById(R.id.imgPreviewAppNenAdmin);
         edtAppNenKhach = v.findViewById(R.id.edtAppNenKhach);
         edtAppNenNhanVien = v.findViewById(R.id.edtAppNenNhanVien);
         edtAppNenAdmin = v.findViewById(R.id.edtAppNenAdmin);
@@ -236,12 +281,6 @@ public class TrangChuCaiDatFragment extends Fragment implements DataRefreshable 
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        refreshData();
-    }
-
-    @Override
     public void refreshData() {
         if (dao == null || edtAnh == null) {
             return;
@@ -281,6 +320,9 @@ public class TrangChuCaiDatFragment extends Fragment implements DataRefreshable 
         if (edtAppNenAdmin != null) {
             edtAppNenAdmin.setText(h.getAppNenAdmin() != null ? h.getAppNenAdmin() : "");
         }
+        refreshAppBgThumb(imgPreviewAppNenKhach, h.getAppNenKhach());
+        refreshAppBgThumb(imgPreviewAppNenNhanVien, h.getAppNenNhanVien());
+        refreshAppBgThumb(imgPreviewAppNenAdmin, h.getAppNenAdmin());
     }
 
     private void refreshHeroPreview(String ref) {

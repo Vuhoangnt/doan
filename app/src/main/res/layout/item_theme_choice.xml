@@ -10,7 +10,7 @@
     android:foreground="?attr/selectableItemBackground"
     app:cardCornerRadius="16dp"
     app:cardElevation="2dp"
-    app:strokeColor="@color/admin_card_stroke"
+    app:strokeColor="?attr/colorOutlineVariant"
     app:strokeWidth="1dp">
 
     <TextView
@@ -18,7 +18,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="16dp"
-        android:textColor="@color/admin_text_primary"
+        android:textColor="?attr/colorOnSurface"
         android:textSize="16sp"
         tools:text="Chủ đề" />
 </com.google.android.material.card.MaterialCardView>

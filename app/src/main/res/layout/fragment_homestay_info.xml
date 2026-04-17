@@ -19,7 +19,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/homestay_page_title"
-            android:textColor="@color/admin_text_primary"
+            android:textColor="?attr/colorOnSurface"
             android:textSize="24sp"
             android:textStyle="bold" />
 
@@ -29,17 +29,17 @@
             android:layout_marginTop="6dp"
             android:lineSpacingExtra="2dp"
             android:text="@string/homestay_page_subtitle"
-            android:textColor="@color/admin_text_secondary"
+            android:textColor="?attr/colorOnSurfaceVariant"
             android:textSize="14sp" />
 
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            app:cardBackgroundColor="@color/white"
+            app:cardBackgroundColor="?attr/colorSurfaceContainerHighest"
             app:cardCornerRadius="20dp"
             app:cardElevation="3dp"
-            app:strokeColor="@color/admin_card_stroke"
+            app:strokeColor="?attr/colorOutlineVariant"
             app:strokeWidth="1dp">
 
             <LinearLayout
@@ -52,7 +52,7 @@
                     android:id="@+id/txtHomestayTen"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/primary"
+                    android:textColor="?attr/colorPrimary"
                     android:textSize="20sp"
                     android:textStyle="bold" />
 
@@ -62,7 +62,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     android:lineSpacingExtra="3dp"
-                    android:textColor="@color/admin_text_primary"
+                    android:textColor="?attr/colorOnSurface"
                     android:textSize="15sp" />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
@@ -75,10 +75,10 @@
             android:clickable="true"
             android:focusable="true"
             android:foreground="?attr/selectableItemBackground"
-            app:cardBackgroundColor="@color/white"
+            app:cardBackgroundColor="?attr/colorSurfaceContainerHighest"
             app:cardCornerRadius="18dp"
             app:cardElevation="3dp"
-            app:strokeColor="@color/admin_card_stroke"
+            app:strokeColor="?attr/colorOutlineVariant"
             app:strokeWidth="1dp">
 
             <LinearLayout
@@ -101,7 +101,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:lineSpacingExtra="2dp"
-                    android:textColor="@color/admin_text_primary"
+                    android:textColor="?attr/colorOnSurface"
                     android:textSize="15sp" />
 
                 <TextView
@@ -110,7 +110,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     android:lineSpacingExtra="2dp"
-                    android:textColor="@color/admin_text_secondary"
+                    android:textColor="?attr/colorOnSurfaceVariant"
                     android:textSize="13sp"
                     android:visibility="gone"
                     tools:text="Cổng sau gần bãi xe"
@@ -121,7 +121,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:text="@string/homestay_tap_open_map"
-                    android:textColor="@color/admin_text_secondary"
+                    android:textColor="?attr/colorOnSurfaceVariant"
                     android:textSize="12sp" />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
@@ -130,10 +130,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
-            app:cardBackgroundColor="@color/white"
+            app:cardBackgroundColor="?attr/colorSurfaceContainerHighest"
             app:cardCornerRadius="18dp"
             app:cardElevation="3dp"
-            app:strokeColor="@color/admin_card_stroke"
+            app:strokeColor="?attr/colorOutlineVariant"
             app:strokeWidth="1dp">
 
             <LinearLayout
@@ -156,14 +156,14 @@
                     android:layout_marginTop="8dp"
                     android:text="@string/homestay_label_phone"
                     android:textSize="12sp"
-                    android:textColor="@color/admin_text_secondary" />
+                    android:textColor="?attr/colorOnSurfaceVariant" />
 
                 <TextView
                     android:id="@+id/txtHomestayPhone"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:paddingVertical="4dp"
-                    android:textColor="@color/primary"
+                    android:textColor="?attr/colorPrimary"
                     android:textSize="16sp"
                     android:textStyle="bold" />
 
@@ -173,14 +173,14 @@
                     android:layout_marginTop="8dp"
                     android:text="@string/homestay_label_email"
                     android:textSize="12sp"
-                    android:textColor="@color/admin_text_secondary" />
+                    android:textColor="?attr/colorOnSurfaceVariant" />
 
                 <TextView
                     android:id="@+id/txtHomestayEmail"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:paddingVertical="4dp"
-                    android:textColor="@color/primary"
+                    android:textColor="?attr/colorPrimary"
                     android:textSize="15sp" />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
@@ -190,10 +190,10 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
             android:layout_marginBottom="8dp"
-            app:cardBackgroundColor="@color/white"
+            app:cardBackgroundColor="?attr/colorSurfaceContainerHighest"
             app:cardCornerRadius="18dp"
             app:cardElevation="3dp"
-            app:strokeColor="@color/admin_card_stroke"
+            app:strokeColor="?attr/colorOutlineVariant"
             app:strokeWidth="1dp">
 
             <LinearLayout
@@ -215,7 +215,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="6dp"
-                    android:textColor="@color/admin_text_primary"
+                    android:textColor="?attr/colorOnSurface"
                     android:textSize="15sp" />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>

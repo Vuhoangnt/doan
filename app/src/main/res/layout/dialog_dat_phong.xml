@@ -55,13 +55,13 @@
             android:layout_height="1dp"
             android:layout_marginTop="12dp"
             android:layout_marginBottom="4dp"
-            android:background="@color/admin_card_stroke" />
+            android:background="?attr/colorOutlineVariant" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/dat_phong_form_hint"
-            android:textColor="@color/admin_text_secondary"
+            android:textColor="?attr/colorOnSurfaceVariant"
             android:textSize="13sp" />
 
         <EditText
@@ -177,7 +177,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:textColor="@color/primary"
+            android:textColor="?attr/colorPrimary"
             android:textSize="14sp"
             android:textStyle="bold"
             android:visibility="gone" />
@@ -187,7 +187,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="14dp"
             android:text="@string/dat_phong_section_extra_services"
-            android:textColor="@color/primary"
+            android:textColor="?attr/colorPrimary"
             android:textSize="14sp"
             android:textStyle="bold" />
 
@@ -204,7 +204,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
             android:text="@string/dat_phong_extra_services_hint"
-            android:textColor="@color/admin_text_secondary"
+            android:textColor="?attr/colorOnSurfaceVariant"
             android:textSize="12sp" />
 
         <com.google.android.material.card.MaterialCardView
@@ -212,10 +212,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            app:cardBackgroundColor="@color/white"
+            app:cardBackgroundColor="?attr/colorSurfaceContainerHighest"
             app:cardCornerRadius="12dp"
             app:cardElevation="0dp"
-            app:strokeColor="@color/admin_card_stroke"
+            app:strokeColor="?attr/colorOutlineVariant"
             app:strokeWidth="1dp">
 
             <LinearLayout
@@ -233,7 +233,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
             android:text="@string/dat_phong_extra_services_empty"
-            android:textColor="@color/admin_text_secondary"
+            android:textColor="?attr/colorOnSurfaceVariant"
             android:textSize="13sp"
             android:visibility="gone" />
 
@@ -251,7 +251,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            android:textColor="@color/admin_text_secondary"
+            android:textColor="?attr/colorOnSurfaceVariant"
             android:textSize="12sp" />
 
         <EditText

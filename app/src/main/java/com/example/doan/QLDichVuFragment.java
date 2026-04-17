@@ -1,6 +1,7 @@
 package com.example.doan;
 
-import android.app.AlertDialog;
+import androidx.appcompat.app.AlertDialog;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -41,7 +42,7 @@ public class QLDichVuFragment extends Fragment implements DataRefreshable {
         listView.setOnItemClickListener((parent, v, position, id) -> showDialog(list.get(position)));
         listView.setOnItemLongClickListener((parent, v, position, id) -> {
             DichVu d = list.get(position);
-            new AlertDialog.Builder(requireContext())
+            new MaterialAlertDialogBuilder(requireContext())
                     .setTitle(R.string.ql_dich_vu_delete_title)
                     .setMessage(getString(R.string.ql_dich_vu_delete_msg, d.getTenDichVu()))
                     .setPositiveButton(R.string.ql_dich_vu_delete_ok, (di, w) -> {
@@ -90,7 +91,7 @@ public class QLDichVuFragment extends Fragment implements DataRefreshable {
             edtGia.setText(String.valueOf((long) existing.getGia()));
             edtMoTa.setText(existing.getMoTa());
         }
-        AlertDialog dlg = new AlertDialog.Builder(requireContext())
+        AlertDialog dlg = new MaterialAlertDialogBuilder(requireContext())
                 .setTitle(existing == null ? R.string.ql_dich_vu_add : R.string.ql_dich_vu_edit)
                 .setView(form)
                 .setPositiveButton(R.string.ql_dich_vu_save, null)

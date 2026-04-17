@@ -1,6 +1,7 @@
 package com.example.doan;
 
-import android.app.AlertDialog;
+import androidx.appcompat.app.AlertDialog;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +13,7 @@ import android.widget.RatingBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -144,7 +146,7 @@ public class DanhGiaFragment extends Fragment implements DataRefreshable {
         spAd.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spPhong.setAdapter(spAd);
 
-        AlertDialog dlg = new AlertDialog.Builder(requireContext())
+        AlertDialog dlg = new MaterialAlertDialogBuilder(requireContext())
                 .setTitle(R.string.danh_gia_dialog_title)
                 .setView(form)
                 .setPositiveButton(R.string.danh_gia_gui, null)
@@ -269,7 +271,7 @@ public class DanhGiaFragment extends Fragment implements DataRefreshable {
         spPhong.setAdapter(spAd);
         spPhong.setSelection(selectPos);
 
-        AlertDialog dlg = new AlertDialog.Builder(host.requireContext())
+        AlertDialog dlg = new MaterialAlertDialogBuilder(host.requireContext())
                 .setTitle(R.string.danh_gia_dialog_title)
                 .setView(form)
                 .setPositiveButton(R.string.danh_gia_gui, null)

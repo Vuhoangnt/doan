@@ -1,6 +1,5 @@
 package com.example.doan.UI.Fragment;
 
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,9 +12,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
-import androidx.palette.graphics.Palette;
 
 import com.example.doan.DAO.DanhGiaDAO;
 import com.example.doan.DAO.HomestayThongTinDAO;
@@ -34,9 +31,6 @@ import com.example.doan.util.RoomImageUtils;
 import java.util.List;
 
 public class Home extends Fragment implements DataRefreshable {
-
-    /** Tránh lặp post vô hạn khi đo chiều cao banner. */
-    private int heroBannerLayoutAttempts;
 
     private ImageButton btnScrollDown;
     private ScrollView scrollView;
@@ -243,86 +237,15 @@ public class Home extends Fragment implements DataRefreshable {
         if (ref == null || ref.isEmpty()) {
             imgHeroBg.setImageDrawable(null);
             imgHeroBg.setImageResource(R.drawable.bg_guest_hero);
-            scheduleHeroPalette("bg_guest_hero");
             return;
         }
-        scheduleHeroPalette(ref);
         applyHeroBannerImage(ref);
     }
 
-    /**
-     * FrameLayout hero (wrap_content) + ImageView match_parent đôi khi đo height = 0 → ảnh không hiện.
-     * Đợi layout xong, gán height ImageView = chiều cao khung rồi mới load ảnh.
-     */
+    /** Hero dùng khung cố định trong card — ImageView match_parent, load trực tiếp. */
     private void applyHeroBannerImage(String ref) {
         imgHeroBg.setImageDrawable(null);
-        View heroRoot = getView() != null ? getView().findViewById(R.id.homeHeroRoot) : null;
-        if (heroRoot == null) {
-            RoomImageUtils.loadInto(imgHeroBg, ref);
-            return;
-        }
-        heroBannerLayoutAttempts = 0;
-        Runnable attempt = new Runnable() {
-            @Override
-            public void run() {
-                if (!isAdded()) {
-                    return;
-                }
-                int h = heroRoot.getHeight();
-                heroBannerLayoutAttempts++;
-                if (h <= 0 && heroBannerLayoutAttempts < 30) {
-                    heroRoot.post(this);
-                    return;
-                }
-                if (h > 0 && imgHeroBg.getLayoutParams() != null) {
-                    ViewGroup.LayoutParams lp = imgHeroBg.getLayoutParams();
-                    lp.height = h;
-                    imgHeroBg.setLayoutParams(lp);
-                }
-                RoomImageUtils.loadInto(imgHeroBg, ref);
-            }
-        };
-        heroRoot.post(attempt);
-    }
-
-    private void scheduleHeroPalette(String ref) {
-        if (!(getActivity() instanceof MainActivity)) {
-            return;
-        }
-        final MainActivity act = (MainActivity) getActivity();
-        final android.content.Context appCtx = requireContext().getApplicationContext();
-        final String r = ref;
-        new Thread(() -> {
-            Bitmap bmp = RoomImageUtils.decodeBitmapForPalette(appCtx, r, 256);
-            int fallback = ContextCompat.getColor(appCtx, R.color.primary);
-            int seed = fallback;
-            if (bmp != null) {
-                Palette p = Palette.from(bmp).clearFilters().maximumColorCount(20).generate();
-                bmp.recycle();
-                int d = p.getDarkVibrantColor(0);
-                int dv = p.getVibrantColor(0);
-                int m = p.getMutedColor(0);
-                int dm = p.getDarkMutedColor(0);
-                if (dm != 0) {
-                    seed = dm;
-                } else if (d != 0) {
-                    seed = d;
-                } else if (m != 0) {
-                    seed = m;
-                } else if (dv != 0) {
-                    seed = dv;
-                }
-            }
-            int finalSeed = seed;
-            if (act.isFinishing()) {
-                return;
-            }
-            act.runOnUiThread(() -> {
-                if (isAdded() && act.findViewById(R.id.fragmentContainer) != null) {
-                    act.applyHomeGuestChromeFromHeroSeed(finalSeed);
-                }
-            });
-        }).start();
+        RoomImageUtils.loadInto(imgHeroBg, ref);
     }
 
     private void applySectionsVisibility(HomestayThongTin h) {

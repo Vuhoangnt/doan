@@ -21,6 +21,6 @@
         android:gravity="center"
         android:padding="24dp"
         android:text="@string/duyet_danh_gia_empty"
-        android:textColor="@color/admin_text_secondary"
+        android:textColor="?attr/colorOnSurfaceVariant"
         android:textSize="15sp" />
 </FrameLayout>

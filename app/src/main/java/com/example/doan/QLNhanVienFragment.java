@@ -1,6 +1,8 @@
 package com.example.doan;
 
 import android.app.AlertDialog;
+
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -64,7 +66,7 @@ public class QLNhanVienFragment extends Fragment implements DataRefreshable {
         EditText edtPhone = form.findViewById(R.id.edtNvPhone);
         EditText edtEmail = form.findViewById(R.id.edtNvEmail);
 
-        new AlertDialog.Builder(requireContext())
+        new MaterialAlertDialogBuilder(requireContext())
                 .setTitle("Thêm nhân viên")
                 .setView(form)
                 .setPositiveButton("Lưu", (d, w) -> {

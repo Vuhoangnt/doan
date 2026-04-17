@@ -214,6 +214,7 @@
     <string name="trang_chu_cai_dat_hero_nv">Banner trang chủ — nhân viên</string>
     <string name="trang_chu_cai_dat_hero_nv_intro">Tuỳ chọn: ảnh và chữ riêng khi tài khoản đăng nhập là nhân viên. Để trống sẽ dùng cùng cấu hình khách ở trên.</string>
     <string name="trang_chu_cai_dat_intro">Ảnh nền: chọn từ máy hoặc nhập tên drawable (vd: phong1, bg_guest_hero). Để trống tiêu đề / cam kết sẽ dùng chữ mặc định.</string>
+    <string name="trang_chu_cai_dat_xem_truoc">Xem trước</string>
     <string name="trang_chu_cai_dat_chon_anh_may">Chọn ảnh nền từ điện thoại</string>
     <string name="trang_chu_cai_dat_chon_anh_may_nv">Chọn ảnh nền nhân viên từ điện thoại</string>
     <string name="trang_chu_cai_dat_anh_da_chon">Đã chọn ảnh — nhấn Lưu để áp dụng.</string>

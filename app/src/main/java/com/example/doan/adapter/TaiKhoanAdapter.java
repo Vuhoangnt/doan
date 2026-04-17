@@ -1,6 +1,7 @@
 package com.example.doan.adapter;
 
-import android.app.AlertDialog;
+import androidx.appcompat.app.AlertDialog;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -64,7 +65,7 @@ public class TaiKhoanAdapter extends BaseAdapter {
     }
 
     private void showManageDialog(TaiKhoan tk) {
-        new AlertDialog.Builder(context)
+        new MaterialAlertDialogBuilder(context)
                 .setTitle(tk.getTenDangNhap())
                 .setItems(new String[]{"Sửa", "Xóa"}, (d, which) -> {
                     if (which == 0) {
@@ -93,7 +94,7 @@ public class TaiKhoanAdapter extends BaseAdapter {
         edtPhone.setText(tk.getDienThoai() != null ? tk.getDienThoai() : "");
         edtEmail.setText(tk.getEmail() != null ? tk.getEmail() : "");
 
-        AlertDialog dlg = new AlertDialog.Builder(context)
+        AlertDialog dlg = new MaterialAlertDialogBuilder(context)
                 .setTitle("Sửa tài khoản")
                 .setView(form)
                 .setPositiveButton("Lưu", null)
@@ -135,7 +136,7 @@ public class TaiKhoanAdapter extends BaseAdapter {
             Toast.makeText(context, "Không xóa tài khoản quản trị", Toast.LENGTH_SHORT).show();
             return;
         }
-        new AlertDialog.Builder(context)
+        new MaterialAlertDialogBuilder(context)
                 .setTitle("Xóa tài khoản")
                 .setMessage("Xóa \"" + tk.getTenDangNhap() + "\"?")
                 .setPositiveButton("Xóa", (dialog, which) -> {

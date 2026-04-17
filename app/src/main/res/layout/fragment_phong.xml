@@ -23,10 +23,10 @@
         android:layout_marginTop="10dp"
         android:layout_marginBottom="8dp"
         android:visibility="gone"
-        app:cardBackgroundColor="@color/white"
+        app:cardBackgroundColor="?attr/colorSurfaceContainerHighest"
         app:cardCornerRadius="20dp"
         app:cardElevation="5dp"
-        app:strokeColor="@color/admin_card_stroke"
+        app:strokeColor="?attr/colorOutlineVariant"
         app:strokeWidth="1dp"
         tools:visibility="visible">
 
@@ -61,7 +61,7 @@
                         android:contentDescription="@null"
                         android:padding="10dp"
                         android:src="@drawable/ic_nav_bed"
-                        app:tint="@color/primary" />
+                        app:tint="?attr/colorPrimary" />
 
                     <LinearLayout
                         android:layout_width="0dp"
@@ -75,7 +75,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="@string/phong_header_admin_title"
-                            android:textColor="@color/admin_text_primary"
+                            android:textColor="?attr/colorOnSurface"
                             android:textSize="21sp"
                             android:textStyle="bold" />
 
@@ -86,7 +86,7 @@
                             android:layout_marginTop="5dp"
                             android:lineSpacingExtra="3dp"
                             android:text="@string/phong_header_admin_subtitle"
-                            android:textColor="@color/admin_text_secondary"
+                            android:textColor="?attr/colorOnSurfaceVariant"
                             android:textSize="14sp" />
                     </LinearLayout>
                 </LinearLayout>
@@ -105,7 +105,7 @@
                     app:icon="@android:drawable/ic_input_add"
                     app:iconGravity="textStart"
                     app:iconPadding="10dp"
-                    app:iconTint="@color/white"
+                    app:iconTint="?attr/colorOnPrimary"
                     tools:visibility="visible" />
 
                 <LinearLayout
@@ -119,10 +119,10 @@
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="8dp"
                         android:layout_weight="1"
-                        app:cardBackgroundColor="@color/room_stat_card_bg"
+                        app:cardBackgroundColor="?attr/colorSurfaceContainerHighest"
                         app:cardCornerRadius="14dp"
                         app:cardElevation="0dp"
-                        app:strokeColor="@color/admin_card_stroke"
+                        app:strokeColor="?attr/colorOutlineVariant"
                         app:strokeWidth="1dp">
 
                         <LinearLayout
@@ -140,7 +140,7 @@
                                 android:gravity="center"
                                 android:text="@string/phong_stat_tong"
                                 android:textAlignment="center"
-                                android:textColor="@color/admin_text_secondary"
+                                android:textColor="?attr/colorOnSurfaceVariant"
                                 android:textSize="12sp" />
 
                             <TextView
@@ -148,7 +148,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="6dp"
-                                android:textColor="@color/room_stat_accent"
+                                android:textColor="?attr/colorPrimary"
                                 android:textSize="28sp"
                                 android:textStyle="bold"
                                 tools:text="6" />
@@ -160,10 +160,10 @@
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="8dp"
                         android:layout_weight="1"
-                        app:cardBackgroundColor="@color/room_chip_trong_bg"
+                        app:cardBackgroundColor="?attr/colorPrimaryContainer"
                         app:cardCornerRadius="14dp"
                         app:cardElevation="0dp"
-                        app:strokeColor="#81C784"
+                        app:strokeColor="?attr/colorPrimary"
                         app:strokeWidth="1dp">
 
                         <LinearLayout
@@ -181,7 +181,7 @@
                                 android:gravity="center"
                                 android:text="@string/phong_stat_trong"
                                 android:textAlignment="center"
-                                android:textColor="@color/room_chip_trong_text"
+                                android:textColor="?attr/colorOnPrimaryContainer"
                                 android:textSize="12sp" />
 
                             <TextView
@@ -189,7 +189,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="6dp"
-                                android:textColor="@color/room_chip_trong_text"
+                                android:textColor="?attr/colorOnPrimaryContainer"
                                 android:textSize="28sp"
                                 android:textStyle="bold"
                                 tools:text="4" />
@@ -200,10 +200,10 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        app:cardBackgroundColor="@color/room_chip_dang_bg"
+                        app:cardBackgroundColor="?attr/colorSecondaryContainer"
                         app:cardCornerRadius="14dp"
                         app:cardElevation="0dp"
-                        app:strokeColor="#FFB74D"
+                        app:strokeColor="?attr/colorSecondary"
                         app:strokeWidth="1dp">
 
                         <LinearLayout
@@ -221,7 +221,7 @@
                                 android:gravity="center"
                                 android:text="@string/phong_stat_dang"
                                 android:textAlignment="center"
-                                android:textColor="@color/room_chip_dang_text"
+                                android:textColor="?attr/colorOnSecondaryContainer"
                                 android:textSize="12sp" />
 
                             <TextView
@@ -229,7 +229,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="6dp"
-                                android:textColor="@color/room_chip_dang_text"
+                                android:textColor="?attr/colorOnSecondaryContainer"
                                 android:textSize="28sp"
                                 android:textStyle="bold"
                                 tools:text="2" />
@@ -247,10 +247,10 @@
         android:layout_marginHorizontal="12dp"
         android:layout_marginBottom="8dp"
         android:visibility="gone"
-        app:cardBackgroundColor="@color/white"
+        app:cardBackgroundColor="?attr/colorSurfaceContainerHighest"
         app:cardCornerRadius="20dp"
         app:cardElevation="4dp"
-        app:strokeColor="@color/admin_card_stroke"
+        app:strokeColor="?attr/colorOutlineVariant"
         app:strokeWidth="1dp"
         tools:visibility="visible">
 
@@ -276,7 +276,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/phong_lich_title"
-                android:textColor="@color/admin_text_primary"
+                android:textColor="?attr/colorOnSurface"
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
@@ -286,7 +286,7 @@
                 android:layout_marginTop="6dp"
                 android:lineSpacingExtra="3dp"
                 android:text="@string/phong_lich_hint"
-                android:textColor="@color/admin_text_secondary"
+                android:textColor="?attr/colorOnSurfaceVariant"
                 android:textSize="14sp" />
 
             <com.google.android.material.tabs.TabLayout
@@ -296,9 +296,9 @@
                 android:layout_marginTop="12dp"
                 app:tabGravity="start"
                 app:tabMode="scrollable"
-                app:tabRippleColor="@color/primary"
-                app:tabSelectedTextColor="@color/primary"
-                app:tabTextColor="@color/admin_text_secondary" />
+                app:tabRippleColor="?attr/colorPrimary"
+                app:tabSelectedTextColor="?attr/colorPrimary"
+                app:tabTextColor="?attr/colorOnSurfaceVariant" />
 
             <FrameLayout
                 android:id="@+id/framePhongLichContent"
@@ -348,10 +348,10 @@
         android:layout_marginHorizontal="12dp"
         android:layout_marginBottom="8dp"
         android:visibility="gone"
-        app:cardBackgroundColor="@color/guest_card_soft"
+        app:cardBackgroundColor="?attr/colorSurfaceContainerLow"
         app:cardCornerRadius="16dp"
         app:cardElevation="2dp"
-        app:strokeColor="@color/admin_card_stroke"
+        app:strokeColor="?attr/colorOutlineVariant"
         app:strokeWidth="1dp"
         tools:visibility="visible">
 
@@ -379,7 +379,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="@string/phong_guest_filter_card_title"
-                        android:textColor="@color/admin_text_primary"
+                        android:textColor="?attr/colorOnSurface"
                         android:textSize="16sp"
                         android:textStyle="bold" />
 
@@ -389,7 +389,7 @@
                         android:layout_marginTop="4dp"
                         android:lineSpacingExtra="2dp"
                         android:text="@string/phong_guest_toolbar_search_hint"
-                        android:textColor="@color/admin_text_secondary"
+                        android:textColor="?attr/colorOnSurfaceVariant"
                         android:textSize="12sp" />
                 </LinearLayout>
 
@@ -408,7 +408,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                android:textColor="@color/admin_text_secondary"
+                android:textColor="?attr/colorOnSurfaceVariant"
                 android:textSize="12sp"
                 tools:text="Hiển thị 6 phòng" />
 
@@ -424,7 +424,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     android:text="@string/phong_guest_filter_price"
-                    android:textColor="@color/admin_text_secondary"
+                    android:textColor="?attr/colorOnSurfaceVariant"
                     android:textSize="12sp"
                     android:textStyle="bold" />
 
@@ -478,7 +478,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     android:text="@string/phong_guest_sort_label"
-                    android:textColor="@color/admin_text_secondary"
+                    android:textColor="?attr/colorOnSurfaceVariant"
                     android:textSize="12sp"
                     android:textStyle="bold" />
 
@@ -531,7 +531,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
             android:text="@string/phong_ql_list_section"
-            android:textColor="@color/admin_text_primary"
+            android:textColor="?attr/colorOnSurface"
             android:textSize="16sp"
             android:textStyle="bold" />
     </LinearLayout>

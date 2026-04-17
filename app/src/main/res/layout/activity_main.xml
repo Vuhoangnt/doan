@@ -13,7 +13,7 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:fitsSystemWindows="true"
-        android:background="@color/admin_background">
+        android:background="?attr/colorSurface">
 
         <!-- APP BAR -->
         <com.google.android.material.appbar.AppBarLayout
@@ -27,7 +27,7 @@
                 android:layout_height="?attr/actionBarSize"
                 android:background="?attr/colorPrimary"
                 android:title="@string/app_name"
-                android:titleTextColor="@android:color/white" />
+                android:titleTextColor="?attr/colorOnPrimary" />
         </com.google.android.material.appbar.AppBarLayout>
 
         <!-- MENU (ĐÃ ĐƯA LÊN TRÊN) -->
@@ -35,7 +35,7 @@
             android:id="@+id/topNav"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/white"
+            android:background="?attr/colorSurfaceContainerLow"
             app:elevation="4dp"
             app:itemActiveIndicatorStyle="@style/Widget.Doan.BottomNavigation.ActiveIndicator"
             app:itemIconTint="@color/bottom_nav_guest_tint"

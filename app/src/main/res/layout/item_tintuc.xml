@@ -8,7 +8,7 @@
     android:layout_marginVertical="6dp"
     app:cardCornerRadius="14dp"
     app:cardElevation="2dp"
-    app:strokeColor="@color/admin_card_stroke"
+    app:strokeColor="?attr/colorOutlineVariant"
     app:strokeWidth="1dp">
 
     <LinearLayout
@@ -21,7 +21,7 @@
             android:id="@+id/txtTieuDe"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="@color/admin_text_primary"
+            android:textColor="?attr/colorOnSurface"
             android:textSize="16sp"
             android:textStyle="bold"
             tools:text="Tiêu đề tin" />
@@ -31,7 +31,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            android:textColor="@color/admin_text_secondary"
+            android:textColor="?attr/colorOnSurfaceVariant"
             android:textSize="12sp"
             tools:text="2026-03-01" />
 
@@ -43,7 +43,7 @@
             android:ellipsize="end"
             android:lineSpacingExtra="2dp"
             android:maxLines="4"
-            android:textColor="@color/admin_text_primary"
+            android:textColor="?attr/colorOnSurface"
             android:textSize="14sp"
             tools:text="Nội dung tóm tắt…" />
 
@@ -52,7 +52,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:text="@string/tin_tuc_tap_mo"
-            android:textColor="@color/primary"
+            android:textColor="?attr/colorPrimary"
             android:textSize="13sp"
             android:textStyle="bold" />
     </LinearLayout>

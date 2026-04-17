@@ -1,6 +1,7 @@
 package com.example.doan;
 
-import android.app.AlertDialog;
+import androidx.appcompat.app.AlertDialog;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -90,7 +91,7 @@ public class TinTucFragment extends Fragment implements DataRefreshable {
         txtTieu.setText(t.getTieuDe());
         txtNgay.setText(t.getNgayDang() != null ? t.getNgayDang() : "");
         txtNd.setText(t.getNoiDung() != null ? t.getNoiDung() : "");
-        new AlertDialog.Builder(requireContext())
+        new MaterialAlertDialogBuilder(requireContext())
                 .setView(v)
                 .setPositiveButton(android.R.string.ok, null)
                 .show();
@@ -156,7 +157,7 @@ public class TinTucFragment extends Fragment implements DataRefreshable {
             });
         });
 
-        AlertDialog.Builder b = new AlertDialog.Builder(requireContext())
+        MaterialAlertDialogBuilder b = new MaterialAlertDialogBuilder(requireContext())
                 .setTitle(existing == null ? "Thêm tin" : "Sửa tin")
                 .setView(form);
 
@@ -209,7 +210,7 @@ public class TinTucFragment extends Fragment implements DataRefreshable {
                 android.widget.Button btnNeu = dlg.getButton(AlertDialog.BUTTON_NEUTRAL);
                 if (btnNeu != null) {
                     btnNeu.setOnClickListener(v ->
-                            new AlertDialog.Builder(requireContext())
+                            new MaterialAlertDialogBuilder(requireContext())
                                     .setTitle("Xóa tin")
                                     .setMessage("Xóa tin này?")
                                     .setPositiveButton("Xóa", (d2, w) -> {

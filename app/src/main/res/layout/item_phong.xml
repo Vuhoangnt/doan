@@ -11,7 +11,7 @@
     android:foreground="?attr/selectableItemBackground"
     app:cardCornerRadius="22dp"
     app:cardElevation="4dp"
-    app:strokeColor="@color/admin_card_stroke"
+    app:strokeColor="?attr/colorOutlineVariant"
     app:strokeWidth="1dp">
 
     <LinearLayout
@@ -79,7 +79,7 @@
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
                 android:maxLines="2"
-                android:textColor="@color/admin_text_primary"
+                android:textColor="?attr/colorOnSurface"
                 android:textSize="18sp"
                 android:textStyle="bold"
                 tools:text="Phòng Đôi view vườn" />
@@ -92,7 +92,7 @@
                 android:ellipsize="end"
                 android:lineSpacingExtra="3dp"
                 android:maxLines="2"
-                android:textColor="@color/admin_text_secondary"
+                android:textColor="?attr/colorOnSurfaceVariant"
                 android:textSize="14sp"
                 tools:text="2 giường, ban công, wifi miễn phí…" />
 
@@ -112,7 +112,7 @@
                     android:id="@+id/txtPhongQlMeta"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/admin_text_primary"
+                    android:textColor="?attr/colorOnSurface"
                     android:textSize="14sp"
                     android:textStyle="bold"
                     tools:text="Mã #3 · Tối đa 4 khách" />
@@ -122,7 +122,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
-                    android:textColor="@color/admin_text_secondary"
+                    android:textColor="?attr/colorOnSurfaceVariant"
                     android:textSize="13sp"
                     tools:text="Chạm để sửa hoặc xóa phòng" />
             </LinearLayout>

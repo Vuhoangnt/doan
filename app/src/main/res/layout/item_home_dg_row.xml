@@ -5,10 +5,10 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="10dp"
-    app:cardBackgroundColor="@color/white"
+    app:cardBackgroundColor="?attr/colorSurfaceContainerHighest"
     app:cardCornerRadius="16dp"
     app:cardElevation="2dp"
-    app:strokeColor="#E8E8E8"
+    app:strokeColor="?attr/colorOutlineVariant"
     app:strokeWidth="1dp">
 
     <LinearLayout
@@ -29,7 +29,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:textColor="@color/admin_text_primary"
+                android:textColor="?attr/colorOnSurface"
                 android:textSize="15sp"
                 android:textStyle="bold"
                 tools:text="Khách A" />
@@ -38,7 +38,7 @@
                 android:id="@+id/txtHomeDgSao"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="#F57F17"
+                android:textColor="?attr/colorSecondary"
                 android:textSize="14sp"
                 tools:text="★★★★★" />
         </LinearLayout>
@@ -48,7 +48,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="2dp"
-            android:textColor="@color/admin_text_secondary"
+            android:textColor="?attr/colorOnSurfaceVariant"
             android:textSize="11sp"
             tools:text="2026-03-01" />
 
@@ -59,7 +59,7 @@
             android:layout_marginTop="6dp"
             android:ellipsize="end"
             android:maxLines="3"
-            android:textColor="@color/admin_text_primary"
+            android:textColor="?attr/colorOnSurface"
             android:textSize="13sp"
             tools:text="Nội dung đánh giá…" />
     </LinearLayout>

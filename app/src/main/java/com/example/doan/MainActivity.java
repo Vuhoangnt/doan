@@ -1,6 +1,8 @@
 package com.example.doan;
 
 import android.app.AlertDialog;
+
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
@@ -18,7 +20,6 @@ import androidx.appcompat.content.res.AppCompatResources;
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
-import androidx.core.graphics.ColorUtils;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
@@ -56,7 +57,6 @@ public class MainActivity extends AppCompatActivity {
     private int defaultBottomNavBg;
     private ColorStateList defaultBottomNavTints;
     private ColorStateList defaultDrawerTints;
-    private boolean homeGuestChromeOverride;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,8 +69,9 @@ public class MainActivity extends AppCompatActivity {
         toolbar.post(this::ensureThongBaoBadgeAttached);
 
         defaultToolbarColor = MaterialColors.getColor(this, androidx.appcompat.R.attr.colorPrimary, Color.BLACK);
-        defaultToolbarTitleColor = Color.WHITE;
-        defaultBottomNavBg = ContextCompat.getColor(this, R.color.white);
+        defaultToolbarTitleColor = MaterialColors.getColor(this, com.google.android.material.R.attr.colorOnPrimary, Color.WHITE);
+        defaultBottomNavBg = MaterialColors.getColor(this, com.google.android.material.R.attr.colorSurfaceContainerLow,
+                ContextCompat.getColor(this, R.color.app_card_soft));
         defaultBottomNavTints = AppCompatResources.getColorStateList(this, R.color.bottom_nav_guest_tint);
         defaultDrawerTints = AppCompatResources.getColorStateList(this, R.color.drawer_item_color);
 
@@ -471,7 +472,7 @@ public class MainActivity extends AppCompatActivity {
         if (!session.isLoggedIn() || !session.isKhach() || !session.mustChangePassword()) {
             return;
         }
-        new AlertDialog.Builder(this)
+        new MaterialAlertDialogBuilder(this)
                 .setTitle(R.string.first_password_change_title)
                 .setMessage(R.string.first_password_change_msg)
                 .setPositiveButton(R.string.first_password_change_ok, (d, w) -> {
@@ -653,73 +654,8 @@ public class MainActivity extends AppCompatActivity {
         updateNavHeader();
     }
 
-    /** Trang chủ: toolbar + bottom nav + drawer lấy tông từ ảnh nền hero. */
-    public void applyHomeGuestChromeFromHeroSeed(int seedColor) {
-        if (isFinishing()) {
-            return;
-        }
-        homeGuestChromeOverride = true;
-        Toolbar tb = findViewById(R.id.toolbar);
-        float[] hsv = new float[3];
-        Color.colorToHSV(seedColor, hsv);
-        hsv[1] = Math.min(1f, hsv[1] * 1.08f);
-        int toolbarCol = Color.HSVToColor(hsv);
-        boolean darkBar = ColorUtils.calculateLuminance(toolbarCol) < 0.45;
-        int title = darkBar ? Color.WHITE : Color.BLACK;
-        tb.setBackgroundColor(toolbarCol);
-        tb.setTitleTextColor(title);
-        int bottomBg = ColorUtils.blendARGB(toolbarCol, Color.WHITE, 0.52f);
-        bottomNav.setBackgroundColor(bottomBg);
-        // Tab đang chọn dùng màu từ ảnh — nếu quá nhạt trên nền bottom sáng, chữ/icon gần như biến mất (đặc biệt menu nhân viên).
-        int selected = adjustSelectedColorForBottomBar(seedColor, bottomBg);
-        // Nền bottom nav luôn khá sáng (pha trắng) — không dùng chữ trắng mờ khi toolbar tối (sẽ mờ trên nền sáng).
-        boolean bottomIsLight = ColorUtils.calculateLuminance(bottomBg) > 0.45f;
-        int unselectedNav = bottomIsLight
-                ? ContextCompat.getColor(this, R.color.guest_nav_inactive)
-                : ContextCompat.getColor(this, R.color.white);
-        ColorStateList cslNav = new ColorStateList(
-                new int[][]{
-                        new int[]{android.R.attr.state_checked},
-                        new int[]{-android.R.attr.state_checked}
-                },
-                new int[]{selected, unselectedNav}
-        );
-        bottomNav.setItemIconTintList(cslNav);
-        bottomNav.setItemTextColor(cslNav);
-        // Drawer nền sáng: luôn dùng chữ đậm cho mục không chọn (tránh lẫn với tint theo toolbar tối).
-        int unselectedDrawer = ContextCompat.getColor(this, R.color.guest_nav_inactive);
-        ColorStateList cslDrawer = new ColorStateList(
-                new int[][]{
-                        new int[]{android.R.attr.state_checked},
-                        new int[]{-android.R.attr.state_checked}
-                },
-                new int[]{selected, unselectedDrawer}
-        );
-        navigationView.setItemIconTintList(cslDrawer);
-        navigationView.setItemTextColor(cslDrawer);
-    }
-
-    /** Đảm bảo màu mục đang chọn đọc được trên nền thanh dưới (tránh seed quá sáng / trùng nền). */
-    private static int adjustSelectedColorForBottomBar(int seed, int bottomBg) {
-        double lBg = ColorUtils.calculateLuminance(bottomBg);
-        double lSeed = ColorUtils.calculateLuminance(seed);
-        if (Math.abs(lSeed - lBg) < 0.14f) {
-            return ColorUtils.blendARGB(seed, lBg > 0.5f ? Color.BLACK : Color.WHITE, 0.5f);
-        }
-        if (lBg > 0.52f && lSeed > 0.58f) {
-            return ColorUtils.blendARGB(seed, Color.BLACK, 0.42f);
-        }
-        if (lBg < 0.42f && lSeed < 0.4f) {
-            return ColorUtils.blendARGB(seed, Color.WHITE, 0.38f);
-        }
-        return seed;
-    }
-
+    /** Khôi phục toolbar / bottom nav / drawer theo ThemeManager (sau khi rời Trang chủ). */
     public void resetHomeGuestChrome() {
-        if (!homeGuestChromeOverride) {
-            return;
-        }
-        homeGuestChromeOverride = false;
         Toolbar tb = findViewById(R.id.toolbar);
         tb.setBackgroundColor(defaultToolbarColor);
         tb.setTitleTextColor(defaultToolbarTitleColor);

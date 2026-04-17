@@ -37,6 +37,7 @@ import com.example.doan.util.VietSearch;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.chip.ChipGroup;
+import com.google.android.material.color.MaterialColors;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -457,7 +458,8 @@ public class Phong extends Fragment implements DataRefreshable {
         if (list == null || list.isEmpty()) {
             TextView empty = new TextView(requireContext());
             empty.setText(R.string.phong_lich_empty_rooms);
-            empty.setTextColor(ContextCompat.getColor(requireContext(), R.color.admin_text_secondary));
+            empty.setTextColor(MaterialColors.getColor(requireContext(), com.google.android.material.R.attr.colorOnSurfaceVariant,
+                    ContextCompat.getColor(requireContext(), R.color.app_on_surface_variant)));
             empty.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14f);
             int pad = Math.round(8 * getResources().getDisplayMetrics().density);
             empty.setPadding(pad, pad, pad, pad);
@@ -502,7 +504,8 @@ public class Phong extends Fragment implements DataRefreshable {
         tvTitle.setText(titleRes);
         tvTitle.setTextSize(TypedValue.COMPLEX_UNIT_SP, 12f);
         tvTitle.setTypeface(tvTitle.getTypeface(), Typeface.BOLD);
-        tvTitle.setTextColor(ContextCompat.getColor(requireContext(), R.color.admin_text_secondary));
+        tvTitle.setTextColor(MaterialColors.getColor(requireContext(), com.google.android.material.R.attr.colorOnSurfaceVariant,
+                    ContextCompat.getColor(requireContext(), R.color.app_on_surface_variant)));
         LinearLayout.LayoutParams lpTitle = new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         int top = Math.round(10 * getResources().getDisplayMetrics().density);
@@ -513,7 +516,8 @@ public class Phong extends Fragment implements DataRefreshable {
         TextView tvBody = new TextView(requireContext());
         tvBody.setText(body);
         tvBody.setTextSize(TypedValue.COMPLEX_UNIT_SP, 13f);
-        tvBody.setTextColor(ContextCompat.getColor(requireContext(), R.color.admin_text_primary));
+        tvBody.setTextColor(MaterialColors.getColor(requireContext(), com.google.android.material.R.attr.colorOnSurface,
+                    ContextCompat.getColor(requireContext(), R.color.app_on_surface)));
         float extra = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 2f, getResources().getDisplayMetrics());
         tvBody.setLineSpacing(extra, 1f);
         LinearLayout.LayoutParams lpBody = new LinearLayout.LayoutParams(
@@ -532,7 +536,8 @@ public class Phong extends Fragment implements DataRefreshable {
         if (list.isEmpty()) {
             TextView empty = new TextView(requireContext());
             empty.setText(R.string.phong_lich_empty_rooms);
-            empty.setTextColor(ContextCompat.getColor(requireContext(), R.color.admin_text_secondary));
+            empty.setTextColor(MaterialColors.getColor(requireContext(), com.google.android.material.R.attr.colorOnSurfaceVariant,
+                    ContextCompat.getColor(requireContext(), R.color.app_on_surface_variant)));
             empty.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14f);
             int pad = Math.round(8 * getResources().getDisplayMetrics().density);
             empty.setPadding(pad, pad, pad, pad);
@@ -558,7 +563,8 @@ public class Phong extends Fragment implements DataRefreshable {
         if (filtered.isEmpty()) {
             TextView empty = new TextView(requireContext());
             empty.setText(R.string.phong_lich_empty_orders);
-            empty.setTextColor(ContextCompat.getColor(requireContext(), R.color.admin_text_secondary));
+            empty.setTextColor(MaterialColors.getColor(requireContext(), com.google.android.material.R.attr.colorOnSurfaceVariant,
+                    ContextCompat.getColor(requireContext(), R.color.app_on_surface_variant)));
             empty.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14f);
             int pad = Math.round(8 * getResources().getDisplayMetrics().density);
             empty.setPadding(pad, pad, pad, pad);
@@ -618,19 +624,23 @@ public class Phong extends Fragment implements DataRefreshable {
 
     private void styleTimelineStatusBadge(@NonNull TextView tv, @NonNull String normalized) {
         int bg = R.drawable.bg_room_badge_khac;
-        int tc = R.color.room_chip_khac_text;
+        int fgColor = MaterialColors.getColor(requireContext(), com.google.android.material.R.attr.colorOnSurfaceVariant,
+                ContextCompat.getColor(requireContext(), R.color.app_on_surface_variant));
         if (DatPhongDAO.TT_DA_XAC_NHAN.equals(normalized)) {
             bg = R.drawable.bg_room_badge_trong;
-            tc = R.color.room_chip_trong_text;
+            fgColor = MaterialColors.getColor(requireContext(), com.google.android.material.R.attr.colorOnPrimaryContainer,
+                    ContextCompat.getColor(requireContext(), R.color.theme_green_on_primary_container));
         } else if (DatPhongDAO.TT_DANG_O.equals(normalized)) {
             bg = R.drawable.bg_room_badge_dang;
-            tc = R.color.room_chip_dang_text;
+            fgColor = MaterialColors.getColor(requireContext(), com.google.android.material.R.attr.colorOnSecondaryContainer,
+                    ContextCompat.getColor(requireContext(), R.color.app_on_surface_variant));
         } else if (DatPhongDAO.TT_DA_TRA_PHONG.equals(normalized)) {
             bg = R.drawable.bg_room_badge_khac;
-            tc = R.color.room_chip_khac_text;
+            fgColor = MaterialColors.getColor(requireContext(), com.google.android.material.R.attr.colorOnSurfaceVariant,
+                    ContextCompat.getColor(requireContext(), R.color.app_on_surface_variant));
         }
         tv.setBackgroundResource(bg);
-        tv.setTextColor(ContextCompat.getColor(requireContext(), tc));
+        tv.setTextColor(fgColor);
     }
 
     @Nullable
@@ -663,7 +673,8 @@ public class Phong extends Fragment implements DataRefreshable {
         tv.setTypeface(tv.getTypeface(), Typeface.BOLD);
         tv.setPadding(pad, pad, pad, pad);
         tv.setBackgroundResource(R.drawable.bg_phong_lich_header);
-        tv.setTextColor(ContextCompat.getColor(requireContext(), R.color.admin_text_primary));
+        tv.setTextColor(MaterialColors.getColor(requireContext(), com.google.android.material.R.attr.colorOnSurface,
+                    ContextCompat.getColor(requireContext(), R.color.app_on_surface)));
         tv.setMaxLines(3);
         tv.setLineSpacing(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 2f, getResources().getDisplayMetrics()), 1f);
         TableRow.LayoutParams lp = new TableRow.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, weight);
@@ -691,7 +702,8 @@ public class Phong extends Fragment implements DataRefreshable {
         tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 13f);
         tv.setPadding(pad, pad, pad, pad);
         tv.setBackgroundResource(rowBgRes);
-        tv.setTextColor(ContextCompat.getColor(requireContext(), R.color.admin_text_primary));
+        tv.setTextColor(MaterialColors.getColor(requireContext(), com.google.android.material.R.attr.colorOnSurface,
+                    ContextCompat.getColor(requireContext(), R.color.app_on_surface)));
         tv.setMaxLines(5);
         tv.setEllipsize(android.text.TextUtils.TruncateAt.END);
         tv.setLineSpacing(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 2f, getResources().getDisplayMetrics()), 1f);

@@ -1,6 +1,6 @@
 package com.example.doan.adapter;
 
-import android.app.AlertDialog;
+import androidx.appcompat.app.AlertDialog;
 import android.content.Context;
 import android.net.Uri;
 import android.view.LayoutInflater;
@@ -41,6 +41,9 @@ import com.example.doan.util.DatPhongIntervalUtil;
 import com.example.doan.util.PeakPricingUtil;
 import com.example.doan.util.RoomImageUtils;
 import com.example.doan.util.TimePickerHelper;
+
+import com.google.android.material.color.MaterialColors;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -208,19 +211,22 @@ public class PhongAdapter extends BaseAdapter {
             t = "—";
         }
         tv.setText(t);
-        int fg;
+        int fgColor;
         int bgDrawable;
         if (isPhongTrong(t)) {
-            fg = R.color.room_chip_trong_text;
+            fgColor = MaterialColors.getColor(context, com.google.android.material.R.attr.colorOnPrimaryContainer,
+                    ContextCompat.getColor(context, R.color.theme_green_on_primary_container));
             bgDrawable = R.drawable.bg_room_badge_trong;
         } else if (isPhongDang(t)) {
-            fg = R.color.room_chip_dang_text;
+            fgColor = MaterialColors.getColor(context, com.google.android.material.R.attr.colorOnSecondaryContainer,
+                    ContextCompat.getColor(context, R.color.app_on_surface_variant));
             bgDrawable = R.drawable.bg_room_badge_dang;
         } else {
-            fg = R.color.room_chip_khac_text;
+            fgColor = MaterialColors.getColor(context, com.google.android.material.R.attr.colorOnSurfaceVariant,
+                    ContextCompat.getColor(context, R.color.app_on_surface_variant));
             bgDrawable = R.drawable.bg_room_badge_khac;
         }
-        tv.setTextColor(ContextCompat.getColor(context, fg));
+        tv.setTextColor(fgColor);
         tv.setBackgroundResource(bgDrawable);
     }
 
@@ -245,7 +251,7 @@ public class PhongAdapter extends BaseAdapter {
         txtTt.setText(context.getString(R.string.phong_staff_trang_thai_fmt, p.getTrangThai()));
         fillHorizontalGallery(gallery, p.resolveAllImageRefs());
         fillDanhGiaSection(v, p.getPhongID(), true);
-        new AlertDialog.Builder(context)
+        new MaterialAlertDialogBuilder(context)
                 .setView(v)
                 .setPositiveButton(R.string.phong_detail_close, null)
                 .show();
@@ -286,7 +292,7 @@ public class PhongAdapter extends BaseAdapter {
             }
             body.setText(sb);
         }
-        new AlertDialog.Builder(context)
+        new MaterialAlertDialogBuilder(context)
                 .setTitle(R.string.dat_phong_schedule_title)
                 .setView(scheduleView)
                 .setPositiveButton(android.R.string.ok, null)
@@ -315,7 +321,7 @@ public class PhongAdapter extends BaseAdapter {
         }
         FragmentActivity act = (FragmentActivity) context;
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(context);
         View view = LayoutInflater.from(context).inflate(R.layout.dialog_dat_phong, null);
         builder.setView(view);
         AlertDialog dialog = builder.create();
@@ -324,7 +330,7 @@ public class PhongAdapter extends BaseAdapter {
         view.findViewById(R.id.btnXemDanhGia).setOnClickListener(v -> {
             View content = LayoutInflater.from(context).inflate(R.layout.dialog_xem_danh_gia_dat_phong, null);
             fillDanhGiaSection(content, p.getPhongID(), false);
-            new AlertDialog.Builder(context)
+            new MaterialAlertDialogBuilder(context)
                     .setTitle(R.string.dat_phong_dialog_reviews_title)
                     .setView(content)
                     .setPositiveButton(android.R.string.ok, null)
@@ -758,7 +764,7 @@ public class PhongAdapter extends BaseAdapter {
     }
 
     private void showBookingSuccessDialog(AlertDialog bookingFormDialog, String message) {
-        AlertDialog success = new AlertDialog.Builder(context)
+        AlertDialog success = new MaterialAlertDialogBuilder(context)
                 .setTitle(R.string.dat_phong_success_title)
                 .setMessage(message)
                 .setPositiveButton(android.R.string.ok, (d1, w) -> bookingFormDialog.dismiss())
@@ -840,7 +846,7 @@ public class PhongAdapter extends BaseAdapter {
         } else {
             sb.append("\nPhòng này chưa cấu hình giá cao điểm — mọi đêm tính theo giá thường.");
         }
-        new AlertDialog.Builder(context)
+        new MaterialAlertDialogBuilder(context)
                 .setTitle(R.string.dat_phong_dialog_price_title)
                 .setMessage(sb.toString())
                 .setPositiveButton(android.R.string.ok, null)
@@ -939,7 +945,7 @@ public class PhongAdapter extends BaseAdapter {
     private void openAdminDialog(@Nullable PhongFull p) {
         final boolean isNewRoom = (p == null);
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(context);
         builder.setTitle(isNewRoom
                 ? context.getString(R.string.phong_add_dialog_title)
                 : p.getTenPhong());

@@ -13,10 +13,10 @@
         android:layout_marginHorizontal="12dp"
         android:layout_marginTop="12dp"
         android:layout_marginBottom="8dp"
-        app:cardBackgroundColor="#E8F4FD"
+        app:cardBackgroundColor="?attr/colorPrimaryContainer"
         app:cardCornerRadius="20dp"
         app:cardElevation="3dp"
-        app:strokeColor="#90CAF9"
+        app:strokeColor="?attr/colorOutline"
         app:strokeWidth="1dp">
 
         <LinearLayout
@@ -30,7 +30,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/admin_ql_don_title"
-                android:textColor="@color/admin_text_primary"
+                android:textColor="?attr/colorOnSurface"
                 android:textSize="20sp"
                 android:textStyle="bold" />
 
@@ -41,7 +41,7 @@
                 android:layout_marginTop="6dp"
                 android:lineSpacingExtra="2dp"
                 android:text="@string/admin_ql_don_hint"
-                android:textColor="@color/admin_text_secondary"
+                android:textColor="?attr/colorOnSurfaceVariant"
                 android:textSize="13sp" />
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
@@ -51,10 +51,10 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="12dp"
         android:layout_marginBottom="8dp"
-        app:cardBackgroundColor="@color/white"
+        app:cardBackgroundColor="?attr/colorSurfaceContainerHighest"
         app:cardCornerRadius="16dp"
         app:cardElevation="2dp"
-        app:strokeColor="@color/admin_card_stroke"
+        app:strokeColor="?attr/colorOutlineVariant"
         app:strokeWidth="1dp">
 
         <com.google.android.material.tabs.TabLayout
@@ -63,12 +63,12 @@
             android:layout_height="wrap_content"
             android:background="@android:color/transparent"
             android:paddingVertical="4dp"
-            app:tabIndicatorColor="@color/primary"
+            app:tabIndicatorColor="?attr/colorPrimary"
             app:tabIndicatorHeight="3dp"
             app:tabMode="scrollable"
-            app:tabRippleColor="#1A000000"
-            app:tabSelectedTextColor="@color/primary"
-            app:tabTextColor="@color/admin_text_secondary" />
+            app:tabRippleColor="@color/guest_nav_ripple"
+            app:tabSelectedTextColor="?attr/colorPrimary"
+            app:tabTextColor="?attr/colorOnSurfaceVariant" />
     </com.google.android.material.card.MaterialCardView>
 
     <ListView

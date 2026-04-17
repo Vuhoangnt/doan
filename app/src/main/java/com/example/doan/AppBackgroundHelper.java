@@ -5,6 +5,9 @@ import android.graphics.drawable.Drawable;
 import android.view.View;
 
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
+
+import com.google.android.material.color.MaterialColors;
 import com.example.doan.DAO.HomestayThongTinDAO;
 import com.example.doan.model.HomestayThongTin;
 import com.example.doan.util.RoomImageUtils;
@@ -20,8 +23,10 @@ public final class AppBackgroundHelper {
         if (root == null) {
             return;
         }
+        int surface = MaterialColors.getColor(activity, com.google.android.material.R.attr.colorSurface,
+                ContextCompat.getColor(activity, R.color.app_background));
         if (ref == null || ref.trim().isEmpty()) {
-            root.setBackgroundResource(R.color.admin_background);
+            root.setBackgroundColor(surface);
             root.invalidate();
             return;
         }
@@ -29,7 +34,7 @@ public final class AppBackgroundHelper {
         if (d != null) {
             root.setBackground(d);
         } else {
-            root.setBackgroundResource(R.color.admin_background);
+            root.setBackgroundColor(surface);
         }
         root.invalidate();
     }

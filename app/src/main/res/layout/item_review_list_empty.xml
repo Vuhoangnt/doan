@@ -4,5 +4,5 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:text="@string/phong_reviews_empty"
-    android:textColor="@color/admin_text_secondary"
+    android:textColor="?attr/colorOnSurfaceVariant"
     android:textSize="13sp" />

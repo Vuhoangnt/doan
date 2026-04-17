@@ -17,10 +17,10 @@
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:cardBackgroundColor="@color/white"
+            app:cardBackgroundColor="?attr/colorSurfaceContainerHighest"
             app:cardCornerRadius="20dp"
             app:cardElevation="3dp"
-            app:strokeColor="@color/admin_card_stroke"
+            app:strokeColor="?attr/colorOutlineVariant"
             app:strokeWidth="1dp">
 
             <LinearLayout
@@ -43,7 +43,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="@string/trang_chu_cai_dat_hero_khach"
-                        android:textColor="@color/admin_text_primary"
+                        android:textColor="?attr/colorOnSurface"
                         android:textSize="17sp"
                         android:textStyle="bold" />
 
@@ -52,7 +52,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
                         android:text="@string/trang_chu_cai_dat_intro"
-                        android:textColor="@color/admin_text_secondary"
+                        android:textColor="?attr/colorOnSurfaceVariant"
                         android:textSize="14sp" />
 
                     <com.google.android.material.button.MaterialButton
@@ -65,14 +65,31 @@
                         android:textAllCaps="false"
                         app:cornerRadius="12dp" />
 
-                    <ImageView
-                        android:id="@+id/imgPreviewTrangChuHero"
+                    <TextView
                         android:layout_width="match_parent"
-                        android:layout_height="140dp"
+                        android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
-                        android:contentDescription="@null"
-                        android:scaleType="centerCrop"
-                        android:visibility="gone" />
+                        android:text="@string/trang_chu_cai_dat_xem_truoc"
+                        android:textColor="?attr/colorOnSurfaceVariant"
+                        android:textSize="12sp" />
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        app:cardCornerRadius="10dp"
+                        app:cardElevation="0dp"
+                        app:strokeColor="?attr/colorOutlineVariant"
+                        app:strokeWidth="1dp">
+
+                        <ImageView
+                            android:id="@+id/imgPreviewTrangChuHero"
+                            android:layout_width="168dp"
+                            android:layout_height="100dp"
+                            android:contentDescription="@string/trang_chu_cai_dat_xem_truoc"
+                            android:scaleType="centerCrop"
+                            android:visibility="gone" />
+                    </com.google.android.material.card.MaterialCardView>
 
                     <com.google.android.material.textfield.TextInputLayout
                         android:layout_width="match_parent"
@@ -123,7 +140,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="20dp"
                         android:text="@string/trang_chu_cai_dat_hero_nv"
-                        android:textColor="@color/admin_text_primary"
+                        android:textColor="?attr/colorOnSurface"
                         android:textSize="17sp"
                         android:textStyle="bold" />
 
@@ -132,7 +149,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="6dp"
                         android:text="@string/trang_chu_cai_dat_hero_nv_intro"
-                        android:textColor="@color/admin_text_secondary"
+                        android:textColor="?attr/colorOnSurfaceVariant"
                         android:textSize="14sp" />
 
                     <com.google.android.material.button.MaterialButton
@@ -145,14 +162,31 @@
                         android:textAllCaps="false"
                         app:cornerRadius="12dp" />
 
-                    <ImageView
-                        android:id="@+id/imgPreviewTrangChuHeroNv"
+                    <TextView
                         android:layout_width="match_parent"
-                        android:layout_height="140dp"
+                        android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
-                        android:contentDescription="@null"
-                        android:scaleType="centerCrop"
-                        android:visibility="gone" />
+                        android:text="@string/trang_chu_cai_dat_xem_truoc"
+                        android:textColor="?attr/colorOnSurfaceVariant"
+                        android:textSize="12sp" />
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        app:cardCornerRadius="10dp"
+                        app:cardElevation="0dp"
+                        app:strokeColor="?attr/colorOutlineVariant"
+                        app:strokeWidth="1dp">
+
+                        <ImageView
+                            android:id="@+id/imgPreviewTrangChuHeroNv"
+                            android:layout_width="168dp"
+                            android:layout_height="100dp"
+                            android:contentDescription="@string/trang_chu_cai_dat_xem_truoc"
+                            android:scaleType="centerCrop"
+                            android:visibility="gone" />
+                    </com.google.android.material.card.MaterialCardView>
 
                     <com.google.android.material.textfield.TextInputLayout
                         android:layout_width="match_parent"
@@ -205,10 +239,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
-            app:cardBackgroundColor="@color/white"
+            app:cardBackgroundColor="?attr/colorSurfaceContainerHighest"
             app:cardCornerRadius="20dp"
             app:cardElevation="3dp"
-            app:strokeColor="@color/admin_card_stroke"
+            app:strokeColor="?attr/colorOutlineVariant"
             app:strokeWidth="1dp">
 
             <LinearLayout
@@ -234,7 +268,7 @@
                         android:layout_marginStart="10dp"
                         android:layout_weight="1"
                         android:text="@string/trang_chu_cai_dat_map_section"
-                        android:textColor="@color/admin_text_primary"
+                        android:textColor="?attr/colorOnSurface"
                         android:textSize="17sp"
                         android:textStyle="bold" />
                 </LinearLayout>
@@ -329,10 +363,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
-            app:cardBackgroundColor="@color/white"
+            app:cardBackgroundColor="?attr/colorSurfaceContainerHighest"
             app:cardCornerRadius="20dp"
             app:cardElevation="3dp"
-            app:strokeColor="@color/admin_card_stroke"
+            app:strokeColor="?attr/colorOutlineVariant"
             app:strokeWidth="1dp">
 
             <LinearLayout
@@ -345,7 +379,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/trang_chu_cai_dat_sections"
-                    android:textColor="@color/admin_text_primary"
+                    android:textColor="?attr/colorOnSurface"
                     android:textSize="17sp"
                     android:textStyle="bold" />
 
@@ -429,10 +463,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
-            app:cardBackgroundColor="@color/white"
+            app:cardBackgroundColor="?attr/colorSurfaceContainerHighest"
             app:cardCornerRadius="20dp"
             app:cardElevation="3dp"
-            app:strokeColor="@color/admin_card_stroke"
+            app:strokeColor="?attr/colorOutlineVariant"
             app:strokeWidth="1dp">
 
             <LinearLayout
@@ -445,7 +479,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/trang_chu_cai_dat_app_bg_section"
-                    android:textColor="@color/admin_text_primary"
+                    android:textColor="?attr/colorOnSurface"
                     android:textSize="17sp"
                     android:textStyle="bold" />
 
@@ -455,7 +489,7 @@
                     android:layout_marginTop="8dp"
                     android:lineSpacingExtra="2dp"
                     android:text="@string/trang_chu_cai_dat_app_bg_intro"
-                    android:textColor="@color/admin_text_secondary"
+                    android:textColor="?attr/colorOnSurfaceVariant"
                     android:textSize="13sp" />
 
                 <com.google.android.material.textfield.TextInputLayout
@@ -482,6 +516,24 @@
                     android:textAllCaps="false"
                     app:cornerRadius="12dp" />
 
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    app:cardCornerRadius="10dp"
+                    app:cardElevation="0dp"
+                    app:strokeColor="?attr/colorOutlineVariant"
+                    app:strokeWidth="1dp">
+
+                    <ImageView
+                        android:id="@+id/imgPreviewAppNenKhach"
+                        android:layout_width="132dp"
+                        android:layout_height="80dp"
+                        android:contentDescription="@string/trang_chu_cai_dat_xem_truoc"
+                        android:scaleType="centerCrop"
+                        android:visibility="gone" />
+                </com.google.android.material.card.MaterialCardView>
+
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -506,6 +558,24 @@
                     android:textAllCaps="false"
                     app:cornerRadius="12dp" />
 
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    app:cardCornerRadius="10dp"
+                    app:cardElevation="0dp"
+                    app:strokeColor="?attr/colorOutlineVariant"
+                    app:strokeWidth="1dp">
+
+                    <ImageView
+                        android:id="@+id/imgPreviewAppNenNhanVien"
+                        android:layout_width="132dp"
+                        android:layout_height="80dp"
+                        android:contentDescription="@string/trang_chu_cai_dat_xem_truoc"
+                        android:scaleType="centerCrop"
+                        android:visibility="gone" />
+                </com.google.android.material.card.MaterialCardView>
+
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -529,6 +599,24 @@
                     android:text="@string/trang_chu_cai_dat_chon_anh"
                     android:textAllCaps="false"
                     app:cornerRadius="12dp" />
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    app:cardCornerRadius="10dp"
+                    app:cardElevation="0dp"
+                    app:strokeColor="?attr/colorOutlineVariant"
+                    app:strokeWidth="1dp">
+
+                    <ImageView
+                        android:id="@+id/imgPreviewAppNenAdmin"
+                        android:layout_width="132dp"
+                        android:layout_height="80dp"
+                        android:contentDescription="@string/trang_chu_cai_dat_xem_truoc"
+                        android:scaleType="centerCrop"
+                        android:visibility="gone" />
+                </com.google.android.material.card.MaterialCardView>
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
     </LinearLayout>

@@ -23,7 +23,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/nav_ql_dich_vu"
-                android:textColor="@color/admin_text_primary"
+                android:textColor="?attr/colorOnSurface"
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
@@ -32,7 +32,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="6dp"
                 android:text="@string/ql_dich_vu_hint"
-                android:textColor="@color/admin_text_secondary"
+                android:textColor="?attr/colorOnSurfaceVariant"
                 android:textSize="13sp" />
 
             <com.google.android.material.button.MaterialButton

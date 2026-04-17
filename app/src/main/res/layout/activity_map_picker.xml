@@ -10,9 +10,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?attr/colorPrimary"
-        app:navigationIconTint="@color/white"
+        app:navigationIconTint="?attr/colorOnPrimary"
         app:title="@string/map_picker_title"
-        app:titleTextColor="@color/white" />
+        app:titleTextColor="?attr/colorOnPrimary" />
 
     <WebView
         android:id="@+id/webMapPicker"
@@ -24,7 +24,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:cardElevation="6dp"
-        app:strokeColor="@color/admin_card_stroke"
+        app:strokeColor="?attr/colorOutlineVariant"
         app:strokeWidth="0.5dp">
 
         <LinearLayout
@@ -37,7 +37,7 @@
                 android:id="@+id/txtMapPickerCoords"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="@color/admin_text_primary"
+                android:textColor="?attr/colorOnSurface"
                 android:textSize="13sp" />
 
             <TextView
@@ -45,7 +45,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="6dp"
                 android:text="@string/map_picker_hint"
-                android:textColor="@color/admin_text_secondary"
+                android:textColor="?attr/colorOnSurfaceVariant"
                 android:textSize="12sp" />
 
             <com.google.android.material.button.MaterialButton

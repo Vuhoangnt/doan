@@ -6,6 +6,10 @@ import android.content.SharedPreferences;
 
 import com.example.doan.R;
 
+/**
+ * Chọn màu accent (green / blue / …) lưu trong SharedPreferences, map sang {@code Theme.Doan.*}.
+ * Phần nền, chữ, viền, thẻ mềm dùng chung {@code Theme.Doan.Base}; mỗi biến thể chỉ đổi {@code colorPrimary}.
+ */
 public final class ThemeManager {
 
     private static final String PREF = "APP_THEME";

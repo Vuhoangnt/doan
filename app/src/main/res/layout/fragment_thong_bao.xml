@@ -18,10 +18,10 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dp"
             android:visibility="gone"
-            app:cardBackgroundColor="@color/white"
+            app:cardBackgroundColor="?attr/colorSurfaceContainerHighest"
             app:cardCornerRadius="12dp"
             app:cardElevation="1dp"
-            app:strokeColor="@color/admin_card_stroke"
+            app:strokeColor="?attr/colorOutlineVariant"
             app:strokeWidth="1dp"
             tools:visibility="visible">
 
@@ -35,7 +35,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/thong_bao_perm_title"
-                    android:textColor="@color/admin_text_primary"
+                    android:textColor="?attr/colorOnSurface"
                     android:textSize="15sp"
                     android:textStyle="bold" />
 
@@ -44,7 +44,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="6dp"
                     android:text="@string/thong_bao_perm_body"
-                    android:textColor="@color/admin_text_secondary"
+                    android:textColor="?attr/colorOnSurfaceVariant"
                     android:textSize="13sp" />
 
                 <LinearLayout

@@ -1,44 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <style name="Base.Theme.Doan" parent="Theme.Material3.DayNight.NoActionBar">
-        <item name="colorPrimary">@color/primary</item>
-        <item name="colorOnPrimary">@color/white</item>
+
+    <!-- Nền / chữ / viền + container theo accent (ThemeManager đổi colorPrimary + container cùng bộ) -->
+    <style name="Theme.Doan.Base" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="colorSurface">@color/app_background</item>
+        <item name="android:colorBackground">@color/app_background</item>
+        <item name="colorOnSurface">@color/app_on_surface</item>
+        <item name="colorOnSurfaceVariant">@color/app_on_surface_variant</item>
+        <item name="colorSurfaceVariant">#E8E4DD</item>
+        <item name="colorOutline">@color/app_outline</item>
+        <item name="colorOutlineVariant">@color/app_outline_variant</item>
+        <item name="colorSurfaceContainerLow">@color/app_card_soft</item>
+        <item name="colorSurfaceContainerHighest">@color/app_surface_card</item>
+        <!-- Trạng thái “đang ở” / cảnh báo nhẹ — cố định, tách biệt primary -->
+        <item name="colorSecondary">#EF6C00</item>
+        <item name="colorOnSecondary">@color/white</item>
+        <item name="colorSecondaryContainer">#FFE0B2</item>
+        <item name="colorOnSecondaryContainer">#E65100</item>
+
+        <item name="android:statusBarColor">?attr/colorPrimary</item>
+        <item name="android:navigationBarColor">@color/app_background</item>
+
+        <item name="alertDialogTheme">@style/ThemeOverlay.Doan.Dialog.Alert</item>
+        <item name="materialAlertDialogTheme">@style/ThemeOverlay.Doan.MaterialAlertDialog</item>
+
+        <item name="materialCardViewStyle">@style/Widget.Doan.CardView</item>
+        <item name="shapeAppearanceMediumComponent">@style/ShapeAppearance.Doan.Medium</item>
+        <item name="shapeAppearanceLargeComponent">@style/ShapeAppearance.Doan.Large</item>
     </style>
 
-    <!-- Mặc định manifest — trùng green; đổi theme runtime qua ThemeManager -->
+    <style name="ShapeAppearance.Doan.Medium" parent="ShapeAppearance.Material3.Corner.Medium">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">16dp</item>
+    </style>
+    <style name="ShapeAppearance.Doan.Large" parent="ShapeAppearance.Material3.Corner.Large">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">22dp</item>
+    </style>
+
+    <style name="Widget.Doan.CardView" parent="Widget.Material3.CardView.Elevated">
+        <item name="cardCornerRadius">16dp</item>
+        <item name="cardElevation">2dp</item>
+        <item name="strokeWidth">0.5dp</item>
+        <item name="strokeColor">?attr/colorOutlineVariant</item>
+        <item name="cardBackgroundColor">?attr/colorSurfaceContainerHighest</item>
+    </style>
+
+    <style name="ThemeOverlay.Doan.Dialog.Alert" parent="ThemeOverlay.Material3.Dialog.Alert" />
+
+    <style name="ThemeOverlay.Doan.MaterialAlertDialog" parent="ThemeOverlay.Material3.MaterialAlertDialog" />
+
     <style name="Theme.Doan" parent="Theme.Doan.Green" />
 
-    <style name="Theme.Doan.Green" parent="Theme.Material3.DayNight.NoActionBar">
+    <style name="Theme.Doan.Green" parent="Theme.Doan.Base">
         <item name="colorPrimary">@color/theme_green_primary</item>
         <item name="colorOnPrimary">@color/white</item>
+        <item name="colorPrimaryContainer">@color/theme_green_primary_container</item>
+        <item name="colorOnPrimaryContainer">@color/theme_green_on_primary_container</item>
     </style>
-    <style name="Theme.Doan.Blue" parent="Theme.Material3.DayNight.NoActionBar">
+    <style name="Theme.Doan.Blue" parent="Theme.Doan.Base">
         <item name="colorPrimary">@color/theme_blue_primary</item>
         <item name="colorOnPrimary">@color/white</item>
+        <item name="colorPrimaryContainer">@color/theme_blue_primary_container</item>
+        <item name="colorOnPrimaryContainer">@color/theme_blue_on_primary_container</item>
     </style>
-    <style name="Theme.Doan.Purple" parent="Theme.Material3.DayNight.NoActionBar">
+    <style name="Theme.Doan.Purple" parent="Theme.Doan.Base">
         <item name="colorPrimary">@color/theme_purple_primary</item>
         <item name="colorOnPrimary">@color/white</item>
+        <item name="colorPrimaryContainer">@color/theme_purple_primary_container</item>
+        <item name="colorOnPrimaryContainer">@color/theme_purple_on_primary_container</item>
     </style>
-    <style name="Theme.Doan.Orange" parent="Theme.Material3.DayNight.NoActionBar">
+    <style name="Theme.Doan.Orange" parent="Theme.Doan.Base">
         <item name="colorPrimary">@color/theme_orange_primary</item>
         <item name="colorOnPrimary">@color/white</item>
+        <item name="colorPrimaryContainer">@color/theme_orange_primary_container</item>
+        <item name="colorOnPrimaryContainer">@color/theme_orange_on_primary_container</item>
     </style>
-    <style name="Theme.Doan.Teal" parent="Theme.Material3.DayNight.NoActionBar">
+    <style name="Theme.Doan.Teal" parent="Theme.Doan.Base">
         <item name="colorPrimary">@color/theme_teal_primary</item>
         <item name="colorOnPrimary">@color/white</item>
+        <item name="colorPrimaryContainer">@color/theme_teal_primary_container</item>
+        <item name="colorOnPrimaryContainer">@color/theme_teal_on_primary_container</item>
     </style>
 
-    <style name="TextAppearance.Guest.BottomNav.Active" parent="TextAppearance.MaterialComponents.Caption">
+    <style name="TextAppearance.Doan.BottomNav.Active" parent="TextAppearance.MaterialComponents.Caption">
         <item name="android:textSize">12sp</item>
         <item name="android:textStyle">bold</item>
         <item name="android:letterSpacing">0.01</item>
     </style>
-    <style name="TextAppearance.Guest.BottomNav.Inactive" parent="TextAppearance.MaterialComponents.Caption">
+    <style name="TextAppearance.Doan.BottomNav.Inactive" parent="TextAppearance.MaterialComponents.Caption">
         <item name="android:textSize">12sp</item>
         <item name="android:letterSpacing">0.01</item>
     </style>
 
-    <!-- Tắt vùng nền pill sau icon (tránh chồng/mờ chữ khi có nhãn) -->
+    <style name="TextAppearance.Guest.BottomNav.Active" parent="TextAppearance.Doan.BottomNav.Active" />
+    <style name="TextAppearance.Guest.BottomNav.Inactive" parent="TextAppearance.Doan.BottomNav.Inactive" />
+
     <style name="Widget.Doan.BottomNavigation.ActiveIndicator" parent="Widget.Material3.BottomNavigationView.ActiveIndicator">
         <item name="android:width">0dp</item>
         <item name="android:height">0dp</item>

@@ -16,7 +16,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class DatabaseHelper extends SQLiteOpenHelper {
 
     private static final String DB_NAME = "HomestayDB.db";
-    private static final int DB_VERSION = 18;
+    private static final int DB_VERSION = 19;
 
     public DatabaseHelper(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
@@ -243,14 +243,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("INSERT INTO AnhPhong VALUES (null,1,'phong1')");
         db.execSQL("INSERT INTO AnhPhong VALUES (null,2,'phong2')");
         db.execSQL("INSERT INTO AnhPhong VALUES (null,3,'phong3')");
-        db.execSQL("INSERT INTO AnhPhong VALUES (null,4,'phong1')");
-        db.execSQL("INSERT INTO AnhPhong VALUES (null,5,'phong2')");
-        db.execSQL("INSERT INTO AnhPhong VALUES (null,6,'phong3')");
-        db.execSQL("INSERT INTO AnhPhong VALUES (null,7,'phong1')");
-        db.execSQL("INSERT INTO AnhPhong VALUES (null,7,'phong2')");
-        db.execSQL("INSERT INTO AnhPhong VALUES (null,8,'phong3')");
-        db.execSQL("INSERT INTO AnhPhong VALUES (null,9,'phong1')");
-        db.execSQL("INSERT INTO AnhPhong VALUES (null,10,'phong2')");
+        db.execSQL("INSERT INTO AnhPhong VALUES (null,4,'phong4')");
+        db.execSQL("INSERT INTO AnhPhong VALUES (null,5,'phong5')");
+        db.execSQL("INSERT INTO AnhPhong VALUES (null,6,'phong6')");
+        db.execSQL("INSERT INTO AnhPhong VALUES (null,7,'phong7')");
+        db.execSQL("INSERT INTO AnhPhong VALUES (null,7,'phong8')");
+        db.execSQL("INSERT INTO AnhPhong VALUES (null,8,'phong9')");
+        db.execSQL("INSERT INTO AnhPhong VALUES (null,9,'phong10')");
+        db.execSQL("INSERT INTO AnhPhong VALUES (null,10,'phong11')");
+        db.execSQL("INSERT INTO AnhPhong VALUES (null,10,'phong9')");
 
         // ===== DỊCH VỤ =====
         db.execSQL("INSERT INTO DichVu VALUES (null,'Thuê xe máy',150000,'Thuê theo ngày')");
