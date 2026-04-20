@@ -347,7 +347,36 @@ public class PhongAdapter extends BaseAdapter {
         TextView txtDichVuThemEmpty = view.findViewById(R.id.txtDichVuThemEmpty);
         DichVuDAO dichVuDAO = new DichVuDAO(context);
         List<DichVu> extraDv = dichVuDAO.getAll();
-        final List<CheckBox> dvBoxes = new ArrayList<>();
+        class DichVuRow {
+            final View root;
+            final CheckBox cb;
+            final View qtyWrap;
+            final TextView txtQty;
+            final View btnMinus;
+            final View btnPlus;
+            int qty = 0;
+
+            DichVuRow(View root) {
+                this.root = root;
+                this.cb = root.findViewById(R.id.cbDichVuBooking);
+                this.qtyWrap = root.findViewById(R.id.layoutSoLuongDichVu);
+                this.txtQty = root.findViewById(R.id.txtSoLuongDichVu);
+                this.btnMinus = root.findViewById(R.id.btnGiamSoLuongDichVu);
+                this.btnPlus = root.findViewById(R.id.btnTangSoLuongDichVu);
+            }
+
+            void setQty(int newQty) {
+                qty = Math.max(0, newQty);
+                if (txtQty != null) {
+                    txtQty.setText(String.valueOf(Math.max(1, qty)));
+                }
+                if (qtyWrap != null) {
+                    qtyWrap.setVisibility(qty > 0 ? View.VISIBLE : View.GONE);
+                }
+            }
+        }
+
+        final List<DichVuRow> dvRows = new ArrayList<>();
 
         EditText edtTen = view.findViewById(R.id.edtKhachTen);
         EditText edtSdt = view.findViewById(R.id.edtKhachSDT);
@@ -388,9 +417,11 @@ public class PhongAdapter extends BaseAdapter {
                 return;
             }
             double tongDv = 0;
-            for (CheckBox cb : dvBoxes) {
-                if (cb.isChecked() && cb.getTag() instanceof DichVu) {
-                    tongDv += ((DichVu) cb.getTag()).getGia();
+            for (DichVuRow r : dvRows) {
+                if (r.cb != null && r.cb.isChecked() && r.cb.getTag() instanceof DichVu) {
+                    DichVu dv = (DichVu) r.cb.getTag();
+                    int q = Math.max(1, r.qty);
+                    tongDv += dv.getGia() * q;
                 }
             }
             if (checkInMs[0] == null || checkOutMs[0] == null) {
@@ -467,14 +498,45 @@ public class PhongAdapter extends BaseAdapter {
             }
             LayoutInflater infDv = LayoutInflater.from(context);
             for (DichVu dv : extraDv) {
-                CheckBox cb = (CheckBox) infDv.inflate(
-                        R.layout.item_booking_dich_vu_checkbox, layoutDichVuThem, false);
-                cb.setText(String.format(Locale.getDefault(), "%s — %,.0f đ",
+                View rowV = infDv.inflate(R.layout.item_booking_dich_vu_checkbox, layoutDichVuThem, false);
+                DichVuRow row = new DichVuRow(rowV);
+                row.cb.setText(String.format(Locale.getDefault(), "%s — %,.0f đ",
                         dv.getTenDichVu(), dv.getGia()));
-                cb.setTag(dv);
-                cb.setOnCheckedChangeListener((buttonView, isChecked) -> refreshTamTinh.run());
-                layoutDichVuThem.addView(cb);
-                dvBoxes.add(cb);
+                row.cb.setTag(dv);
+                row.setQty(0);
+
+                row.cb.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                    row.setQty(isChecked ? Math.max(1, row.qty) : 0);
+                    refreshTamTinh.run();
+                });
+
+                if (row.btnMinus != null) {
+                    row.btnMinus.setOnClickListener(v -> {
+                        if (!row.cb.isChecked()) {
+                            row.cb.setChecked(true);
+                        }
+                        int next = Math.max(1, row.qty) - 1;
+                        if (next <= 0) {
+                            row.cb.setChecked(false);
+                        } else {
+                            row.setQty(next);
+                            refreshTamTinh.run();
+                        }
+                    });
+                }
+                if (row.btnPlus != null) {
+                    row.btnPlus.setOnClickListener(v -> {
+                        if (!row.cb.isChecked()) {
+                            row.cb.setChecked(true);
+                        }
+                        int next = Math.max(1, row.qty) + 1;
+                        row.setQty(next);
+                        refreshTamTinh.run();
+                    });
+                }
+
+                layoutDichVuThem.addView(rowV);
+                dvRows.add(row);
             }
         }
 
@@ -646,9 +708,11 @@ public class PhongAdapter extends BaseAdapter {
             double demGia = PeakPricingUtil.demGiaTheoGio(p, gioNhan[0], gioTra[0]);
             double tongPhong = demGia * soDem;
             double tongDv = 0;
-            for (CheckBox cb : dvBoxes) {
-                if (cb.isChecked() && cb.getTag() instanceof DichVu) {
-                    tongDv += ((DichVu) cb.getTag()).getGia();
+            for (DichVuRow r : dvRows) {
+                if (r.cb != null && r.cb.isChecked() && r.cb.getTag() instanceof DichVu) {
+                    DichVu dv = (DichVu) r.cb.getTag();
+                    int q = Math.max(1, r.qty);
+                    tongDv += dv.getGia() * q;
                 }
             }
             double tong = tongPhong + tongDv;
@@ -690,10 +754,11 @@ public class PhongAdapter extends BaseAdapter {
                 return;
             }
             if (rowId != -1) {
-                for (CheckBox cb : dvBoxes) {
-                    if (cb.isChecked() && cb.getTag() instanceof DichVu) {
-                        DichVu dv = (DichVu) cb.getTag();
-                        dpDao.insertDatPhongDichVu((int) rowId, dv.getDichVuID(), 1);
+                for (DichVuRow r : dvRows) {
+                    if (r.cb != null && r.cb.isChecked() && r.cb.getTag() instanceof DichVu) {
+                        DichVu dv = (DichVu) r.cb.getTag();
+                        int q = Math.max(1, r.qty);
+                        dpDao.insertDatPhongDichVu((int) rowId, dv.getDichVuID(), q);
                     }
                 }
                 boolean loggedKhach = session != null && session.isLoggedIn() && session.isKhach();
