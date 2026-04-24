@@ -25,6 +25,10 @@ public class DatPhongListAdapter extends BaseAdapter {
         void onGuestTraPhong(DatPhong d);
     }
 
+    public interface GuestDepositListener {
+        void onGuestGuiCoc(DatPhong d);
+    }
+
     private final Context context;
     private final List<DatPhong> list;
     /** Đã thu theo DatPhongID (admin / lễ tân); null = không hiển thị. */
@@ -32,6 +36,8 @@ public class DatPhongListAdapter extends BaseAdapter {
     private boolean guestOrdersMode;
     @Nullable
     private GuestCheckoutListener guestCheckoutListener;
+    @Nullable
+    private GuestDepositListener guestDepositListener;
 
     public DatPhongListAdapter(Context context, List<DatPhong> list) {
         this(context, list, null);
@@ -50,6 +56,10 @@ public class DatPhongListAdapter extends BaseAdapter {
     public void setGuestOrdersMode(boolean on, @Nullable GuestCheckoutListener listener) {
         guestOrdersMode = on;
         guestCheckoutListener = listener;
+    }
+
+    public void setGuestDepositListener(@Nullable GuestDepositListener listener) {
+        guestDepositListener = listener;
     }
 
     public void updateData(List<DatPhong> newList) {
@@ -87,6 +97,7 @@ public class DatPhongListAdapter extends BaseAdapter {
         TextView txtThuHo = convertView.findViewById(R.id.txtThuHo);
         TextView txtTongTien = convertView.findViewById(R.id.txtTongTien);
         TextView txtNv = convertView.findViewById(R.id.txtNhanVienXuLy);
+        MaterialButton btnCoc = convertView.findViewById(R.id.btnGuestGuiCoc);
         MaterialButton btnTra = convertView.findViewById(R.id.btnGuestTraPhong);
 
         txtMa.setText(d.getMaDatPhong());
@@ -113,21 +124,35 @@ public class DatPhongListAdapter extends BaseAdapter {
         if (daThu != null) {
             txtThuHo.setVisibility(View.VISIBLE);
             double thucThu = daThu;
+            double cocMin = d.getTongTien() * 0.2;
+            boolean daCoc = thucThu + 1.0 >= cocMin;
+            String head = daCoc ? "Đã thu cọc: " : "Đã thu: ";
             txtThuHo.setText(String.format(Locale.getDefault(),
-                    "Đã thu: %,.0f đ — Còn: %,.0f đ",
+                    head + "%,.0f đ — Còn: %,.0f đ",
                     thucThu, Math.max(0, d.getTongTien() - thucThu)));
         } else {
             txtThuHo.setVisibility(View.GONE);
         }
         if (btnTra != null) {
             boolean dangO = DatPhongDAO.TT_DANG_O.equals(DatPhongDAO.normalizeStatus(d.getTrangThai()));
-            double thu = daThuTheoDon.getOrDefault(d.getDatPhongID(), 0d);
-            boolean duTien = thu + 1.0 >= d.getTongTien();
-            if (guestOrdersMode && guestCheckoutListener != null && dangO && duTien) {
+            if (guestOrdersMode && guestCheckoutListener != null && dangO) {
                 btnTra.setVisibility(View.VISIBLE);
                 btnTra.setOnClickListener(v -> guestCheckoutListener.onGuestTraPhong(d));
             } else {
                 btnTra.setVisibility(View.GONE);
+            }
+        }
+
+        if (btnCoc != null) {
+            String st = DatPhongDAO.normalizeStatus(d.getTrangThai());
+            double thu = daThuTheoDon.getOrDefault(d.getDatPhongID(), 0d);
+            double cocMin = d.getTongTien() * 0.2;
+            boolean canGuiCoc = DatPhongDAO.TT_CHO_XAC_NHAN.equals(st) && (thu + 1.0 < cocMin);
+            if (guestOrdersMode && guestDepositListener != null && canGuiCoc) {
+                btnCoc.setVisibility(View.VISIBLE);
+                btnCoc.setOnClickListener(v -> guestDepositListener.onGuestGuiCoc(d));
+            } else {
+                btnCoc.setVisibility(View.GONE);
             }
         }
         return convertView;

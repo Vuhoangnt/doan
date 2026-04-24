@@ -12,9 +12,19 @@
         android:padding="16dp">
 
         <TextView
+            android:id="@+id/txtChiTietCocHint"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/le_tan_deposit_confirm_hint"
+            android:textColor="?attr/colorOnSurfaceVariant"
+            android:textSize="12sp"
+            android:visibility="gone" />
+
+        <TextView
             android:id="@+id/txtChiTietDon"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
             android:lineSpacingExtra="3dp"
             android:textColor="?attr/colorOnSurface"
             android:textSize="14sp" />

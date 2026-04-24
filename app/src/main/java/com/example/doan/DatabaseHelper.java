@@ -337,14 +337,26 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         // ===== THANH TOÁN =====
         db.execSQL("INSERT INTO ThanhToan VALUES (null,1,400000,'Tiền mặt','2026-03-16','Đã thanh toán',2)");
-        db.execSQL("INSERT INTO ThanhToan VALUES (null,2,2000000,'Chuyển khoản','2026-04-11','Đã thanh toán',2)");
-        db.execSQL("INSERT INTO ThanhToan VALUES (null,7,2800000,'Chuyển khoản','2026-04-07','Đã thanh toán',2)");
-        db.execSQL("INSERT INTO ThanhToan VALUES (null,8,600000,'Chuyển khoản','2026-01-10','Đã thanh toán',2)");
+        db.execSQL("INSERT INTO ThanhToan VALUES (null,2,2000000,'Chuyển khoản ngân hàng','2026-04-11','Đã thanh toán',2)");
+        db.execSQL("INSERT INTO ThanhToan VALUES (null,7,2800000,'Chuyển khoản ngân hàng','2026-04-07','Đã thanh toán',2)");
+        db.execSQL("INSERT INTO ThanhToan VALUES (null,8,600000,'Chuyển khoản ngân hàng','2026-01-10','Đã thanh toán',2)");
         db.execSQL("INSERT INTO ThanhToan VALUES (null,13,800000,'Tiền mặt','2026-03-03','Đã thanh toán',7)");
-        db.execSQL("INSERT INTO ThanhToan VALUES (null,15,500000,'Chuyển khoản','2026-03-07','Đã thanh toán',2)");
+        db.execSQL("INSERT INTO ThanhToan VALUES (null,15,500000,'Chuyển khoản ngân hàng','2026-03-07','Đã thanh toán',2)");
         db.execSQL("INSERT INTO ThanhToan VALUES (null,18,600000,'Quẹt thẻ','2026-10-02','Đã thanh toán',2)");
-        db.execSQL("INSERT INTO ThanhToan VALUES (null,18,500000,'Chuyển khoản','2026-10-05','Chưa thanh toán',null)");
+        db.execSQL("INSERT INTO ThanhToan VALUES (null,18,500000,'Chuyển khoản ngân hàng','2026-10-05','Chưa thanh toán',null)");
         db.execSQL("INSERT INTO ThanhToan VALUES (null,20,1400000,'Tiền mặt','2026-05-03','Đã thanh toán',7)");
+
+        // ===== CỌC MẪU (20%) — KHÁCH GỬI, NV XÁC NHẬN =====
+        // Đơn Chờ xác nhận: tạo giao dịch Chưa thanh toán (để NV xác nhận và tự chuyển đơn sang Đã xác nhận)
+        db.execSQL("INSERT INTO ThanhToan VALUES (null,3,120000,'Chuyển khoản ngân hàng','2026-03-16','Chưa thanh toán',null)"); // 20% của 600.000
+        db.execSQL("INSERT INTO ThanhToan VALUES (null,5,680000,'Chuyển khoản ngân hàng','2026-03-16','Chưa thanh toán',null)"); // 20% của 3.400.000
+        db.execSQL("INSERT INTO ThanhToan VALUES (null,9,240000,'Chuyển khoản ngân hàng','2026-04-02','Đã thanh toán',2)"); // 20% của 1.200.000 (đã nhận cọc)
+        db.execSQL("INSERT INTO ThanhToan VALUES (null,10,120000,'Chuyển khoản ngân hàng','2026-02-02','Chưa thanh toán',null)"); // 20% của 600.000
+        db.execSQL("INSERT INTO ThanhToan VALUES (null,14,510000,'Chuyển khoản ngân hàng','2026-04-04','Chưa thanh toán',null)"); // 20% của 2.550.000
+        db.execSQL("INSERT INTO ThanhToan VALUES (null,17,520000,'Chuyển khoản ngân hàng','2026-04-05','Chưa thanh toán',null)"); // 20% của 2.600.000
+        db.execSQL("INSERT INTO ThanhToan VALUES (null,19,1330000,'Chuyển khoản ngân hàng','2026-04-08','Chưa thanh toán',null)"); // 20% của 6.650.000
+        db.execSQL("INSERT INTO ThanhToan VALUES (null,21,300000,'Chuyển khoản ngân hàng','2026-04-08','Chưa thanh toán',null)"); // 20% của 1.500.000
+        db.execSQL("INSERT INTO ThanhToan VALUES (null,22,240000,'Chuyển khoản ngân hàng','2026-04-09','Chưa thanh toán',null)"); // 20% của 1.200.000
 
         // ===== TIN TỨC =====
         db.execSQL("INSERT INTO TinTuc VALUES (null,'Khai trương','Giảm giá 20% tuần đầu — áp dụng mọi loại phòng. Liên hệ hotline để nhận mã ưu đãi.','2026-02-04')");

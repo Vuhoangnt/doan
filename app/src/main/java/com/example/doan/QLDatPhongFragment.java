@@ -133,11 +133,20 @@ public class QLDatPhongFragment extends Fragment implements DataRefreshable {
         LayoutInflater inflater = LayoutInflater.from(requireContext());
         View dlgView = inflater.inflate(R.layout.dialog_le_tan_chi_tiet_don, null, false);
         TextView txtChiTiet = dlgView.findViewById(R.id.txtChiTietDon);
+        TextView txtCocHint = dlgView.findViewById(R.id.txtChiTietCocHint);
         MaterialButton btnStatus = dlgView.findViewById(R.id.btnDonDoiTrangThai);
         MaterialButton btnPay = dlgView.findViewById(R.id.btnDonThanhToan);
         MaterialButton btnHist = dlgView.findViewById(R.id.btnDonLichSuTT);
 
         txtChiTiet.setText(buildChiTietText(d));
+        if (txtCocHint != null) {
+            String normalized = DatPhongDAO.normalizeStatus(d.getTrangThai());
+            if (DatPhongDAO.TT_CHO_XAC_NHAN.equals(normalized)) {
+                txtCocHint.setVisibility(View.VISIBLE);
+            } else {
+                txtCocHint.setVisibility(View.GONE);
+            }
+        }
 
         AlertDialog dlg = new MaterialAlertDialogBuilder(requireContext())
                 .setTitle(d.getMaDatPhong())
@@ -153,7 +162,7 @@ public class QLDatPhongFragment extends Fragment implements DataRefreshable {
             dlg.dismiss();
             showThanhToanDialog(inflater, d, session);
         });
-        btnHist.setOnClickListener(v -> showLichSuThanhToan(d));
+        btnHist.setOnClickListener(v -> showLichSuThanhToan(d, session));
         dlg.show();
     }
 
@@ -184,51 +193,121 @@ public class QLDatPhongFragment extends Fragment implements DataRefreshable {
     }
 
     private void applyTrangThai(DatPhong d, SessionManager session, String tt) {
-        Integer nvId = null;
-        if (session.isAdmin() || session.isNhanVien()) {
-            nvId = session.getTaiKhoanId();
-        }
-        if (dao.updateTrangThaiVaNhanVien(d.getDatPhongID(), tt, nvId) > 0) {
-            Toast.makeText(requireContext(), "Đã cập nhật: " + tt, Toast.LENGTH_SHORT).show();
-            refreshOrdersFromDb();
-            currentTabPosition = 0;
-            if (tabLayout != null && tabLayout.getTabCount() > 0) {
-                TabLayout.Tab first = tabLayout.getTabAt(0);
-                if (first != null) {
-                    if (tabLayout.getSelectedTabPosition() != 0) {
-                        tabLayout.selectTab(first);
+        try {
+            Integer nvId = null;
+            if (session != null && (session.isAdmin() || session.isNhanVien())) {
+                nvId = session.getTaiKhoanId();
+            }
+
+            String cur = DatPhongDAO.normalizeStatus(d.getTrangThai());
+            String next = DatPhongDAO.normalizeStatus(tt);
+
+            // Trả phòng sớm/muộn: tự tính lại tổng tiền trước khi đóng đơn.
+            if (DatPhongDAO.TT_DANG_O.equals(cur) && DatPhongDAO.TT_DA_TRA_PHONG.equals(next)) {
+                String today = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
+                dao.applyCheckoutAdjustmentIfNeeded(d.getDatPhongID(), today);
+            }
+
+            if (DatPhongDAO.TT_CHO_XAC_NHAN.equals(cur) && DatPhongDAO.TT_DA_XAC_NHAN.equals(next)) {
+                double tongDon = d.getTongTien();
+                double cocMin = tongDon * 0.2;
+                double daThu = ttDao.getTongDaThu(d.getDatPhongID());
+                if (daThu + 1.0 < cocMin) {
+                    Toast.makeText(requireContext(),
+                            getString(R.string.le_tan_deposit_block_confirm_fmt, cocMin, daThu),
+                            Toast.LENGTH_LONG).show();
+                    return;
+                }
+            }
+
+            if (dao.updateTrangThaiVaNhanVien(d.getDatPhongID(), tt, nvId) > 0) {
+                Toast.makeText(requireContext(), "Đã cập nhật: " + tt, Toast.LENGTH_SHORT).show();
+                refreshOrdersFromDb();
+                currentTabPosition = 0;
+                if (tabLayout != null && tabLayout.getTabCount() > 0) {
+                    TabLayout.Tab first = tabLayout.getTabAt(0);
+                    if (first != null) {
+                        if (tabLayout.getSelectedTabPosition() != 0) {
+                            tabLayout.selectTab(first);
+                        } else {
+                            applyFilter();
+                        }
                     } else {
                         applyFilter();
                     }
                 } else {
                     applyFilter();
                 }
-            } else {
-                applyFilter();
             }
+        } catch (Throwable ex) {
+            StringBuilder sb = new StringBuilder();
+            sb.append("Lỗi đổi trạng thái\n\n");
+            sb.append(ex.getClass().getName());
+            if (ex.getMessage() != null && !ex.getMessage().trim().isEmpty()) {
+                sb.append(": ").append(ex.getMessage());
+            }
+            sb.append("\n\nStacktrace (rút gọn):\n");
+            StackTraceElement[] st = ex.getStackTrace();
+            int n = Math.min(8, st != null ? st.length : 0);
+            for (int i = 0; i < n; i++) {
+                sb.append("• ").append(st[i].toString()).append('\n');
+            }
+            new MaterialAlertDialogBuilder(requireContext())
+                    .setTitle("Lỗi")
+                    .setMessage(sb.toString().trim())
+                    .setPositiveButton(android.R.string.ok, null)
+                    .show();
         }
     }
 
     private void showThanhToanDialog(LayoutInflater inflater, DatPhong d, SessionManager session) {
-        View payView = inflater.inflate(R.layout.dialog_le_tan_thanh_toan, null, false);
-        TextView txtTong = payView.findViewById(R.id.txtThanhToanTongDon);
-        TextView txtDaThu = payView.findViewById(R.id.txtThanhToanDaThu);
-        TextView txtConLai = payView.findViewById(R.id.txtThanhToanConLai);
-        Spinner spinner = payView.findViewById(R.id.spinnerPhuongThuc);
-        TextInputEditText edtTien = payView.findViewById(R.id.edtThanhToanSoTien);
+        try {
+            View payView = inflater.inflate(R.layout.dialog_le_tan_thanh_toan, null, false);
+            TextView txtCoc = payView.findViewById(R.id.txtThanhToanCoc);
+            TextView txtTong = payView.findViewById(R.id.txtThanhToanTongDon);
+            TextView txtDaThu = payView.findViewById(R.id.txtThanhToanDaThu);
+            TextView txtConLai = payView.findViewById(R.id.txtThanhToanConLai);
+            Spinner spinner = payView.findViewById(R.id.spinnerPhuongThuc);
+            TextInputEditText edtTien = payView.findViewById(R.id.edtThanhToanSoTien);
 
         double tongDon = d.getTongTien();
         double daThu = ttDao.getTongDaThu(d.getDatPhongID());
         double conLai = Math.max(0, tongDon - daThu);
+
+        String normalized = DatPhongDAO.normalizeStatus(d.getTrangThai());
+        Integer pendingId = ttDao.getLatestPendingId(d.getDatPhongID());
+        if (txtCoc != null) {
+            if (DatPhongDAO.TT_CHO_XAC_NHAN.equals(normalized)) {
+                double cocMin = tongDon * 0.2;
+                double canThuThem = Math.max(0, cocMin - daThu);
+                txtCoc.setText(getString(R.string.le_tan_deposit_required_fmt, cocMin, daThu, canThuThem));
+                txtCoc.setVisibility(View.VISIBLE);
+                if (edtTien != null) {
+                    edtTien.setText(canThuThem > 0 ? String.format(Locale.getDefault(), "%.0f", canThuThem) : "");
+                }
+            } else {
+                txtCoc.setVisibility(View.GONE);
+            }
+        }
 
         txtTong.setText(String.format(Locale.getDefault(), "Tổng đơn: %,.0f đ", tongDon));
         txtDaThu.setText(String.format(Locale.getDefault(), "Đã thu: %,.0f đ", daThu));
         txtConLai.setText(String.format(Locale.getDefault(), "Còn lại: %,.0f đ", conLai));
 
         String[] methods = getResources().getStringArray(R.array.payment_methods);
-        ArrayAdapter<String> spinAdapter = new ArrayAdapter<>(requireContext(),
-                android.R.layout.simple_spinner_dropdown_item, methods);
-        spinner.setAdapter(spinAdapter);
+            if (spinner != null) {
+            ArrayAdapter<String> spinAdapter = new ArrayAdapter<>(requireContext(),
+                    android.R.layout.simple_spinner_dropdown_item, methods);
+            spinner.setAdapter(spinAdapter);
+                // Với đơn chờ xác nhận: mặc định chọn chuyển khoản nhưng cho phép đổi sang tiền mặt.
+                if (DatPhongDAO.TT_CHO_XAC_NHAN.equals(normalized)) {
+                    int transferIdx = 1; // payment_methods[1] = "Chuyển khoản ngân hàng"
+                    if (transferIdx >= 0 && methods != null && transferIdx < methods.length) {
+                        spinner.setSelection(transferIdx);
+                    }
+                    spinner.setEnabled(true);
+                }
+        }
 
         AlertDialog payDlg = new MaterialAlertDialogBuilder(requireContext())
                 .setTitle(R.string.le_tan_action_payment)
@@ -238,6 +317,42 @@ public class QLDatPhongFragment extends Fragment implements DataRefreshable {
                 .create();
 
         payDlg.setOnShowListener(dialog -> payDlg.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
+            if (edtTien == null || spinner == null) {
+                Toast.makeText(requireContext(), "Lỗi giao diện thanh toán — thử mở lại.", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            // Nếu đơn đang Chờ xác nhận và có giao dịch cọc Chưa thanh toán => nút này dùng để XÁC NHẬN CỌC.
+            if (DatPhongDAO.TT_CHO_XAC_NHAN.equals(normalized) && pendingId != null) {
+                int nvId = session.getTaiKhoanId();
+                try {
+                    int pos = spinner.getSelectedItemPosition();
+                    String pt = (methods != null && methods.length > 0)
+                            ? (pos >= 0 && pos < methods.length ? methods[pos] : methods[0])
+                            : "Chuyển khoản ngân hàng";
+                    if (ttDao.confirmDaThanhToan(pendingId, nvId, pt) > 0) {
+                        // sau khi xác nhận cọc, tự xác nhận đơn nếu đủ 20%
+                        DatPhong updated = dao.getByIdWithTenPhong(d.getDatPhongID());
+                        if (updated != null) {
+                            double cocMin = updated.getTongTien() * 0.2;
+                            double thuNow = ttDao.getTongDaThu(updated.getDatPhongID());
+                            if (thuNow + 1.0 >= cocMin) {
+                                dao.updateTrangThaiVaNhanVien(updated.getDatPhongID(), DatPhongDAO.TT_DA_XAC_NHAN, nvId);
+                            }
+                        }
+                        Toast.makeText(requireContext(), "Đã xác nhận nhận cọc", Toast.LENGTH_SHORT).show();
+                        payDlg.dismiss();
+                        reload();
+                    } else {
+                        Toast.makeText(requireContext(), "Không xác nhận được cọc", Toast.LENGTH_SHORT).show();
+                    }
+                } catch (Exception ex) {
+                    Toast.makeText(requireContext(),
+                            "Lỗi khi xác nhận cọc: " + ex.getMessage(),
+                            Toast.LENGTH_LONG).show();
+                }
+                return;
+            }
+
             String sTien = edtTien.getText() != null ? edtTien.getText().toString().trim() : "";
             double soTien;
             try {
@@ -251,7 +366,9 @@ public class QLDatPhongFragment extends Fragment implements DataRefreshable {
                 return;
             }
             int pos = spinner.getSelectedItemPosition();
-            String pt = pos >= 0 && pos < methods.length ? methods[pos] : methods[0];
+            String pt = (methods != null && methods.length > 0)
+                    ? (pos >= 0 && pos < methods.length ? methods[pos] : methods[0])
+                    : "Khác";
 
             String ngay = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
             ThanhToan t = new ThanhToan();
@@ -265,18 +382,55 @@ public class QLDatPhongFragment extends Fragment implements DataRefreshable {
                 t.setNhanVienGhiNhanID(nvId);
             }
 
-            if (ttDao.insert(t) > 0) {
-                Toast.makeText(requireContext(), R.string.le_tan_payment_saved, Toast.LENGTH_SHORT).show();
-                payDlg.dismiss();
-                reload();
-            } else {
-                Toast.makeText(requireContext(), "Không lưu được", Toast.LENGTH_SHORT).show();
+            try {
+                if (ttDao.insert(t) > 0) {
+                    // Nếu đơn đang chờ xác nhận: thu (cọc hoặc bất kỳ khoản nào) đủ 20% thì tự xác nhận đơn.
+                    if (DatPhongDAO.TT_CHO_XAC_NHAN.equals(normalized)) {
+                        DatPhong updated = dao.getByIdWithTenPhong(d.getDatPhongID());
+                        if (updated != null) {
+                            double cocMin = updated.getTongTien() * 0.2;
+                            double thuNow = ttDao.getTongDaThu(updated.getDatPhongID());
+                            if (thuNow + 1.0 >= cocMin) {
+                                int nvId2 = session.getTaiKhoanId();
+                                dao.updateTrangThaiVaNhanVien(updated.getDatPhongID(), DatPhongDAO.TT_DA_XAC_NHAN, nvId2);
+                            }
+                        }
+                    }
+                    Toast.makeText(requireContext(), R.string.le_tan_payment_saved, Toast.LENGTH_SHORT).show();
+                    payDlg.dismiss();
+                    reload();
+                } else {
+                    Toast.makeText(requireContext(), "Không lưu được", Toast.LENGTH_SHORT).show();
+                }
+            } catch (Exception ex) {
+                Toast.makeText(requireContext(),
+                        "Lỗi khi lưu thanh toán: " + ex.getMessage(),
+                        Toast.LENGTH_LONG).show();
             }
         }));
-        payDlg.show();
+            payDlg.show();
+        } catch (Throwable ex) {
+            StringBuilder sb = new StringBuilder();
+            sb.append("Lỗi mở thanh toán\n\n");
+            sb.append(ex.getClass().getName());
+            if (ex.getMessage() != null && !ex.getMessage().trim().isEmpty()) {
+                sb.append(": ").append(ex.getMessage());
+            }
+            sb.append("\n\nStacktrace (rút gọn):\n");
+            StackTraceElement[] st = ex.getStackTrace();
+            int n = Math.min(8, st != null ? st.length : 0);
+            for (int i = 0; i < n; i++) {
+                sb.append("• ").append(st[i].toString()).append('\n');
+            }
+            new MaterialAlertDialogBuilder(requireContext())
+                    .setTitle("Lỗi")
+                    .setMessage(sb.toString().trim())
+                    .setPositiveButton(android.R.string.ok, null)
+                    .show();
+        }
     }
 
-    private void showLichSuThanhToan(DatPhong d) {
+    private void showLichSuThanhToan(DatPhong d, SessionManager session) {
         List<ThanhToan> rows = ttDao.getByDatPhongId(d.getDatPhongID());
         if (rows.isEmpty()) {
             new MaterialAlertDialogBuilder(requireContext())
@@ -286,7 +440,7 @@ public class QLDatPhongFragment extends Fragment implements DataRefreshable {
                     .show();
             return;
         }
-        StringBuilder sb = new StringBuilder();
+        List<String> items = new ArrayList<>();
         for (ThanhToan t : rows) {
             String nv = "";
             if (t.getNhanVienGhiNhanID() != null) {
@@ -295,13 +449,57 @@ public class QLDatPhongFragment extends Fragment implements DataRefreshable {
                     nv = " — NV: " + ten;
                 }
             }
-            sb.append(String.format(Locale.getDefault(),
-                    "• %,.0f đ — %s — %s — %s%s\n",
+            items.add(String.format(Locale.getDefault(),
+                    "%,.0f đ — %s — %s — %s%s",
                     t.getSoTien(), t.getPhuongThuc(), t.getNgayThanhToan(), t.getTrangThai(), nv));
         }
         new MaterialAlertDialogBuilder(requireContext())
                 .setTitle(R.string.le_tan_action_payment_history)
-                .setMessage(sb.toString().trim())
+                .setItems(items.toArray(new String[0]), (dialog, which) -> {
+                    ThanhToan pick = rows.get(which);
+                    if (!session.isAdmin() && !session.isNhanVien()) {
+                        return;
+                    }
+                    String st = pick.getTrangThai() != null ? pick.getTrangThai().trim() : "";
+                    if (ThanhToanDAO.TT_DA_THANH_TOAN.equals(st)) {
+                        return;
+                    }
+                    if (!ThanhToanDAO.TT_CHUA_THANH_TOAN.equals(st)) {
+                        Toast.makeText(requireContext(), "Giao dịch không ở trạng thái chờ xác nhận.", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    int nvId = session.getTaiKhoanId();
+                    new MaterialAlertDialogBuilder(requireContext())
+                            .setTitle("Xác nhận đã thu?")
+                            .setMessage(items.get(which))
+                            .setNegativeButton(android.R.string.cancel, null)
+                            .setPositiveButton("Xác nhận", (d2, w2) -> {
+                                // Khi xác nhận từ lịch sử, mặc định giữ nguyên phương thức đã lưu (khách gửi: chuyển khoản).
+                                if (ttDao.confirmDaThanhToan(pick.getThanhToanID(), nvId) > 0) {
+                                    Toast.makeText(requireContext(), "Đã xác nhận đã thu", Toast.LENGTH_SHORT).show();
+                                    // Nếu đơn đang "Chờ xác nhận" và sau khi xác nhận đã thu đủ cọc (>=20%), tự xác nhận đơn.
+                                    DatPhong updated = dao.getByIdWithTenPhong(d.getDatPhongID());
+                                    if (updated != null) {
+                                        String stDon = DatPhongDAO.normalizeStatus(updated.getTrangThai());
+                                        if (DatPhongDAO.TT_CHO_XAC_NHAN.equals(stDon)) {
+                                            double cocMin = updated.getTongTien() * 0.2;
+                                            double daThu = ttDao.getTongDaThu(updated.getDatPhongID());
+                                            if (daThu + 1.0 >= cocMin) {
+                                                dao.updateTrangThaiVaNhanVien(updated.getDatPhongID(), DatPhongDAO.TT_DA_XAC_NHAN, nvId);
+                                            }
+                                        } else if (DatPhongDAO.TT_DANG_O.equals(stDon)
+                                                && ttDao.isOrderFullyPaid(updated.getDatPhongID(), updated.getTongTien())) {
+                                            // Nếu đơn đang ở và sau khi xác nhận đã thu thì đã đủ tiền, tự đóng đơn.
+                                            dao.updateTrangThaiVaNhanVien(updated.getDatPhongID(), DatPhongDAO.TT_DA_TRA_PHONG, nvId);
+                                        }
+                                    }
+                                    reload();
+                                } else {
+                                    Toast.makeText(requireContext(), "Không cập nhật được", Toast.LENGTH_SHORT).show();
+                                }
+                            })
+                            .show();
+                })
                 .setPositiveButton(android.R.string.ok, null)
                 .show();
     }
@@ -330,6 +528,8 @@ public class QLDatPhongFragment extends Fragment implements DataRefreshable {
             sb.append("NV xử lý đơn: ").append(nv).append('\n');
         }
         double daThu = ttDao.getTongDaThu(d.getDatPhongID());
+        double cocMin = d.getTongTien() * 0.2;
+        sb.append(String.format(Locale.getDefault(), "Cọc tối thiểu (20%%): %,.0f đ\n", cocMin));
         sb.append(String.format(Locale.getDefault(),
                 "Đã thu: %,.0f đ — Còn: %,.0f đ",
                 daThu, Math.max(0, d.getTongTien() - daThu)));

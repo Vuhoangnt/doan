@@ -102,6 +102,41 @@ public class PhongDAO {
         return list;
     }
 
+    /** Lấy 1 phòng theo ID (đủ thông tin giá/giờ cao điểm). */
+    public PhongFull getPhongFullById(int phongId) {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        String sql =
+                "SELECT P.PhongID, P.TenPhong, P.GiaNgay, P.MoTa, P.TrangThai, IFNULL(P.SoNguoiToiDa, 2), "
+                        + "IFNULL(P.GiaCaoDiem,0), IFNULL(P.GioCaoDiemTu,''), IFNULL(P.GioCaoDiemDen,''), "
+                        + "(SELECT A.UrlAnh FROM AnhPhong A WHERE A.PhongID = P.PhongID ORDER BY A.AnhID LIMIT 1), "
+                        + "(SELECT GROUP_CONCAT(A.UrlAnh, '|||') FROM AnhPhong A WHERE A.PhongID = P.PhongID) "
+                        + "FROM Phong P WHERE P.PhongID=? LIMIT 1";
+        try (Cursor c = db.rawQuery(sql, new String[]{String.valueOf(phongId)})) {
+            if (c.moveToFirst()) {
+                PhongFull p = new PhongFull();
+                p.setPhongID(c.getInt(0));
+                p.setTenPhong(c.getString(1));
+                p.setGiaNgay(c.getDouble(2));
+                p.setMoTa(c.getString(3));
+                p.setTrangThai(c.getString(4));
+                p.setSoNguoiToiDa(c.getInt(5));
+                p.setGiaCaoDiem(c.getDouble(6));
+                p.setGioCaoDiemTu(c.getString(7));
+                p.setGioCaoDiemDen(c.getString(8));
+                p.setUrlAnh(c.getString(9));
+                String concat = c.getString(10);
+                if (concat != null && !concat.isEmpty()) {
+                    p.setAnhUrlsList(new ArrayList<>(Arrays.asList(concat.split(Pattern.quote(ANH_SEP), -1))));
+                } else {
+                    p.setAnhUrlsList(new ArrayList<>());
+                }
+                p.setDichVuList(new ArrayList<>());
+                return p;
+            }
+        }
+        return null;
+    }
+
     public List<String> getAnhUrlsByPhongId(int phongId) {
         List<String> list = new ArrayList<>();
         SQLiteDatabase db = dbHelper.getReadableDatabase();

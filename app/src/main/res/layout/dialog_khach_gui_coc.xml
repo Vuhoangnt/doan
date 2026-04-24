@@ -11,38 +11,21 @@
         android:padding="16dp">
 
         <TextView
-            android:id="@+id/txtThanhToanCoc"
+            android:id="@+id/txtGuiCocRequired"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="?attr/colorOnSurface"
             android:textSize="13sp"
-            android:textStyle="bold"
-            android:visibility="gone" />
+            android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/txtThanhToanTongDon"
+            android:id="@+id/txtGuiCocNote"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="6dp"
+            android:text="@string/khach_gui_coc_note"
             android:textColor="?attr/colorOnSurfaceVariant"
-            android:textSize="13sp" />
-
-        <TextView
-            android:id="@+id/txtThanhToanDaThu"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:textColor="?attr/colorOnSurfaceVariant"
-            android:textSize="13sp" />
-
-        <TextView
-            android:id="@+id/txtThanhToanConLai"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:textColor="?attr/colorPrimary"
-            android:textSize="15sp"
-            android:textStyle="bold" />
+            android:textSize="12sp" />
 
         <TextView
             android:layout_width="match_parent"
@@ -52,7 +35,7 @@
             android:textSize="12sp" />
 
         <Spinner
-            android:id="@+id/spinnerPhuongThuc"
+            android:id="@+id/spinnerGuiCocPhuongThuc"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
@@ -67,18 +50,11 @@
             app:suffixText="đ">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/edtThanhToanSoTien"
+                android:id="@+id/edtGuiCocSoTien"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="numberDecimal" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="@string/le_tan_payment_note"
-            android:textColor="?attr/colorOnSurfaceVariant"
-            android:textSize="12sp" />
     </LinearLayout>
 </ScrollView>

@@ -386,6 +386,7 @@ public class PhongAdapter extends BaseAdapter {
         TextView txtGioNhan = view.findViewById(R.id.txtGioNhan);
         TextView txtGioTra = view.findViewById(R.id.txtGioTra);
         TextView txtTamTinh = view.findViewById(R.id.txtTamTinh);
+        TextView txtCocHint = view.findViewById(R.id.txtCocHint);
         EditText edtSoNguoi = view.findViewById(R.id.edtSoNguoi);
         TextView txtSoNguoiToiDa = view.findViewById(R.id.txtSoNguoiToiDa);
         EditText edtGhiChu = view.findViewById(R.id.edtGhiChu);
@@ -415,6 +416,9 @@ public class PhongAdapter extends BaseAdapter {
         Runnable refreshTamTinh = () -> {
             if (txtTamTinh == null) {
                 return;
+            }
+            if (txtCocHint != null) {
+                txtCocHint.setVisibility(View.GONE);
             }
             double tongDv = 0;
             for (DichVuRow r : dvRows) {
@@ -461,6 +465,12 @@ public class PhongAdapter extends BaseAdapter {
                 line += "\n" + context.getString(R.string.dat_phong_peak_night_note);
             }
             txtTamTinh.setText(line);
+            if (txtCocHint != null) {
+                double coc = tong * 0.2;
+                txtCocHint.setText(String.format(Locale.getDefault(),
+                        "Cọc tối thiểu (20%%): %,.0f đ", coc));
+                txtCocHint.setVisibility(View.VISIBLE);
+            }
         };
 
         if (extraDv.isEmpty()) {
@@ -763,9 +773,10 @@ public class PhongAdapter extends BaseAdapter {
                 }
                 boolean loggedKhach = session != null && session.isLoggedIn() && session.isKhach();
                 if (loggedKhach) {
+                    double coc = tong * 0.2;
                     showBookingSuccessDialog(dialog,
                             context.getString(R.string.dat_phong_success_logged_in,
-                                    d.getMaDatPhong(), tong));
+                                    d.getMaDatPhong(), tong, coc));
                 } else {
                     TaiKhoan tkLink = null;
                     boolean accountNew = false;
@@ -803,22 +814,23 @@ public class PhongAdapter extends BaseAdapter {
                         }
                     }
                     String msgBody;
+                    double coc = tong * 0.2;
                     if (tkLink != null) {
                         if (accountNew) {
                             msgBody = context.getString(R.string.dat_phong_success_new_account,
-                                    d.getMaDatPhong(), tong,
+                                    d.getMaDatPhong(), tong, coc,
                                     tkLink.getTenDangNhap(),
                                     tkLink.getTenNguoiDung(),
                                     tkLink.getDienThoai());
                         } else {
                             msgBody = context.getString(R.string.dat_phong_success_linked_account,
-                                    d.getMaDatPhong(), tong,
+                                    d.getMaDatPhong(), tong, coc,
                                     tkLink.getTenDangNhap(),
                                     tkLink.getTenNguoiDung());
                         }
                     } else {
                         msgBody = context.getString(R.string.dat_phong_success_guest_no_login,
-                                d.getMaDatPhong(), tong);
+                                d.getMaDatPhong(), tong, coc);
                     }
                     showBookingSuccessDialog(dialog, msgBody);
                 }

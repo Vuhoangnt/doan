@@ -16,6 +16,7 @@ import java.util.List;
 public class ThanhToanDAO {
 
     public static final String TT_DA_THANH_TOAN = "Đã thanh toán";
+    public static final String TT_CHUA_THANH_TOAN = "Chưa thanh toán";
 
     private final DatabaseHelper dbHelper;
 
@@ -56,6 +57,20 @@ public class ThanhToanDAO {
         return list;
     }
 
+    /** Lấy giao dịch "Chưa thanh toán" mới nhất của đơn (để xác nhận cọc nhanh). */
+    @Nullable
+    public Integer getLatestPendingId(int datPhongId) {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        try (Cursor c = db.rawQuery(
+                "SELECT ThanhToanID FROM ThanhToan WHERE DatPhongID=? AND TrangThai=? ORDER BY ThanhToanID DESC LIMIT 1",
+                new String[]{String.valueOf(datPhongId), TT_CHUA_THANH_TOAN})) {
+            if (c.moveToFirst()) {
+                return c.getInt(0);
+            }
+        }
+        return null;
+    }
+
     private static ThanhToan cursorToThanhToan(Cursor c) {
         ThanhToan t = new ThanhToan();
         t.setThanhToanID(c.getInt(c.getColumnIndexOrThrow("ThanhToanID")));
@@ -91,6 +106,37 @@ public class ThanhToanDAO {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         ContentValues v = new ContentValues();
         v.put("TrangThai", trangThai);
+        return db.update("ThanhToan", v, "ThanhToanID=?",
+                new String[]{String.valueOf(thanhToanId)});
+    }
+
+    /** Nhân viên xác nhận đã thu (đổi trạng thái + ghi nhận NV). */
+    public int confirmDaThanhToan(int thanhToanId, int nhanVienId) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        ContentValues v = new ContentValues();
+        v.put("TrangThai", TT_DA_THANH_TOAN);
+        if (nhanVienId > 0) {
+            v.put("NhanVienGhiNhanID", nhanVienId);
+        } else {
+            v.putNull("NhanVienGhiNhanID");
+        }
+        return db.update("ThanhToan", v, "ThanhToanID=?",
+                new String[]{String.valueOf(thanhToanId)});
+    }
+
+    /** Xác nhận đã thu và cập nhật phương thức (vd: tiền mặt / chuyển khoản). */
+    public int confirmDaThanhToan(int thanhToanId, int nhanVienId, @Nullable String phuongThuc) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        ContentValues v = new ContentValues();
+        v.put("TrangThai", TT_DA_THANH_TOAN);
+        if (nhanVienId > 0) {
+            v.put("NhanVienGhiNhanID", nhanVienId);
+        } else {
+            v.putNull("NhanVienGhiNhanID");
+        }
+        if (phuongThuc != null) {
+            v.put("PhuongThuc", phuongThuc);
+        }
         return db.update("ThanhToan", v, "ThanhToanID=?",
                 new String[]{String.valueOf(thanhToanId)});
     }

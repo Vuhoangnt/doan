@@ -7,12 +7,16 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.example.doan.DatabaseHelper;
 import com.example.doan.model.DatPhong;
+import com.example.doan.model.PhongFull;
+import com.example.doan.model.ThanhToan;
 import com.example.doan.util.DatPhongIntervalUtil;
+import com.example.doan.util.PeakPricingUtil;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 public class DatPhongDAO {
 
@@ -506,9 +510,156 @@ public class DatPhongDAO {
         if (!TT_DANG_O.equals(normalizeStatus(d.getTrangThai()))) {
             return -2;
         }
-        if (!new ThanhToanDAO(appContext).isOrderFullyPaid(datPhongId, d.getTongTien())) {
+
+        return -2; // deprecated: dùng guestRequestCheckout()
+    }
+
+    /** Tổng tiền dịch vụ thêm của 1 đơn (DatPhong_DichVu x DichVu). */
+    private double getTongTienDichVu(int datPhongId) {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        try (Cursor c = db.rawQuery(
+                "SELECT IFNULL(SUM(DV.Gia * DP.SoLuong),0) "
+                        + "FROM DatPhong_DichVu DP "
+                        + "JOIN DichVu DV ON DV.DichVuID = DP.DichVuID "
+                        + "WHERE DP.DatPhongID=?",
+                new String[]{String.valueOf(datPhongId)})) {
+            if (c.moveToFirst()) {
+                return c.getDouble(0);
+            }
+        }
+        return 0;
+    }
+
+    /** Tổng tiền dịch vụ thêm (public — dùng cho màn hình tất toán của khách). */
+    public double getTongTienDichVuPublic(int datPhongId) {
+        return getTongTienDichVu(datPhongId);
+    }
+
+    /**
+     * Trả phòng sớm: nếu {@code actualNgayTraYmd} sớm hơn ngày trả trên đơn thì cập nhật:
+     * - SoDem = số đêm thực ở
+     * - NgayTra = actualNgayTraYmd
+     * - TongTien = (tiền phòng theo số đêm ở) + 20% * (tiền phòng của số đêm còn lại) + dịch vụ (giữ nguyên)
+     *
+     * @return số dòng cập nhật (>0 nếu có cập nhật)
+     */
+    public int applyCheckoutAdjustmentIfNeeded(int datPhongId, String actualNgayTraYmd) {
+        DatPhong d = getByIdWithTenPhong(datPhongId);
+        if (d == null) {
+            return 0;
+        }
+        if (!TT_DANG_O.equals(normalizeStatus(d.getTrangThai()))) {
+            return 0;
+        }
+        if (actualNgayTraYmd == null || actualNgayTraYmd.trim().isEmpty()) {
+            return 0;
+        }
+        String planned = d.getNgayTra();
+        if (planned == null || planned.trim().isEmpty()) {
+            return 0;
+        }
+
+        int booked = Math.max(1, d.getSoDem());
+        int actual = computeSoDem(d.getNgayNhan(), actualNgayTraYmd);
+        if (actual < 1) {
+            return 0;
+        }
+
+        PhongFull p = new PhongDAO(appContext).getPhongFullById(d.getPhongID());
+        if (p == null) {
+            return 0;
+        }
+        String gioNhan = d.getGioNhan() != null ? d.getGioNhan() : "14:00";
+        String gioTra = d.getGioTra() != null ? d.getGioTra() : "12:00";
+        double giaDem = PeakPricingUtil.demGiaTheoGio(p, gioNhan, gioTra);
+        double tongDv = getTongTienDichVu(datPhongId);
+        double tongMoi;
+        int soDemMoi;
+
+        // So sánh yyyy-MM-dd bằng string là an toàn khi đúng format.
+        if (actualNgayTraYmd.compareTo(planned) < 0) {
+            // Trả sớm: thu actual đêm + 20% của số đêm còn lại.
+            if (actual >= booked) {
+                return 0;
+            }
+            int remaining = booked - actual;
+            double tongPhong = giaDem * actual;
+            double phiTraSom = giaDem * remaining * 0.2;
+            tongMoi = tongPhong + phiTraSom + tongDv;
+            soDemMoi = actual;
+        } else if (actualNgayTraYmd.compareTo(planned) > 0) {
+            // Trả muộn: cộng thêm tiền các đêm vượt.
+            int extra = computeSoDem(planned, actualNgayTraYmd);
+            if (extra < 1) {
+                return 0;
+            }
+            soDemMoi = booked + extra;
+            tongMoi = (giaDem * soDemMoi) + tongDv;
+        } else {
+            return 0; // đúng ngày, không chỉnh
+        }
+
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        ContentValues v = new ContentValues();
+        v.put("NgayTra", actualNgayTraYmd);
+        v.put("SoDem", soDemMoi);
+        v.put("TongTien", tongMoi);
+        return db.update("DatPhong", v, "DatPhongID=?",
+                new String[]{String.valueOf(datPhongId)});
+    }
+
+    private static int computeSoDem(String d1, String d2) {
+        try {
+            java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+            sdf.setLenient(false);
+            java.util.Date a = sdf.parse(d1);
+            java.util.Date b = sdf.parse(d2);
+            if (a == null || b == null) return -1;
+            if (b.before(a)) return -1;
+            long diff = b.getTime() - a.getTime();
+            int days = (int) java.util.concurrent.TimeUnit.MILLISECONDS.toDays(diff);
+            return Math.max(1, days);
+        } catch (Exception e) {
             return -1;
         }
-        return updateTrangThaiVaNhanVien(datPhongId, TT_DA_TRA_PHONG, null);
+    }
+
+    /**
+     * Khách bấm "Trả phòng" trên app:
+     * - Tự tính lại tổng tiền nếu trả sớm/muộn (ngày thực tế = hôm nay).
+     * - Nếu còn thiếu tiền, tạo 1 giao dịch "Chưa thanh toán" (phương thức chuyển khoản) để NV xác nhận khi nhận tiền.
+     *
+     * @return 1 nếu đã ghi nhận yêu cầu
+     */
+    public int guestRequestCheckout(int datPhongId, int taiKhoanKhachId) {
+        DatPhong d = getByIdWithTenPhong(datPhongId);
+        if (d == null || d.getTaiKhoanID() == null || d.getTaiKhoanID() != taiKhoanKhachId) {
+            return -2;
+        }
+        if (!TT_DANG_O.equals(normalizeStatus(d.getTrangThai()))) {
+            return -2;
+        }
+        String today = new java.text.SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+                .format(new java.util.Date());
+        applyCheckoutAdjustmentIfNeeded(datPhongId, today);
+        d = getByIdWithTenPhong(datPhongId);
+        if (d == null) {
+            return -2;
+        }
+        ThanhToanDAO ttDao = new ThanhToanDAO(appContext);
+        double daThu = ttDao.getTongDaThu(datPhongId);
+        double conThieu = Math.max(0, d.getTongTien() - daThu);
+        if (conThieu > 1.0) {
+            String ngay = today;
+            ThanhToan t = new ThanhToan();
+            t.setDatPhongID(datPhongId);
+            t.setSoTien(conThieu);
+            t.setPhuongThuc("Chuyển khoản ngân hàng");
+            t.setNgayThanhToan(ngay);
+            t.setTrangThai(ThanhToanDAO.TT_CHUA_THANH_TOAN);
+            t.setNhanVienGhiNhanID(null);
+            ttDao.insert(t);
+        }
+        return 1;
     }
 }
