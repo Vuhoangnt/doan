@@ -327,6 +327,9 @@ public class PhongAdapter extends BaseAdapter {
         AlertDialog dialog = builder.create();
         dialog.show();
 
+        LinearLayout bookingGallery = view.findViewById(R.id.layoutDatPhongGalleryPhong);
+        fillHorizontalGallery(bookingGallery, p.resolveAllImageRefs());
+
         view.findViewById(R.id.btnXemDanhGia).setOnClickListener(v -> {
             View content = LayoutInflater.from(context).inflate(R.layout.dialog_xem_danh_gia_dat_phong, null);
             fillDanhGiaSection(content, p.getPhongID(), false);
