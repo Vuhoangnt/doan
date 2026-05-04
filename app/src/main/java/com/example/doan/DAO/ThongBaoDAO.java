@@ -101,6 +101,8 @@ public class ThongBaoDAO {
         String title = "Cập nhật đơn " + ma;
         String bodyAd = tp + " — trạng thái: " + tt;
         insertRow(db, DOI_TUONG_ADMIN, null, title, bodyAd, don.getDatPhongID(), don.getPhongID(), HANH_DONG_MO_QL_DON);
+        // Nhân viên cũng cần nhận cập nhật trạng thái (đặc biệt các trường hợp hủy / trả phòng).
+        insertRow(db, DOI_TUONG_NHAN_VIEN, null, title, bodyAd, don.getDatPhongID(), don.getPhongID(), HANH_DONG_MO_QL_DON);
 
         if (don.getTaiKhoanID() != null && don.getTaiKhoanID() > 0) {
             String bodyKh = "Đơn " + ma + " (" + tp + ") hiện là: " + tt;
