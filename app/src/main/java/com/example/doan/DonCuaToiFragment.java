@@ -95,6 +95,7 @@ public class DonCuaToiFragment extends Fragment implements DataRefreshable {
         adapter.setDaThuMap(daThu);
         adapter.setGuestOrdersMode(true, this::onGuestRequestedCheckout);
         adapter.setGuestDepositListener(this::onGuestRequestedDeposit);
+        adapter.setGuestCancelListener(session.getTaiKhoanId(), this::onGuestRequestedCancel);
         adapter.updateData(data);
         if (data.isEmpty()) {
             listView.setVisibility(View.GONE);
@@ -122,6 +123,33 @@ public class DonCuaToiFragment extends Fragment implements DataRefreshable {
         }
 
         maybePromptRatingAfterCheckout(session, data);
+    }
+
+    private void onGuestRequestedCancel(DatPhong d) {
+        if (d == null) {
+            return;
+        }
+        String ma = d.getMaDatPhong() != null ? d.getMaDatPhong() : ("#" + d.getDatPhongID());
+        new MaterialAlertDialogBuilder(requireContext())
+                .setTitle(R.string.don_cua_toi_huy_title)
+                .setMessage(getString(R.string.don_cua_toi_huy_msg, ma))
+                .setNegativeButton(android.R.string.cancel, null)
+                .setPositiveButton(R.string.don_cua_toi_btn_huy_don, (di, w) -> {
+                    SessionManager s = new SessionManager(requireContext());
+                    int r = dao.guestCancelBooking(d.getDatPhongID(), s.getTaiKhoanId());
+                    if (r > 0) {
+                        Toast.makeText(requireContext(), R.string.don_cua_toi_huy_ok, Toast.LENGTH_SHORT).show();
+                        loadData();
+                        if (getActivity() != null) {
+                            getActivity().invalidateOptionsMenu();
+                        }
+                    } else if (r == DatPhongDAO.GUEST_CANCEL_NOT_ALLOWED) {
+                        Toast.makeText(requireContext(), R.string.don_cua_toi_huy_not_allowed, Toast.LENGTH_LONG).show();
+                    } else {
+                        Toast.makeText(requireContext(), R.string.don_cua_toi_huy_fail, Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .show();
     }
 
     private void maybePromptRatingAfterCheckout(SessionManager session, List<DatPhong> data) {

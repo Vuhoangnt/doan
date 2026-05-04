@@ -465,6 +465,38 @@ public class DatPhongDAO {
         return n;
     }
 
+    /** Khách tự hủy đơn — không hợp lệ / không thuộc tài khoản. */
+    public static final int GUEST_CANCEL_INVALID = -2;
+    /** Khách tự hủy đơn — trạng thái hiện tại không cho phép hủy. */
+    public static final int GUEST_CANCEL_NOT_ALLOWED = -3;
+
+    /**
+     * Khách (đã đăng nhập) tự hủy đơn của mình.
+     *
+     * <p>Cho phép khi đơn chưa kết thúc: {@link #TT_CHO_XAC_NHAN}, {@link #TT_DA_XAC_NHAN}.
+     * Không cho phép khi {@link #TT_DANG_O}, {@link #TT_DA_TRA_PHONG}, {@link #TT_DA_HUY}.</p>
+     *
+     * @return số dòng cập nhật (&gt;0), hoặc mã lỗi âm
+     */
+    public int guestCancelBooking(int datPhongId, int taiKhoanKhachId) {
+        DatPhong d = getByIdWithTenPhong(datPhongId);
+        if (d == null || d.getTaiKhoanID() == null || d.getTaiKhoanID() != taiKhoanKhachId) {
+            return GUEST_CANCEL_INVALID;
+        }
+        String st = normalizeStatus(d.getTrangThai());
+        if (isRoomReleasedStatus(st)) {
+            return GUEST_CANCEL_NOT_ALLOWED;
+        }
+        if (TT_DANG_O.equals(st)) {
+            return GUEST_CANCEL_NOT_ALLOWED;
+        }
+        if (!TT_CHO_XAC_NHAN.equals(st) && !TT_DA_XAC_NHAN.equals(st)) {
+            return GUEST_CANCEL_NOT_ALLOWED;
+        }
+        // Khách hủy: không ghi nhận nhân viên xử lý (giữ NV xác nhận trước đó nếu có).
+        return updateTrangThai(datPhongId, TT_DA_HUY);
+    }
+
     /**
      * Khách (tài khoản) đã có ít nhất một đơn cùng phòng và trạng thái {@link #TT_DA_TRA_PHONG}.
      */

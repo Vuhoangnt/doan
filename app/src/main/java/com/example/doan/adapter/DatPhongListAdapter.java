@@ -29,6 +29,10 @@ public class DatPhongListAdapter extends BaseAdapter {
         void onGuestGuiCoc(DatPhong d);
     }
 
+    public interface GuestCancelListener {
+        void onGuestHuyDon(DatPhong d);
+    }
+
     private final Context context;
     private final List<DatPhong> list;
     /** Đã thu theo DatPhongID (admin / lễ tân); null = không hiển thị. */
@@ -38,6 +42,9 @@ public class DatPhongListAdapter extends BaseAdapter {
     private GuestCheckoutListener guestCheckoutListener;
     @Nullable
     private GuestDepositListener guestDepositListener;
+    @Nullable
+    private GuestCancelListener guestCancelListener;
+    private int guestTaiKhoanId;
 
     public DatPhongListAdapter(Context context, List<DatPhong> list) {
         this(context, list, null);
@@ -60,6 +67,11 @@ public class DatPhongListAdapter extends BaseAdapter {
 
     public void setGuestDepositListener(@Nullable GuestDepositListener listener) {
         guestDepositListener = listener;
+    }
+
+    public void setGuestCancelListener(int taiKhoanKhachId, @Nullable GuestCancelListener listener) {
+        this.guestTaiKhoanId = taiKhoanKhachId;
+        this.guestCancelListener = listener;
     }
 
     public void updateData(List<DatPhong> newList) {
@@ -98,6 +110,7 @@ public class DatPhongListAdapter extends BaseAdapter {
         TextView txtTongTien = convertView.findViewById(R.id.txtTongTien);
         TextView txtNv = convertView.findViewById(R.id.txtNhanVienXuLy);
         MaterialButton btnCoc = convertView.findViewById(R.id.btnGuestGuiCoc);
+        MaterialButton btnHuy = convertView.findViewById(R.id.btnGuestHuyDon);
         MaterialButton btnTra = convertView.findViewById(R.id.btnGuestTraPhong);
 
         txtMa.setText(d.getMaDatPhong());
@@ -153,6 +166,22 @@ public class DatPhongListAdapter extends BaseAdapter {
                 btnCoc.setOnClickListener(v -> guestDepositListener.onGuestGuiCoc(d));
             } else {
                 btnCoc.setVisibility(View.GONE);
+            }
+        }
+
+        if (btnHuy != null) {
+            String st = DatPhongDAO.normalizeStatus(d.getTrangThai());
+            boolean canHuy = guestOrdersMode
+                    && guestCancelListener != null
+                    && guestTaiKhoanId > 0
+                    && d.getTaiKhoanID() != null
+                    && d.getTaiKhoanID() == guestTaiKhoanId
+                    && (DatPhongDAO.TT_CHO_XAC_NHAN.equals(st) || DatPhongDAO.TT_DA_XAC_NHAN.equals(st));
+            if (canHuy) {
+                btnHuy.setVisibility(View.VISIBLE);
+                btnHuy.setOnClickListener(v -> guestCancelListener.onGuestHuyDon(d));
+            } else {
+                btnHuy.setVisibility(View.GONE);
             }
         }
         return convertView;
