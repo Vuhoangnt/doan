@@ -9,6 +9,8 @@ public class PhongFull {
     private double giaNgay;
     private String moTa;
     private String trangThai;
+    /** Loại phòng (cột Phong.LoaiPhong): Don/Doi/GiaDinh/Studio/Dorm/... */
+    private String loaiPhong;
     /** Số khách tối đa (cột Phong.SoNguoiToiDa). */
     private int soNguoiToiDa = 2;
     private String urlAnh;
@@ -52,6 +54,9 @@ public class PhongFull {
 
     public String getTrangThai() { return trangThai; }
     public void setTrangThai(String trangThai) { this.trangThai = trangThai; }
+
+    public String getLoaiPhong() { return loaiPhong; }
+    public void setLoaiPhong(String loaiPhong) { this.loaiPhong = loaiPhong; }
 
     public int getSoNguoiToiDa() { return soNguoiToiDa; }
     public void setSoNguoiToiDa(int soNguoiToiDa) { this.soNguoiToiDa = soNguoiToiDa; }

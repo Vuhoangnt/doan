@@ -37,6 +37,7 @@ import com.example.doan.util.VietSearch;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.chip.ChipGroup;
+import com.google.android.material.chip.Chip;
 import com.google.android.material.color.MaterialColors;
 
 import java.text.SimpleDateFormat;
@@ -81,6 +82,7 @@ public class Phong extends Fragment implements DataRefreshable {
     private MaterialCardView cardGuestSearch;
     private ChipGroup chipGuestPrice;
     private ChipGroup chipGuestSort;
+    private ChipGroup chipGuestLoaiPhong;
     private TextView txtGuestPhongResultCount;
     private LinearLayout layoutGuestFilters;
     private ImageButton btnToggleGuestFilters;
@@ -125,6 +127,7 @@ public class Phong extends Fragment implements DataRefreshable {
         cardGuestSearch = view.findViewById(R.id.cardGuestSearch);
         chipGuestPrice = view.findViewById(R.id.chipGuestPrice);
         chipGuestSort = view.findViewById(R.id.chipGuestSort);
+        chipGuestLoaiPhong = view.findViewById(R.id.chipGuestLoaiPhong);
         txtGuestPhongResultCount = view.findViewById(R.id.txtGuestPhongResultCount);
         layoutGuestFilters = view.findViewById(R.id.layoutGuestFilters);
         btnToggleGuestFilters = view.findViewById(R.id.btnToggleGuestFilters);
@@ -216,6 +219,7 @@ public class Phong extends Fragment implements DataRefreshable {
         }
 
         if (guestBook) {
+            rebuildGuestLoaiPhongChipsIfNeeded();
             if (guestDisplayList == null) {
                 guestDisplayList = new ArrayList<>();
             }
@@ -284,12 +288,13 @@ public class Phong extends Fragment implements DataRefreshable {
     }
 
     private void bindGuestSearchListeners() {
-        if (guestSearchBound || chipGuestPrice == null || chipGuestSort == null) {
+        if (guestSearchBound || chipGuestPrice == null || chipGuestSort == null || chipGuestLoaiPhong == null) {
             return;
         }
         guestSearchBound = true;
         chipGuestPrice.setOnCheckedStateChangeListener((group, checkedIds) -> applyGuestFilters());
         chipGuestSort.setOnCheckedStateChangeListener((group, checkedIds) -> applyGuestFilters());
+        chipGuestLoaiPhong.setOnCheckedStateChangeListener((group, checkedIds) -> applyGuestFilters());
     }
 
     private void applyGuestFilters() {
@@ -303,6 +308,7 @@ public class Phong extends Fragment implements DataRefreshable {
         String qn = VietSearch.normalize(q);
         int band = guestPriceBandFromChip();
         boolean cheap = chipGuestSort != null && chipGuestSort.getCheckedChipId() == R.id.chipSortCheap;
+        String wantLoai = guestLoaiPhongFromChip();
 
         guestDisplayList.clear();
         for (PhongFull p : list) {
@@ -310,6 +316,9 @@ public class Phong extends Fragment implements DataRefreshable {
                 continue;
             }
             if (!guestPriceMatches(p.getGiaNgay(), band)) {
+                continue;
+            }
+            if (!guestLoaiPhongMatches(p, wantLoai)) {
                 continue;
             }
             guestDisplayList.add(p);
@@ -320,6 +329,69 @@ public class Phong extends Fragment implements DataRefreshable {
         adapter.notifyDataSetChanged();
         updateGuestResultCount();
         syncPhongListHeightForNestedScroll();
+    }
+
+    private String guestLoaiPhongFromChip() {
+        if (chipGuestLoaiPhong == null) {
+            return "";
+        }
+        int id = chipGuestLoaiPhong.getCheckedChipId();
+        if (id == View.NO_ID) {
+            return "";
+        }
+        View v = chipGuestLoaiPhong.findViewById(id);
+        if (!(v instanceof Chip)) {
+            return "";
+        }
+        Object tag = v.getTag();
+        return tag != null ? String.valueOf(tag) : "";
+    }
+
+    private static boolean guestLoaiPhongMatches(PhongFull p, String wantLoai) {
+        if (wantLoai == null || wantLoai.trim().isEmpty() || "ALL".equals(wantLoai)) {
+            return true;
+        }
+        String raw = p != null ? p.getLoaiPhong() : null;
+        if (raw == null) {
+            raw = "";
+        }
+        return raw.trim().equalsIgnoreCase(wantLoai.trim());
+    }
+
+    private void rebuildGuestLoaiPhongChipsIfNeeded() {
+        if (chipGuestLoaiPhong == null || list == null) {
+            return;
+        }
+        if (chipGuestLoaiPhong.getChildCount() > 0) {
+            return;
+        }
+        Set<String> types = new HashSet<>();
+        for (PhongFull p : list) {
+            String t = p.getLoaiPhong();
+            if (t != null) {
+                t = t.trim();
+            }
+            if (t != null && !t.isEmpty()) {
+                types.add(t);
+            }
+        }
+        List<String> sorted = new ArrayList<>(types);
+        Collections.sort(sorted, String::compareToIgnoreCase);
+
+        Chip all = new Chip(requireContext());
+        all.setText(getString(R.string.phong_guest_price_all)); // "Tất cả"
+        all.setCheckable(true);
+        all.setChecked(true);
+        all.setTag("ALL");
+        chipGuestLoaiPhong.addView(all);
+
+        for (String t : sorted) {
+            Chip c = new Chip(requireContext());
+            c.setText(t);
+            c.setCheckable(true);
+            c.setTag(t);
+            chipGuestLoaiPhong.addView(c);
+        }
     }
 
     private int guestPriceBandFromChip() {

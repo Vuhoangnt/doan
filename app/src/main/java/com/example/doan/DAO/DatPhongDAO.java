@@ -447,11 +447,19 @@ public class DatPhongDAO {
         if (n > 0 && phongId > 0) {
             new PhongDAO(appContext).syncTrangThaiPhongTheoDon(phongId);
         }
-        if (n > 0 && before != null) {
-            String oldN = normalizeStatus(before.getTrangThai());
-            String newN = normalizeStatus(trangThai);
-            if (!oldN.equals(newN)) {
-                ThongBaoDAO.notifyOrderStatusChanged(appContext, before, trangThai);
+        if (n > 0) {
+            // Luôn cố gắng bắn thông báo khi đổi trạng thái (kể cả khi bản ghi "before" không load được).
+            if (before != null) {
+                String oldN = normalizeStatus(before.getTrangThai());
+                String newN = normalizeStatus(trangThai);
+                if (!oldN.equals(newN)) {
+                    ThongBaoDAO.notifyOrderStatusChanged(appContext, before, trangThai);
+                }
+            } else {
+                DatPhong after = getByIdWithTenPhong(datPhongId);
+                if (after != null) {
+                    ThongBaoDAO.notifyOrderStatusChanged(appContext, after, trangThai);
+                }
             }
         }
         return n;

@@ -106,6 +106,16 @@ public class DanhGiaDAO {
         return db.update("DanhGia", v, "DanhGiaID=?", new String[]{String.valueOf(danhGiaId)}) > 0;
     }
 
+    /** Khách đã từng gửi đánh giá cho phòng này (kể cả chờ duyệt / đã duyệt). */
+    public boolean hasAnyReviewForUserAndPhong(int taiKhoanId, int phongId) {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        try (Cursor c = db.rawQuery(
+                "SELECT 1 FROM DanhGia WHERE TaiKhoanID=? AND PhongID=? LIMIT 1",
+                new String[]{String.valueOf(taiKhoanId), String.valueOf(phongId)})) {
+            return c.moveToFirst();
+        }
+    }
+
     /** Trang chủ: đánh giá đã duyệt, giới hạn số dòng. */
     public List<DanhGia> getApprovedNewestFirstLimit(int limit) {
         int n = Math.max(1, Math.min(50, limit));

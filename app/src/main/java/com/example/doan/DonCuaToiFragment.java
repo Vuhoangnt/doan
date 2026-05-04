@@ -3,6 +3,7 @@ package com.example.doan;
 import androidx.appcompat.app.AlertDialog;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,6 +20,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.example.doan.DAO.DatPhongDAO;
+import com.example.doan.DAO.DanhGiaDAO;
 import com.example.doan.DAO.ThanhToanDAO;
 import com.example.doan.DAO.PhongDAO;
 import com.example.doan.adapter.DatPhongListAdapter;
@@ -117,6 +119,54 @@ public class DonCuaToiFragment extends Fragment implements DataRefreshable {
                     break;
                 }
             }
+        }
+
+        maybePromptRatingAfterCheckout(session, data);
+    }
+
+    private void maybePromptRatingAfterCheckout(SessionManager session, List<DatPhong> data) {
+        if (session == null || !session.isLoggedIn() || !session.isKhach()) {
+            return;
+        }
+        if (data == null || data.isEmpty() || !isAdded()) {
+            return;
+        }
+        int uid = session.getTaiKhoanId();
+        DanhGiaDAO dgDao = new DanhGiaDAO(requireContext());
+        android.content.SharedPreferences sp = requireContext()
+                .getSharedPreferences("don_cua_toi", Context.MODE_PRIVATE);
+
+        for (DatPhong d : data) {
+            if (d == null) continue;
+            String st = DatPhongDAO.normalizeStatus(d.getTrangThai());
+            if (!DatPhongDAO.TT_DA_TRA_PHONG.equals(st)) {
+                continue;
+            }
+            int phongId = d.getPhongID();
+            if (phongId <= 0) {
+                continue;
+            }
+            String key = "prompted_rate_dp_" + d.getDatPhongID();
+            if (sp.getBoolean(key, false)) {
+                continue;
+            }
+            // Nếu đã gửi đánh giá (kể cả chờ duyệt) thì không hỏi lại.
+            if (dgDao.hasAnyReviewForUserAndPhong(uid, phongId)) {
+                sp.edit().putBoolean(key, true).apply();
+                continue;
+            }
+
+            new MaterialAlertDialogBuilder(requireContext())
+                    .setTitle(R.string.don_cua_toi_rate_title)
+                    .setMessage(R.string.don_cua_toi_rate_prompt)
+                    .setNegativeButton(R.string.don_cua_toi_rate_later, (di, w) ->
+                            sp.edit().putBoolean(key, true).apply())
+                    .setPositiveButton(R.string.don_cua_toi_rate_now, (di, w) -> {
+                        sp.edit().putBoolean(key, true).apply();
+                        DanhGiaFragment.showReviewDialogForPhong(this, phongId);
+                    })
+                    .show();
+            break; // chỉ hỏi 1 đơn mỗi lần mở màn
         }
     }
 

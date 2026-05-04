@@ -68,7 +68,7 @@ public class PhongDAO {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
 
         String sql =
-                "SELECT P.PhongID, P.TenPhong, P.GiaNgay, P.MoTa, P.TrangThai, IFNULL(P.SoNguoiToiDa, 2), "
+                "SELECT P.PhongID, P.TenPhong, P.GiaNgay, P.MoTa, P.TrangThai, IFNULL(P.SoNguoiToiDa, 2), IFNULL(P.LoaiPhong,''), "
                         + "IFNULL(P.GiaCaoDiem,0), IFNULL(P.GioCaoDiemTu,''), IFNULL(P.GioCaoDiemDen,''), "
                         + "(SELECT A.UrlAnh FROM AnhPhong A WHERE A.PhongID = P.PhongID ORDER BY A.AnhID LIMIT 1), "
                         + "(SELECT GROUP_CONCAT(A.UrlAnh, '|||') FROM AnhPhong A WHERE A.PhongID = P.PhongID) "
@@ -84,11 +84,12 @@ public class PhongDAO {
                     p.setMoTa(c.getString(3));
                     p.setTrangThai(c.getString(4));
                     p.setSoNguoiToiDa(c.getInt(5));
-                    p.setGiaCaoDiem(c.getDouble(6));
-                    p.setGioCaoDiemTu(c.getString(7));
-                    p.setGioCaoDiemDen(c.getString(8));
-                    p.setUrlAnh(c.getString(9));
-                    String concat = c.getString(10);
+                    p.setLoaiPhong(c.getString(6));
+                    p.setGiaCaoDiem(c.getDouble(7));
+                    p.setGioCaoDiemTu(c.getString(8));
+                    p.setGioCaoDiemDen(c.getString(9));
+                    p.setUrlAnh(c.getString(10));
+                    String concat = c.getString(11);
                     if (concat != null && !concat.isEmpty()) {
                         p.setAnhUrlsList(new ArrayList<>(Arrays.asList(concat.split(Pattern.quote(ANH_SEP), -1))));
                     } else {
@@ -106,7 +107,7 @@ public class PhongDAO {
     public PhongFull getPhongFullById(int phongId) {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         String sql =
-                "SELECT P.PhongID, P.TenPhong, P.GiaNgay, P.MoTa, P.TrangThai, IFNULL(P.SoNguoiToiDa, 2), "
+                "SELECT P.PhongID, P.TenPhong, P.GiaNgay, P.MoTa, P.TrangThai, IFNULL(P.SoNguoiToiDa, 2), IFNULL(P.LoaiPhong,''), "
                         + "IFNULL(P.GiaCaoDiem,0), IFNULL(P.GioCaoDiemTu,''), IFNULL(P.GioCaoDiemDen,''), "
                         + "(SELECT A.UrlAnh FROM AnhPhong A WHERE A.PhongID = P.PhongID ORDER BY A.AnhID LIMIT 1), "
                         + "(SELECT GROUP_CONCAT(A.UrlAnh, '|||') FROM AnhPhong A WHERE A.PhongID = P.PhongID) "
@@ -120,11 +121,12 @@ public class PhongDAO {
                 p.setMoTa(c.getString(3));
                 p.setTrangThai(c.getString(4));
                 p.setSoNguoiToiDa(c.getInt(5));
-                p.setGiaCaoDiem(c.getDouble(6));
-                p.setGioCaoDiemTu(c.getString(7));
-                p.setGioCaoDiemDen(c.getString(8));
-                p.setUrlAnh(c.getString(9));
-                String concat = c.getString(10);
+                p.setLoaiPhong(c.getString(6));
+                p.setGiaCaoDiem(c.getDouble(7));
+                p.setGioCaoDiemTu(c.getString(8));
+                p.setGioCaoDiemDen(c.getString(9));
+                p.setUrlAnh(c.getString(10));
+                String concat = c.getString(11);
                 if (concat != null && !concat.isEmpty()) {
                     p.setAnhUrlsList(new ArrayList<>(Arrays.asList(concat.split(Pattern.quote(ANH_SEP), -1))));
                 } else {

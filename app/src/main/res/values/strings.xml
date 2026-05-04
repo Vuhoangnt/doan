@@ -372,6 +372,7 @@
     <string name="phong_guest_search_title">Tìm &amp; lọc phòng</string>
     <string name="phong_guest_search_hint">Gõ tên phòng, mô tả hoặc mã phòng — không cần đúng dấu.</string>
     <string name="phong_guest_filter_card_title">Lọc phòng</string>
+    <string name="phong_guest_filter_type">Loại phòng</string>
     <string name="phong_guest_toolbar_search_hint">Dùng biểu tượng kính lúp cạnh chuông trên thanh trên để tìm theo tên, mô tả hoặc mã phòng (không cần đúng dấu).</string>
     <string name="phong_guest_search_field_hint">Tìm phòng…</string>
     <string name="phong_guest_filter_price">Mức giá mỗi đêm</string>
