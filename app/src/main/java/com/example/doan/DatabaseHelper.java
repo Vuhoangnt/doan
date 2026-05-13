@@ -240,12 +240,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("INSERT INTO Phong VALUES (null,'Phòng Bungalow',950000,'Nhà gỗ riêng trong vườn','Trống',3,'GiaDinh',0,'','')");
 
         // ===== ẢNH =====
-        db.execSQL("INSERT INTO AnhPhong VALUES (null,1,'phong1')");
+        db.execSQL("INSERT INTO AnhPhong VALUES (null,1,'don2')"); db.execSQL("INSERT INTO AnhPhong VALUES (null,1,'don')");
         db.execSQL("INSERT INTO AnhPhong VALUES (null,2,'phong2')");
-        db.execSQL("INSERT INTO AnhPhong VALUES (null,3,'phong3')");
+        db.execSQL("INSERT INTO AnhPhong VALUES (null,2,'giuongdoi')");
+        db.execSQL("INSERT INTO AnhPhong VALUES (null,3,'giadinh')");
+        db.execSQL("INSERT INTO AnhPhong VALUES (null,3,'giadinh2')");
+        db.execSQL("INSERT INTO AnhPhong VALUES (null,3,'giadinh3')");
         db.execSQL("INSERT INTO AnhPhong VALUES (null,4,'phong4')");
-        db.execSQL("INSERT INTO AnhPhong VALUES (null,5,'phong5')");
-        db.execSQL("INSERT INTO AnhPhong VALUES (null,6,'phong6')");
+        db.execSQL("INSERT INTO AnhPhong VALUES (null,4,'stu')");
+        db.execSQL("INSERT INTO AnhPhong VALUES (null,5,'phong6')");
+        db.execSQL("INSERT INTO AnhPhong VALUES (null,6,'tang1')");
+        db.execSQL("INSERT INTO AnhPhong VALUES (null,6,'tang')");
         db.execSQL("INSERT INTO AnhPhong VALUES (null,7,'phong7')");
         db.execSQL("INSERT INTO AnhPhong VALUES (null,7,'phong8')");
         db.execSQL("INSERT INTO AnhPhong VALUES (null,8,'phong9')");
@@ -386,12 +391,24 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         // ===== THÔNG TIN HOMESTAY =====
         db.execSQL(
-                "INSERT INTO HomestayThongTin VALUES (1,'Homestay Du Lịch'," +
-                        "'Không gian xanh, view đẹp, phù hợp nghỉ dưỡng và khám phá. " +
-                        "Đội ngũ hỗ trợ 24/7, đặt phòng linh hoạt có hoặc không tài khoản.'," +
-                        "'123 Đường Biển, Phường Trung Tâm, TP. Du Lịch'," +
-                        "'0337 124 322 ','khanhhuyen@homestay.vn','Nhận phòng từ 14:00 — Trả phòng trước 12:00'," +
-                        "'phong2','','',1,1,1,1,1,5,6,12.2388,109.1967,'Cổng sau gần bãi xe — gọi khi tới','','','','','','')"
+                "INSERT INTO HomestayThongTin VALUES (\n" +
+                        "1,\n" +
+                        "'Homestay Du Lịch',\n" +
+                        "'Không gian xanh, view đẹp, phù hợp nghỉ dưỡng và khám phá. Đội ngũ hỗ trợ 24/7, đặt phòng linh hoạt có hoặc không tài khoản.',\n" +
+                        "'Quảng Trường Bình Minh, P. Cửa Lò, tỉnh Nghệ An',\n" +
+                        "'0337 124 322',\n" +
+                        "'khanhhuyen@homestay.vn',\n" +
+                        "'Nhận phòng từ 14:00 — Trả phòng trước 12:00',\n" +
+                        "'phong7',\n" +
+                        "'',\n" +
+                        "'',\n" +
+                        "1,1,1,1,1,\n" +
+                        "5,6,\n" +
+                        "18.7979931,\n" +
+                        "105.7305256,\n" +
+                        "'Cổng sau gần bãi xe — gọi khi tới',\n" +
+                        "'','','','','',''\n" +
+                        ")"
         );
 
         // ===== ĐÁNH GIÁ MẪU (TrangThaiDuyet: da_duyet | cho_duyet) =====
