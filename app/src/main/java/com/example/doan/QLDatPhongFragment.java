@@ -56,16 +56,9 @@ public class QLDatPhongFragment extends Fragment implements DataRefreshable {
         View view = inflater.inflate(R.layout.fragment_ql_dat_phong, container, false);
         listView = view.findViewById(R.id.listQlDatPhong);
         tabLayout = view.findViewById(R.id.tabQlDatPhong);
-        TextView txtTitle = view.findViewById(R.id.txtQlDonTitle);
-        TextView txtSubtitle = view.findViewById(R.id.txtQlDonSubtitle);
+
         SessionManager sessionHeader = new SessionManager(requireContext());
-        if (sessionHeader.isNhanVien()) {
-            txtTitle.setText(R.string.le_tan_don_title);
-            txtSubtitle.setText(R.string.le_tan_don_hint);
-        } else {
-            txtTitle.setText(R.string.admin_ql_don_title);
-            txtSubtitle.setText(R.string.admin_ql_don_hint);
-        }
+
 
         dao = new DatPhongDAO(requireContext());
         ttDao = new ThanhToanDAO(requireContext());
