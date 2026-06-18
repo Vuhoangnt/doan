@@ -65,6 +65,27 @@ public class PhongGiaLeDAO {
     }
 
     /**
+     * Map ngày lễ → hệ số nhân (yyyy-MM-dd → heSo). Dùng thay thế getNgayLeSetByPhongId
+     * để tính giá chính xác theo hệ số riêng mỗi ngày.
+     */
+    public java.util.Map<String, Double> getNgayLeMapByPhongId(int phongId) {
+        java.util.Map<String, Double> out = new java.util.HashMap<>();
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        try (Cursor c = db.rawQuery(
+                "SELECT NgayLe, HeSoNhan FROM Phong_GiaLe WHERE PhongID=?",
+                new String[]{String.valueOf(phongId)})) {
+            if (c.moveToFirst()) {
+                do {
+                    String ngay = c.getString(0);
+                    double hs = c.getDouble(1);
+                    out.put(ngay, hs > 0 ? hs : 1.0);
+                } while (c.moveToNext());
+            }
+        }
+        return out;
+    }
+
+    /**
      * Thêm / cập nhật một ngày lễ cho phòng. UNIQUE(PhongID, NgayLe) nên INSERT OR REPLACE
      * sẽ tự ghi đè nếu trùng ngày.
      *

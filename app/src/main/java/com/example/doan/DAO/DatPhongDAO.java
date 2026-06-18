@@ -613,6 +613,8 @@ public class DatPhongDAO {
         String gioTra = d.getGioTra() != null ? d.getGioTra() : "12:00";
         java.util.Set<String> ngayLeSet = new com.example.doan.DAO.PhongGiaLeDAO(appContext)
                 .getNgayLeSetByPhongId(d.getPhongID());
+        java.util.Map<String, Double> ngayLeHesoMap = new com.example.doan.DAO.PhongGiaLeDAO(appContext)
+                .getNgayLeMapByPhongId(d.getPhongID());
         double giaDem = PeakPricingUtil.demGiaTheoGio(p, gioNhan, gioTra);
         double tongDv = getTongTienDichVu(datPhongId);
         double tongMoi;
@@ -629,7 +631,7 @@ public class DatPhongDAO {
             double tongPhongActual = 0;
             for (int i = 0; i < actual; i++) {
                 String ngayDem = congNgayYmd(d.getNgayNhan(), i);
-                tongPhongActual += PeakPricingUtil.demGiaMotDem(p, gioNhan, gioTra, ngayDem, ngayLeSet, 1.0);
+                tongPhongActual += PeakPricingUtil.demGiaMotDem(p, gioNhan, gioTra, ngayDem, ngayLeSet, 1.0, ngayLeHesoMap);
             }
             // Phí trả sớm 20% dựa trên giá đêm "bình thường" của phần còn lại (lấy giaDem làm đại diện)
             double phiTraSom = giaDem * remaining * 0.2;
@@ -646,12 +648,12 @@ public class DatPhongDAO {
             double tongPhongBooked = 0;
             for (int i = 0; i < booked; i++) {
                 String ngayDem = congNgayYmd(d.getNgayNhan(), i);
-                tongPhongBooked += PeakPricingUtil.demGiaMotDem(p, gioNhan, gioTra, ngayDem, ngayLeSet, 1.0);
+                tongPhongBooked += PeakPricingUtil.demGiaMotDem(p, gioNhan, gioTra, ngayDem, ngayLeSet, 1.0, ngayLeHesoMap);
             }
             double tongPhongExtra = 0;
             for (int i = 0; i < extra; i++) {
                 String ngayDem = congNgayYmd(planned, i);
-                tongPhongExtra += PeakPricingUtil.demGiaMotDem(p, gioNhan, gioTra, ngayDem, ngayLeSet, 1.0);
+                tongPhongExtra += PeakPricingUtil.demGiaMotDem(p, gioNhan, gioTra, ngayDem, ngayLeSet, 1.0, ngayLeHesoMap);
             }
             tongMoi = tongPhongBooked + tongPhongExtra + tongDv;
         } else {

@@ -87,6 +87,21 @@ public final class PeakPricingUtil {
                                       @Nullable String ngayYmd,
                                       @Nullable Set<String> ngayLeSet,
                                       double heSoLeMacDinh) {
+        return demGiaMotDem(p, gioNhan, gioTra, ngayYmd, ngayLeSet, heSoLeMacDinh, null);
+    }
+
+    /**
+     * Đơn giá cho 1 đêm, có xét ngày lễ với hệ số riêng mỗi ngày.
+     *
+     * @param ngayLeHesoMap map ngày lễ → hệ số nhân (từ {@code PhongGiaLeDAO.getNgayLeMapByPhongId});
+     *                      null = dùng {@code heSoLeMacDinh} cho mọi ngày lễ
+     */
+    public static double demGiaMotDem(@Nullable PhongFull p,
+                                      @Nullable String gioNhan, @Nullable String gioTra,
+                                      @Nullable String ngayYmd,
+                                      @Nullable Set<String> ngayLeSet,
+                                      double heSoLeMacDinh,
+                                      @Nullable java.util.Map<String, Double> ngayLeHesoMap) {
         if (p == null) {
             return 0;
         }
@@ -96,7 +111,12 @@ public final class PeakPricingUtil {
         }
         // 1) Ngày lễ thắng
         if (ngayYmd != null && ngayLeSet != null && ngayLeSet.contains(ngayYmd)) {
-            double hs = heSoLeMacDinh > 0 ? heSoLeMacDinh : 1.5;
+            double hs = heSoLeMacDinh;
+            if (ngayLeHesoMap != null && ngayLeHesoMap.containsKey(ngayYmd)) {
+                hs = ngayLeHesoMap.get(ngayYmd);
+            } else if (hs <= 0) {
+                hs = 1.5;
+            }
             return base * hs;
         }
         // 2) Giờ cao điểm
@@ -117,6 +137,19 @@ public final class PeakPricingUtil {
                                        @Nullable String gioNhan, @Nullable String gioTra,
                                        @Nullable Set<String> ngayLeSet,
                                        double heSoLeMacDinh) {
+        return tongTienPhong(p, ngayNhanYmd, ngayTraYmd, gioNhan, gioTra,
+                ngayLeSet, heSoLeMacDinh, null);
+    }
+
+    /**
+     * Tổng tiền phòng cho cả khoảng [ngayNhan, ngayTra), áp hệ số riêng từng ngày lễ.
+     */
+    public static double tongTienPhong(@Nullable PhongFull p,
+                                       @Nullable String ngayNhanYmd, @Nullable String ngayTraYmd,
+                                       @Nullable String gioNhan, @Nullable String gioTra,
+                                       @Nullable Set<String> ngayLeSet,
+                                       double heSoLeMacDinh,
+                                       @Nullable java.util.Map<String, Double> ngayLeHesoMap) {
         if (p == null || ngayNhanYmd == null || ngayTraYmd == null) {
             return 0;
         }
@@ -127,7 +160,7 @@ public final class PeakPricingUtil {
         double tong = 0;
         for (int i = 0; i < soDem; i++) {
             String ngayDem = congNgay(ngayNhanYmd, i);
-            tong += demGiaMotDem(p, gioNhan, gioTra, ngayDem, ngayLeSet, heSoLeMacDinh);
+            tong += demGiaMotDem(p, gioNhan, gioTra, ngayDem, ngayLeSet, heSoLeMacDinh, ngayLeHesoMap);
         }
         return tong;
     }

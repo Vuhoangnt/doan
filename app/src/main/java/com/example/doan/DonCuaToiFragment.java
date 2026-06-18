@@ -318,9 +318,12 @@ public class DonCuaToiFragment extends Fragment implements DataRefreshable {
         java.util.Set<String> ngayLeSet = (p != null)
                 ? new com.example.doan.DAO.PhongGiaLeDAO(requireContext()).getNgayLeSetByPhongId(p.getPhongID())
                 : java.util.Collections.<String>emptySet();
+        java.util.Map<String, Double> ngayLeHesoMap = (p != null)
+                ? new com.example.doan.DAO.PhongGiaLeDAO(requireContext()).getNgayLeMapByPhongId(p.getPhongID())
+                : java.util.Collections.emptyMap();
         double tongPhong = (p != null)
                 ? PeakPricingUtil.tongTienPhong(p, updated.getNgayNhan(), updated.getNgayTra(),
-                        gioNhan, gioTra, ngayLeSet, 1.0)
+                        gioNhan, gioTra, ngayLeSet, 1.0, ngayLeHesoMap)
                 : 0;
         double giaDem = (p != null)
                 ? PeakPricingUtil.demGiaTheoGio(p, gioNhan, gioTra)

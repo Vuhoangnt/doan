@@ -444,8 +444,9 @@ public class PhongAdapter extends BaseAdapter {
             // Tổng tiền phòng = tổng từng đêm, mỗi đêm áp giá lễ riêng nếu rơi vào ngày lễ.
             // Query fresh để luôn đúng dù ngày lễ được thêm sau khi mở dialog.
             Set<String> ngayLeFresh = new PhongGiaLeDAO(context).getNgayLeSetByPhongId(p.getPhongID());
+            java.util.Map<String, Double> ngayLeHesoMap = new PhongGiaLeDAO(context).getNgayLeMapByPhongId(p.getPhongID());
             double tongPhong = PeakPricingUtil.tongTienPhong(
-                    p, nhan, tra, gioNhan[0], gioTra[0], ngayLeFresh, 1.0);
+                    p, nhan, tra, gioNhan[0], gioTra[0], ngayLeFresh, 1.0, ngayLeHesoMap);
             double tong = tongPhong + tongDv;
             txtTamTinh.setVisibility(View.VISIBLE);
             String line = String.format(Locale.getDefault(),
@@ -718,8 +719,10 @@ public class PhongAdapter extends BaseAdapter {
                 Toast.makeText(context, context.getString(R.string.dat_phong_invalid_stay_time), Toast.LENGTH_LONG).show();
                 return;
             }
+            Set<String> ngayLeFresh2 = new PhongGiaLeDAO(context).getNgayLeSetByPhongId(p.getPhongID());
+            java.util.Map<String, Double> ngayLeHesoMap2 = new PhongGiaLeDAO(context).getNgayLeMapByPhongId(p.getPhongID());
             double tongPhong = PeakPricingUtil.tongTienPhong(
-                    p, nhan, tra, gioNhan[0], gioTra[0], ngayLeSet, 1.0);
+                    p, nhan, tra, gioNhan[0], gioTra[0], ngayLeFresh2, 1.0, ngayLeHesoMap2);
             double tongDv = 0;
             for (DichVuRow r : dvRows) {
                 if (r.cb != null && r.cb.isChecked() && r.cb.getTag() instanceof DichVu) {
@@ -1058,6 +1061,9 @@ public class PhongAdapter extends BaseAdapter {
         card.setVisibility(View.VISIBLE);
         LayoutInflater inf = LayoutInflater.from(context);
 
+        // Query fresh ngày lễ + hệ số từ DB.
+        java.util.Map<String, Double> ngayLeHesoMap = new PhongGiaLeDAO(context).getNgayLeMapByPhongId(p.getPhongID());
+
         // Từng đêm.
         layoutNights.removeAllViews();
         double tongPhong = 0;
@@ -1065,7 +1071,8 @@ public class PhongAdapter extends BaseAdapter {
         SimpleDateFormat outDmy = new SimpleDateFormat("dd/MM", Locale.getDefault());
         for (int i = 0; i < soDem; i++) {
             String ngayDem = congNgayYmd(nhanYmd, i);
-            double giaDem = PeakPricingUtil.demGiaMotDem(p, gioNhan, gioTra, ngayDem, freshNgayLeSet, 1.0);
+            double giaDem = PeakPricingUtil.demGiaMotDem(
+                    p, gioNhan, gioTra, ngayDem, freshNgayLeSet, 1.0, ngayLeHesoMap);
             tongPhong += giaDem;
 
             // Loại đêm.
