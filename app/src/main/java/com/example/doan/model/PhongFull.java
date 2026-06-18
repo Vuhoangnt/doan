@@ -20,6 +20,9 @@ public class PhongFull {
     private double giaCaoDiem;
     private String gioCaoDiemTu;
     private String gioCaoDiemDen;
+    /** Hệ số nhân với {@code GiaNgay} cho giờ cao điểm (mặc định 1.0 = không cộng).
+     *  Nếu {@code giaCaoDiem > 0} thì giá cao điểm sẽ dùng {@code max(giaCaoDiem, GiaNgay * heSoCaoDiem)}. */
+    private double heSoCaoDiem = 1.0;
 
     // ✅ nhiều dịch vụ
     private List<String> dichVuList;
@@ -109,5 +112,13 @@ public class PhongFull {
 
     public void setGioCaoDiemDen(String gioCaoDiemDen) {
         this.gioCaoDiemDen = gioCaoDiemDen;
+    }
+
+    public double getHeSoCaoDiem() {
+        return heSoCaoDiem <= 0 ? 1.0 : heSoCaoDiem;
+    }
+
+    public void setHeSoCaoDiem(double heSoCaoDiem) {
+        this.heSoCaoDiem = heSoCaoDiem;
     }
 }

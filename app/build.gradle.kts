@@ -38,6 +38,7 @@ dependencies {
     implementation("androidx.palette:palette:1.0.0")
     implementation(libs.activity)
     implementation(libs.constraintlayout)
+    implementation(libs.recyclerview)
     implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
     testImplementation(libs.junit)
     implementation("com.github.bumptech.glide:glide:4.16.0")

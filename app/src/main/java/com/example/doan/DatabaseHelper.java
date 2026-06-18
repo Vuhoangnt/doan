@@ -16,7 +16,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class DatabaseHelper extends SQLiteOpenHelper {
 
     private static final String DB_NAME = "HomestayDB.db";
-    private static final int DB_VERSION = 19;
+    private static final int DB_VERSION = 20;
 
     public DatabaseHelper(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
@@ -52,8 +52,23 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                         "LoaiPhong TEXT," +
                         "GiaCaoDiem REAL DEFAULT 0," +
                         "GioCaoDiemTu TEXT," +
-                        "GioCaoDiemDen TEXT)"
+                        "GioCaoDiemDen TEXT," +
+                        "HeSoGioCaoDiem REAL DEFAULT 1.0)"
         );
+
+        // ===== PHÒNG – GIÁ LỄ (mỗi ngày lễ 1 dòng / phòng) =====
+        db.execSQL(
+                "CREATE TABLE Phong_GiaLe (" +
+                        "ID INTEGER PRIMARY KEY AUTOINCREMENT," +
+                        "PhongID INTEGER NOT NULL," +
+                        "NgayLe TEXT NOT NULL," +
+                        "HeSoNhan REAL NOT NULL DEFAULT 1.5," +
+                        "GhiChu TEXT," +
+                        "UNIQUE (PhongID, NgayLe) ON CONFLICT REPLACE," +
+                        "FOREIGN KEY (PhongID) REFERENCES Phong(PhongID))"
+        );
+        db.execSQL("CREATE INDEX idx_PhongGiaLe_PhongID ON Phong_GiaLe(PhongID)");
+        db.execSQL("CREATE INDEX idx_PhongGiaLe_NgayLe ON Phong_GiaLe(NgayLe)");
 
         // ===== ẢNH PHÒNG =====
         db.execSQL(
@@ -228,16 +243,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         // ===== PHÒNG (LoaiPhong: Don / Doi / GiaDinh — gợi ý báo cáo & filter) =====
         // Cột thêm: GiaCaoDiem, GioCaoDiemTu, GioCaoDiemDen (0 / rỗng = không bật giờ cao điểm)
-        db.execSQL("INSERT INTO Phong VALUES (null,'Phòng Đơn',300000,'1 giường, view đẹp','Trống',2,'Don',350000,'18:00','22:00')");
-        db.execSQL("INSERT INTO Phong VALUES (null,'Phòng Đôi',500000,'2 giường, rộng rãi','Trống',4,'Doi',550000,'17:00','21:00')");
-        db.execSQL("INSERT INTO Phong VALUES (null,'Phòng Gia Đình',700000,'Phòng lớn cho gia đình','Trống',6,'GiaDinh',0,'','')");
-        db.execSQL("INSERT INTO Phong VALUES (null,'Phòng Studio',400000,'Ban công riêng, bếp nhỏ, máy lạnh','Trống',2,'Studio',0,'','')");
-        db.execSQL("INSERT INTO Phong VALUES (null,'Phòng Hướng Biển',850000,'View biển toàn cảnh, bồn tắm','Trống',2,'Doi',900000,'19:00','23:00')");
-        db.execSQL("INSERT INTO Phong VALUES (null,'Phòng Dorm',250000,'Giường tầng, phù hợp nhóm bạn','Trống',8,'Dorm',0,'','')");
-        db.execSQL("INSERT INTO Phong VALUES (null,'Phòng Deluxe',650000,'Nội thất cao cấp, minibar','Trống',2,'Doi',720000,'18:00','22:00')");
-        db.execSQL("INSERT INTO Phong VALUES (null,'Phòng Penthouse',1200000,'Tầng thượng, sân thượng riêng','Trống',4,'GiaDinh',0,'','')");
-        db.execSQL("INSERT INTO Phong VALUES (null,'Phòng Economy',220000,'Gọn gàng, tối ưu chi phí','Trống',1,'Don',0,'','')");
-        db.execSQL("INSERT INTO Phong VALUES (null,'Phòng Bungalow',950000,'Nhà gỗ riêng trong vườn','Trống',3,'GiaDinh',0,'','')");
+        db.execSQL("INSERT INTO Phong VALUES (null,'Phòng Đơn',300000,'1 giường, view đẹp','Trống',2,'Don',350000,'18:00','22:00',1.0)");
+        db.execSQL("INSERT INTO Phong VALUES (null,'Phòng Đôi',500000,'2 giường, rộng rãi','Trống',4,'Doi',550000,'17:00','21:00',1.0)");
+        db.execSQL("INSERT INTO Phong VALUES (null,'Phòng Gia Đình',700000,'Phòng lớn cho gia đình','Trống',6,'GiaDinh',0,'','',1.0)");
+        db.execSQL("INSERT INTO Phong VALUES (null,'Phòng Studio',400000,'Ban công riêng, bếp nhỏ, máy lạnh','Trống',2,'Studio',0,'','',1.0)");
+        db.execSQL("INSERT INTO Phong VALUES (null,'Phòng Hướng Biển',850000,'View biển toàn cảnh, bồn tắm','Trống',2,'Doi',900000,'19:00','23:00',1.0)");
+        db.execSQL("INSERT INTO Phong VALUES (null,'Phòng Dorm',250000,'Giường tầng, phù hợp nhóm bạn','Trống',8,'Dorm',0,'','',1.0)");
+        db.execSQL("INSERT INTO Phong VALUES (null,'Phòng Deluxe',650000,'Nội thất cao cấp, minibar','Trống',2,'Doi',720000,'18:00','22:00',1.0)");
+        db.execSQL("INSERT INTO Phong VALUES (null,'Phòng Penthouse',1200000,'Tầng thượng, sân thượng riêng','Trống',4,'GiaDinh',0,'','',1.0)");
+        db.execSQL("INSERT INTO Phong VALUES (null,'Phòng Economy',220000,'Gọn gàng, tối ưu chi phí','Trống',1,'Don',0,'','',1.0)");
+        db.execSQL("INSERT INTO Phong VALUES (null,'Phòng Bungalow',950000,'Nhà gỗ riêng trong vườn','Trống',3,'GiaDinh',0,'','',1.0)");
 
         // ===== ẢNH =====
         db.execSQL("INSERT INTO AnhPhong VALUES (null,1,'don2')"); db.execSQL("INSERT INTO AnhPhong VALUES (null,1,'don')");
@@ -450,23 +465,67 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("INSERT INTO DanhGia VALUES (null,5,'Nhóm trekking',4,'Dorm tiện giao lưu, ổ khóa tủ hơi cũ.','2026-04-13',6,'da_duyet')");
         db.execSQL("INSERT INTO DanhGia VALUES (null,3,'Khách demo',5,'Bình luận chờ admin duyệt (mẫu).','2026-04-14',2,'cho_duyet')");
         db.execSQL("INSERT INTO DanhGia VALUES (null,null,'Ẩn danh',4,'Cần duyệt — homestay yên tĩnh.','2026-04-14',null,'cho_duyet')");
+
+        // ===== NGÀY LỄ MẪU (áp cho mọi phòng 1..10; admin có thể sửa/xoá/thêm sau) =====
+        // Định dạng: (PhongID, NgayLe [yyyy-MM-dd], HeSoNhan, GhiChu)
+        // Hệ số mẫu: Tết/Giỗ tổ 2.0, lễ lớn 1.5, cuối tuần không cấu hình ở đây.
+        // Tất cả phòng đều áp dụng ngày lễ giống nhau để dễ demo.
+        String[][] sampleHolidays = new String[][] {
+                {"2026-01-01", "2.0", "Tết Dương lịch"},
+                {"2026-02-16", "2.0", "Giao thừa Tết Nguyên Đán"},
+                {"2026-02-17", "2.0", "Mùng 1 Tết"},
+                {"2026-02-18", "2.0", "Mùng 2 Tết"},
+                {"2026-02-19", "1.5", "Mùng 3 Tết"},
+                {"2026-04-26", "1.5", "Lễ 30/4"},
+                {"2026-05-01", "1.5", "Lễ 1/5"},
+                {"2026-09-02", "1.5", "Lễ Quốc khánh 2/9"},
+                {"2026-04-10", "1.3", "Giỗ Tổ Hùng Vương 10/3"}
+        };
+        for (int phongId = 1; phongId <= 10; phongId++) {
+            for (String[] h : sampleHolidays) {
+                db.execSQL("INSERT INTO Phong_GiaLe (PhongID, NgayLe, HeSoNhan, GhiChu) VALUES (?,?,?,?)",
+                        new Object[]{phongId, h[0], Double.parseDouble(h[1]), h[2]});
+            }
+        }
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        // Thứ tự: bảng phụ thuộc trước
-        db.execSQL("DROP TABLE IF EXISTS DatPhong_DichVu");
-        db.execSQL("DROP TABLE IF EXISTS ThanhToan");
-        db.execSQL("DROP TABLE IF EXISTS DatPhong");
-        db.execSQL("DROP TABLE IF EXISTS Phong_DichVu");
-        db.execSQL("DROP TABLE IF EXISTS AnhPhong");
-        db.execSQL("DROP TABLE IF EXISTS DanhGia");
-        db.execSQL("DROP TABLE IF EXISTS ThongBao");
-        db.execSQL("DROP TABLE IF EXISTS Phong");
-        db.execSQL("DROP TABLE IF EXISTS DichVu");
-        db.execSQL("DROP TABLE IF EXISTS TinTuc");
-        db.execSQL("DROP TABLE IF EXISTS HomestayThongTin");
-        db.execSQL("DROP TABLE IF EXISTS TaiKhoan");
-        onCreate(db);
+        // v19 -> v20: thêm cột hệ số giờ cao điểm + bảng Phong_GiaLe
+        if (oldVersion < 20) {
+            try {
+                db.execSQL("ALTER TABLE Phong ADD COLUMN HeSoGioCaoDiem REAL DEFAULT 1.0");
+            } catch (Exception ignored) { /* cột đã tồn tại */ }
+            db.execSQL(
+                    "CREATE TABLE IF NOT EXISTS Phong_GiaLe (" +
+                            "ID INTEGER PRIMARY KEY AUTOINCREMENT," +
+                            "PhongID INTEGER NOT NULL," +
+                            "NgayLe TEXT NOT NULL," +
+                            "HeSoNhan REAL NOT NULL DEFAULT 1.5," +
+                            "GhiChu TEXT," +
+                            "UNIQUE (PhongID, NgayLe) ON CONFLICT REPLACE," +
+                            "FOREIGN KEY (PhongID) REFERENCES Phong(PhongID))"
+            );
+            db.execSQL("CREATE INDEX IF NOT EXISTS idx_PhongGiaLe_PhongID ON Phong_GiaLe(PhongID)");
+            db.execSQL("CREATE INDEX IF NOT EXISTS idx_PhongGiaLe_NgayLe ON Phong_GiaLe(NgayLe)");
+        }
+        // Phiên bản cũ hơn nữa -> drop hết và dựng lại.
+        if (oldVersion < 19) {
+            // Thứ tự: bảng phụ thuộc trước
+            db.execSQL("DROP TABLE IF EXISTS DatPhong_DichVu");
+            db.execSQL("DROP TABLE IF EXISTS ThanhToan");
+            db.execSQL("DROP TABLE IF EXISTS DatPhong");
+            db.execSQL("DROP TABLE IF EXISTS Phong_DichVu");
+            db.execSQL("DROP TABLE IF EXISTS AnhPhong");
+            db.execSQL("DROP TABLE IF EXISTS DanhGia");
+            db.execSQL("DROP TABLE IF EXISTS ThongBao");
+            db.execSQL("DROP TABLE IF EXISTS Phong_GiaLe");
+            db.execSQL("DROP TABLE IF EXISTS Phong");
+            db.execSQL("DROP TABLE IF EXISTS DichVu");
+            db.execSQL("DROP TABLE IF EXISTS TinTuc");
+            db.execSQL("DROP TABLE IF EXISTS HomestayThongTin");
+            db.execSQL("DROP TABLE IF EXISTS TaiKhoan");
+            onCreate(db);
+        }
     }
 }

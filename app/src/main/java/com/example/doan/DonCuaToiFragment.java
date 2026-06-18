@@ -313,12 +313,18 @@ public class DonCuaToiFragment extends Fragment implements DataRefreshable {
         double tongDv = dao.getTongTienDichVuPublic(updated.getDatPhongID());
 
         PhongFull p = new PhongDAO(requireContext()).getPhongFullById(updated.getPhongID());
-        double giaDem = (p != null)
-                ? PeakPricingUtil.demGiaTheoGio(p,
-                updated.getGioNhan() != null ? updated.getGioNhan() : "14:00",
-                updated.getGioTra() != null ? updated.getGioTra() : "12:00")
+        String gioNhan = updated.getGioNhan() != null ? updated.getGioNhan() : "14:00";
+        String gioTra = updated.getGioTra() != null ? updated.getGioTra() : "12:00";
+        java.util.Set<String> ngayLeSet = (p != null)
+                ? new com.example.doan.DAO.PhongGiaLeDAO(requireContext()).getNgayLeSetByPhongId(p.getPhongID())
+                : java.util.Collections.<String>emptySet();
+        double tongPhong = (p != null)
+                ? PeakPricingUtil.tongTienPhong(p, updated.getNgayNhan(), updated.getNgayTra(),
+                        gioNhan, gioTra, ngayLeSet, 1.0)
                 : 0;
-        double tongPhong = giaDem > 0 ? giaDem * Math.max(1, updated.getSoDem()) : 0;
+        double giaDem = (p != null)
+                ? PeakPricingUtil.demGiaTheoGio(p, gioNhan, gioTra)
+                : 0;
         double phiPhat = Math.max(0, updated.getTongTien() - tongPhong - tongDv);
 
         double cocMin = updated.getTongTien() * 0.2;

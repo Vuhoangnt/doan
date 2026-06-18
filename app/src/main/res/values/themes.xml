@@ -46,6 +46,14 @@
         <item name="cardBackgroundColor">?attr/colorSurfaceContainerHighest</item>
     </style>
 
+    <!-- Nút "tonal" an toàn (filled nhưng màu nhạt = primaryContainer).
+         Hoạt động với mọi phiên bản Material; tránh lỗi resolve style Material3.TonalButton. -->
+    <style name="Widget.Doan.Button.Tonal" parent="Widget.Material3.Button">
+        <item name="backgroundTint">?attr/colorSecondaryContainer</item>
+        <item name="android:textColor">?attr/colorOnSecondaryContainer</item>
+        <item name="iconTint">?attr/colorOnSecondaryContainer</item>
+    </style>
+
     <style name="ThemeOverlay.Doan.Dialog.Alert" parent="ThemeOverlay.Material3.Dialog.Alert" />
 
     <style name="ThemeOverlay.Doan.MaterialAlertDialog" parent="ThemeOverlay.Material3.MaterialAlertDialog" />

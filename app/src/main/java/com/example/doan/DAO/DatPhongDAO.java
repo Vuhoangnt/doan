@@ -611,6 +611,8 @@ public class DatPhongDAO {
         }
         String gioNhan = d.getGioNhan() != null ? d.getGioNhan() : "14:00";
         String gioTra = d.getGioTra() != null ? d.getGioTra() : "12:00";
+        java.util.Set<String> ngayLeSet = new com.example.doan.DAO.PhongGiaLeDAO(appContext)
+                .getNgayLeSetByPhongId(d.getPhongID());
         double giaDem = PeakPricingUtil.demGiaTheoGio(p, gioNhan, gioTra);
         double tongDv = getTongTienDichVu(datPhongId);
         double tongMoi;
@@ -618,23 +620,40 @@ public class DatPhongDAO {
 
         // So sánh yyyy-MM-dd bằng string là an toàn khi đúng format.
         if (actualNgayTraYmd.compareTo(planned) < 0) {
-            // Trả sớm: thu actual đêm + 20% của số đêm còn lại.
+            // Trả sớm: thu actual đêm (đã áp giá lễ riêng) + 20% của số đêm còn lại.
             if (actual >= booked) {
                 return 0;
             }
             int remaining = booked - actual;
-            double tongPhong = giaDem * actual;
+            // Tính đúng theo từng đêm (đêm lễ sẽ có giá riêng)
+            double tongPhongActual = 0;
+            for (int i = 0; i < actual; i++) {
+                String ngayDem = congNgayYmd(d.getNgayNhan(), i);
+                tongPhongActual += PeakPricingUtil.demGiaMotDem(p, gioNhan, gioTra, ngayDem, ngayLeSet, 1.0);
+            }
+            // Phí trả sớm 20% dựa trên giá đêm "bình thường" của phần còn lại (lấy giaDem làm đại diện)
             double phiTraSom = giaDem * remaining * 0.2;
-            tongMoi = tongPhong + phiTraSom + tongDv;
+            tongMoi = tongPhongActual + phiTraSom + tongDv;
             soDemMoi = actual;
         } else if (actualNgayTraYmd.compareTo(planned) > 0) {
-            // Trả muộn: cộng thêm tiền các đêm vượt.
+            // Trả muộn: cộng thêm tiền các đêm vượt (cũng xét lễ cho các đêm vượt).
             int extra = computeSoDem(planned, actualNgayTraYmd);
             if (extra < 1) {
                 return 0;
             }
             soDemMoi = booked + extra;
-            tongMoi = (giaDem * soDemMoi) + tongDv;
+            // Giữ phần booked theo giá đã áp lễ; phần extra cũng vậy.
+            double tongPhongBooked = 0;
+            for (int i = 0; i < booked; i++) {
+                String ngayDem = congNgayYmd(d.getNgayNhan(), i);
+                tongPhongBooked += PeakPricingUtil.demGiaMotDem(p, gioNhan, gioTra, ngayDem, ngayLeSet, 1.0);
+            }
+            double tongPhongExtra = 0;
+            for (int i = 0; i < extra; i++) {
+                String ngayDem = congNgayYmd(planned, i);
+                tongPhongExtra += PeakPricingUtil.demGiaMotDem(p, gioNhan, gioTra, ngayDem, ngayLeSet, 1.0);
+            }
+            tongMoi = tongPhongBooked + tongPhongExtra + tongDv;
         } else {
             return 0; // đúng ngày, không chỉnh
         }
@@ -661,6 +680,21 @@ public class DatPhongDAO {
             return Math.max(1, days);
         } catch (Exception e) {
             return -1;
+        }
+    }
+
+    private static String congNgayYmd(String ymd, int offsetDays) {
+        try {
+            java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+            sdf.setLenient(false);
+            java.util.Date d = sdf.parse(ymd);
+            if (d == null) return ymd;
+            java.util.Calendar c = java.util.Calendar.getInstance();
+            c.setTime(d);
+            c.add(java.util.Calendar.DAY_OF_MONTH, offsetDays);
+            return sdf.format(c.getTime());
+        } catch (Exception e) {
+            return ymd;
         }
     }
 

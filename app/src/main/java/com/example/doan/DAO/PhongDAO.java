@@ -69,7 +69,7 @@ public class PhongDAO {
 
         String sql =
                 "SELECT P.PhongID, P.TenPhong, P.GiaNgay, P.MoTa, P.TrangThai, IFNULL(P.SoNguoiToiDa, 2), IFNULL(P.LoaiPhong,''), "
-                        + "IFNULL(P.GiaCaoDiem,0), IFNULL(P.GioCaoDiemTu,''), IFNULL(P.GioCaoDiemDen,''), "
+                        + "IFNULL(P.GiaCaoDiem,0), IFNULL(P.GioCaoDiemTu,''), IFNULL(P.GioCaoDiemDen,''), IFNULL(P.HeSoGioCaoDiem,1.0), "
                         + "(SELECT A.UrlAnh FROM AnhPhong A WHERE A.PhongID = P.PhongID ORDER BY A.AnhID LIMIT 1), "
                         + "(SELECT GROUP_CONCAT(A.UrlAnh, '|||') FROM AnhPhong A WHERE A.PhongID = P.PhongID) "
                         + "FROM Phong P";
@@ -88,8 +88,9 @@ public class PhongDAO {
                     p.setGiaCaoDiem(c.getDouble(7));
                     p.setGioCaoDiemTu(c.getString(8));
                     p.setGioCaoDiemDen(c.getString(9));
-                    p.setUrlAnh(c.getString(10));
-                    String concat = c.getString(11);
+                    p.setHeSoCaoDiem(c.getDouble(10));
+                    p.setUrlAnh(c.getString(11));
+                    String concat = c.getString(12);
                     if (concat != null && !concat.isEmpty()) {
                         p.setAnhUrlsList(new ArrayList<>(Arrays.asList(concat.split(Pattern.quote(ANH_SEP), -1))));
                     } else {
@@ -108,7 +109,7 @@ public class PhongDAO {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         String sql =
                 "SELECT P.PhongID, P.TenPhong, P.GiaNgay, P.MoTa, P.TrangThai, IFNULL(P.SoNguoiToiDa, 2), IFNULL(P.LoaiPhong,''), "
-                        + "IFNULL(P.GiaCaoDiem,0), IFNULL(P.GioCaoDiemTu,''), IFNULL(P.GioCaoDiemDen,''), "
+                        + "IFNULL(P.GiaCaoDiem,0), IFNULL(P.GioCaoDiemTu,''), IFNULL(P.GioCaoDiemDen,''), IFNULL(P.HeSoGioCaoDiem,1.0), "
                         + "(SELECT A.UrlAnh FROM AnhPhong A WHERE A.PhongID = P.PhongID ORDER BY A.AnhID LIMIT 1), "
                         + "(SELECT GROUP_CONCAT(A.UrlAnh, '|||') FROM AnhPhong A WHERE A.PhongID = P.PhongID) "
                         + "FROM Phong P WHERE P.PhongID=? LIMIT 1";
@@ -125,8 +126,9 @@ public class PhongDAO {
                 p.setGiaCaoDiem(c.getDouble(7));
                 p.setGioCaoDiemTu(c.getString(8));
                 p.setGioCaoDiemDen(c.getString(9));
-                p.setUrlAnh(c.getString(10));
-                String concat = c.getString(11);
+                p.setHeSoCaoDiem(c.getDouble(10));
+                p.setUrlAnh(c.getString(11));
+                String concat = c.getString(12);
                 if (concat != null && !concat.isEmpty()) {
                     p.setAnhUrlsList(new ArrayList<>(Arrays.asList(concat.split(Pattern.quote(ANH_SEP), -1))));
                 } else {
@@ -172,13 +174,14 @@ public class PhongDAO {
     public void insertPhong(String ten, double gia, String mota, String trangthai,
                             int soNguoiToiDa,
                             List<String> anhUrls,
-                            double giaCaoDiem, String gioCaoDiemTu, String gioCaoDiemDen) {
+                            double giaCaoDiem, String gioCaoDiemTu, String gioCaoDiemDen,
+                            double heSoCaoDiem) {
 
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
         db.execSQL(
-                "INSERT INTO Phong (TenPhong, GiaNgay, MoTa, TrangThai, SoNguoiToiDa, GiaCaoDiem, GioCaoDiemTu, GioCaoDiemDen) VALUES (?,?,?,?,?,?,?,?)",
-                new Object[]{ten, gia, mota, trangthai, soNguoiToiDa, giaCaoDiem, gioCaoDiemTu, gioCaoDiemDen});
+                "INSERT INTO Phong (TenPhong, GiaNgay, MoTa, TrangThai, SoNguoiToiDa, GiaCaoDiem, GioCaoDiemTu, GioCaoDiemDen, HeSoGioCaoDiem) VALUES (?,?,?,?,?,?,?,?,?)",
+                new Object[]{ten, gia, mota, trangthai, soNguoiToiDa, giaCaoDiem, gioCaoDiemTu, gioCaoDiemDen, heSoCaoDiem});
 
         int phongID = 0;
         try (Cursor c = db.rawQuery("SELECT last_insert_rowid()", null)) {
@@ -193,12 +196,13 @@ public class PhongDAO {
     public void updatePhong(int id, String ten, double gia, String mota,
                             String trangthai, int soNguoiToiDa,
                             List<String> anhUrls,
-                            double giaCaoDiem, String gioCaoDiemTu, String gioCaoDiemDen) {
+                            double giaCaoDiem, String gioCaoDiemTu, String gioCaoDiemDen,
+                            double heSoCaoDiem) {
 
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
-        db.execSQL("UPDATE Phong SET TenPhong=?, GiaNgay=?, MoTa=?, TrangThai=?, SoNguoiToiDa=?, GiaCaoDiem=?, GioCaoDiemTu=?, GioCaoDiemDen=? WHERE PhongID=?",
-                new Object[]{ten, gia, mota, trangthai, soNguoiToiDa, giaCaoDiem, gioCaoDiemTu, gioCaoDiemDen, id});
+        db.execSQL("UPDATE Phong SET TenPhong=?, GiaNgay=?, MoTa=?, TrangThai=?, SoNguoiToiDa=?, GiaCaoDiem=?, GioCaoDiemTu=?, GioCaoDiemDen=?, HeSoGioCaoDiem=? WHERE PhongID=?",
+                new Object[]{ten, gia, mota, trangthai, soNguoiToiDa, giaCaoDiem, gioCaoDiemTu, gioCaoDiemDen, heSoCaoDiem, id});
 
         replaceAnhPhong(id, anhUrls);
     }

@@ -27,6 +27,7 @@ import com.example.doan.DAO.DanhGiaDAO;
 import com.example.doan.DAO.DatPhongDAO;
 import com.example.doan.DAO.DichVuDAO;
 import com.example.doan.DAO.PhongDAO;
+import com.example.doan.DAO.PhongGiaLeDAO;
 import com.example.doan.DAO.TaiKhoanDAO;
 import com.example.doan.MainActivity;
 import com.example.doan.R;
@@ -35,6 +36,7 @@ import com.example.doan.model.DanhGia;
 import com.example.doan.model.DatPhong;
 import com.example.doan.model.DichVu;
 import com.example.doan.model.PhongFull;
+import com.example.doan.model.PhongGiaLe;
 import com.example.doan.model.TaiKhoan;
 import com.example.doan.util.DatePickerHelper;
 import com.example.doan.util.DatPhongIntervalUtil;
@@ -44,6 +46,9 @@ import com.example.doan.util.TimePickerHelper;
 
 import com.google.android.material.color.MaterialColors;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -350,35 +355,6 @@ public class PhongAdapter extends BaseAdapter {
         TextView txtDichVuThemEmpty = view.findViewById(R.id.txtDichVuThemEmpty);
         DichVuDAO dichVuDAO = new DichVuDAO(context);
         List<DichVu> extraDv = dichVuDAO.getAll();
-        class DichVuRow {
-            final View root;
-            final CheckBox cb;
-            final View qtyWrap;
-            final TextView txtQty;
-            final View btnMinus;
-            final View btnPlus;
-            int qty = 0;
-
-            DichVuRow(View root) {
-                this.root = root;
-                this.cb = root.findViewById(R.id.cbDichVuBooking);
-                this.qtyWrap = root.findViewById(R.id.layoutSoLuongDichVu);
-                this.txtQty = root.findViewById(R.id.txtSoLuongDichVu);
-                this.btnMinus = root.findViewById(R.id.btnGiamSoLuongDichVu);
-                this.btnPlus = root.findViewById(R.id.btnTangSoLuongDichVu);
-            }
-
-            void setQty(int newQty) {
-                qty = Math.max(0, newQty);
-                if (txtQty != null) {
-                    txtQty.setText(String.valueOf(Math.max(1, qty)));
-                }
-                if (qtyWrap != null) {
-                    qtyWrap.setVisibility(qty > 0 ? View.VISIBLE : View.GONE);
-                }
-            }
-        }
-
         final List<DichVuRow> dvRows = new ArrayList<>();
 
         EditText edtTen = view.findViewById(R.id.edtKhachTen);
@@ -390,6 +366,16 @@ public class PhongAdapter extends BaseAdapter {
         TextView txtGioTra = view.findViewById(R.id.txtGioTra);
         TextView txtTamTinh = view.findViewById(R.id.txtTamTinh);
         TextView txtCocHint = view.findViewById(R.id.txtCocHint);
+        android.view.View cardPriceBreakdown = view.findViewById(R.id.cardPriceBreakdown);
+        android.widget.LinearLayout layoutPriceNights = view.findViewById(R.id.layoutPriceNights);
+        android.widget.LinearLayout layoutPriceServices = view.findViewById(R.id.layoutPriceServices);
+        android.view.View divPriceServices = view.findViewById(R.id.divPriceServices);
+        TextView txtPriceRoomTotal = view.findViewById(R.id.txtPriceRoomTotal);
+        TextView txtPriceServicesTotal = view.findViewById(R.id.txtPriceServicesTotal);
+        android.widget.LinearLayout rowPriceServicesTotal = view.findViewById(R.id.rowPriceServicesTotal);
+        TextView txtPriceGrandTotal = view.findViewById(R.id.txtPriceGrandTotal);
+        TextView txtPriceDeposit = view.findViewById(R.id.txtPriceDeposit);
+        TextView txtPriceRemain = view.findViewById(R.id.txtPriceRemain);
         EditText edtSoNguoi = view.findViewById(R.id.edtSoNguoi);
         TextView txtSoNguoiToiDa = view.findViewById(R.id.txtSoNguoiToiDa);
         EditText edtGhiChu = view.findViewById(R.id.edtGhiChu);
@@ -406,6 +392,8 @@ public class PhongAdapter extends BaseAdapter {
         final String[] gioNhan = {"14:00"};
         final String[] gioTra = {"12:00"};
         final Set<Long> blockedUtcDays = collectBlockedUtcDays(p.getPhongID());
+        // Cache tập ngày lễ của phòng — load 1 lần khi mở dialog.
+        final Set<String> ngayLeSet = new PhongGiaLeDAO(context).getNgayLeSetByPhongId(p.getPhongID());
         txtGioNhan.setText(gioNhan[0]);
         txtGioTra.setText(gioTra[0]);
         // Giờ nhận / trả là quy định của homestay (admin), khách chỉ xem và không được đổi.
@@ -442,6 +430,7 @@ public class PhongAdapter extends BaseAdapter {
                 } else {
                     txtTamTinh.setVisibility(View.GONE);
                 }
+                hidePriceBreakdown(cardPriceBreakdown);
                 return;
             }
             String nhan = DatePickerHelper.formatYmdLocal(checkInMs[0]);
@@ -449,10 +438,14 @@ public class PhongAdapter extends BaseAdapter {
             int soDem = computeSoDem(nhan, tra);
             if (soDem < 1) {
                 txtTamTinh.setVisibility(View.GONE);
+                hidePriceBreakdown(cardPriceBreakdown);
                 return;
             }
-            double demGia = PeakPricingUtil.demGiaTheoGio(p, gioNhan[0], gioTra[0]);
-            double tongPhong = demGia * soDem;
+            // Tổng tiền phòng = tổng từng đêm, mỗi đêm áp giá lễ riêng nếu rơi vào ngày lễ.
+            // Query fresh để luôn đúng dù ngày lễ được thêm sau khi mở dialog.
+            Set<String> ngayLeFresh = new PhongGiaLeDAO(context).getNgayLeSetByPhongId(p.getPhongID());
+            double tongPhong = PeakPricingUtil.tongTienPhong(
+                    p, nhan, tra, gioNhan[0], gioTra[0], ngayLeFresh, 1.0);
             double tong = tongPhong + tongDv;
             txtTamTinh.setVisibility(View.VISIBLE);
             String line = String.format(Locale.getDefault(),
@@ -463,9 +456,10 @@ public class PhongAdapter extends BaseAdapter {
                     tongPhong,
                     context.getString(R.string.dat_phong_detail_services),
                     tongDv);
-            if (p.getGiaCaoDiem() > 0
-                    && Math.abs(demGia - p.getGiaCaoDiem()) < 0.5) {
-                line += "\n" + context.getString(R.string.dat_phong_peak_night_note);
+            // Ghi chú: có đêm là ngày lễ / giờ cao điểm.
+            String note = buildPricingNote(p, nhan, tra, gioNhan[0], gioTra[0], ngayLeFresh);
+            if (!note.isEmpty()) {
+                line += "\n" + note;
             }
             txtTamTinh.setText(line);
             if (txtCocHint != null) {
@@ -474,6 +468,12 @@ public class PhongAdapter extends BaseAdapter {
                         "Cọc tối thiểu (20%%): %,.0f đ", coc));
                 txtCocHint.setVisibility(View.VISIBLE);
             }
+            // Render breakdown chi tiết.
+            renderPriceBreakdown(
+                    cardPriceBreakdown, layoutPriceNights, layoutPriceServices,
+                    divPriceServices, txtPriceRoomTotal, txtPriceServicesTotal,
+                    rowPriceServicesTotal, txtPriceGrandTotal, txtPriceDeposit, txtPriceRemain,
+                    p, nhan, tra, gioNhan[0], gioTra[0], ngayLeFresh, dvRows);
         };
 
         if (extraDv.isEmpty()) {
@@ -718,8 +718,8 @@ public class PhongAdapter extends BaseAdapter {
                 Toast.makeText(context, context.getString(R.string.dat_phong_invalid_stay_time), Toast.LENGTH_LONG).show();
                 return;
             }
-            double demGia = PeakPricingUtil.demGiaTheoGio(p, gioNhan[0], gioTra[0]);
-            double tongPhong = demGia * soDem;
+            double tongPhong = PeakPricingUtil.tongTienPhong(
+                    p, nhan, tra, gioNhan[0], gioTra[0], ngayLeSet, 1.0);
             double tongDv = 0;
             for (DichVuRow r : dvRows) {
                 if (r.cb != null && r.cb.isChecked() && r.cb.getTag() instanceof DichVu) {
@@ -913,24 +913,98 @@ public class PhongAdapter extends BaseAdapter {
         StringBuilder sb = new StringBuilder();
         sb.append(String.format(Locale.getDefault(),
                 "Giá thường: %,.0f đ/đêm\n", p.getGiaNgay()));
-        if (p.getGiaCaoDiem() > 0) {
+        if (p.getGiaCaoDiem() > 0 || p.getHeSoCaoDiem() > 1.0) {
+            double giaCaoDiemHeSo = p.getGiaNgay() * p.getHeSoCaoDiem();
             sb.append(String.format(Locale.getDefault(),
-                    "Giá giờ cao điểm: %,.0f đ/đêm\n", p.getGiaCaoDiem()));
+                    "Giá giờ cao điểm: %,.0f đ/đêm (hệ số x%s)\n",
+                    Math.max(p.getGiaCaoDiem(), giaCaoDiemHeSo), p.getHeSoCaoDiem()));
             String tu = p.getGioCaoDiemTu();
             String den = p.getGioCaoDiemDen();
             if (tu != null && den != null && !tu.isEmpty() && !den.isEmpty()) {
                 sb.append(String.format(Locale.getDefault(),
                         "Khung giờ: %s → %s\n", tu, den));
             }
-            sb.append("\nNếu giờ nhận hoặc giờ trả nằm trong khung trên, mỗi đêm áp giá cao điểm; không thì áp giá thường.");
+            sb.append("\nNếu giờ nhận hoặc giờ trả nằm trong khung trên, mỗi đêm áp giá cao điểm.");
         } else {
-            sb.append("\nPhòng này chưa cấu hình giá cao điểm — mọi đêm tính theo giá thường.");
+            sb.append("\nPhòng này chưa cấu hình giờ cao điểm — mọi đêm tính theo giá thường.");
         }
+
+        // Danh sách ngày lễ sắp tới (tối đa 5).
+        PhongGiaLeDAO leDao = new PhongGiaLeDAO(context);
+        List<PhongGiaLe> dsLe = leDao.getByPhongId(p.getPhongID());
+        if (!dsLe.isEmpty()) {
+            sb.append("\n\nNgày lễ áp giá riêng:");
+            String today = new SimpleDateFormat("yyyy-MM-dd", Locale.US).format(new Date());
+            int shown = 0;
+            for (PhongGiaLe g : dsLe) {
+                if (g.getNgayLe() == null) continue;
+                if (g.getNgayLe().compareTo(today) < 0) continue; // bỏ ngày đã qua
+                shown++;
+                if (shown > 5) break;
+                String ten = g.getGhiChu() != null && !g.getGhiChu().isEmpty()
+                        ? g.getGhiChu() : "Ngày lễ";
+                sb.append(String.format(Locale.getDefault(),
+                        "\n• %s — x%s (%s) → %,.0f đ/đêm",
+                        g.getNgayLe(), g.getHeSoNhan(), ten,
+                        p.getGiaNgay() * g.getHeSoNhan()));
+            }
+            if (shown == 0) {
+                sb.append("\n(không có ngày lễ sắp tới)");
+            }
+        }
+
+        sb.append("\n\nNgày lễ luôn đè giờ cao điểm.");
         new MaterialAlertDialogBuilder(context)
                 .setTitle(R.string.dat_phong_dialog_price_title)
                 .setMessage(sb.toString())
                 .setPositiveButton(android.R.string.ok, null)
                 .show();
+    }
+
+    /**
+     * Ghi chú ngắn gọn cho tổng tiền: có bao nhiêu đêm lễ / đêm cao điểm.
+     */
+    private String buildPricingNote(PhongFull p, String nhan, String tra,
+                                    String gioNhan, String gioTra, Set<String> ngayLeSet) {
+        if (p == null) return "";
+        int soDem = computeSoDem(nhan, tra);
+        if (soDem < 1) return "";
+        int demLe = 0;
+        int demPeak = 0;
+        for (int i = 0; i < soDem; i++) {
+            String ngayDem = congNgayYmd(nhan, i);
+            if (ngayLeSet != null && ngayLeSet.contains(ngayDem)) {
+                demLe++;
+            } else if (PeakPricingUtil.isInPeakWindow(gioNhan, p.getGioCaoDiemTu(), p.getGioCaoDiemDen())
+                    || PeakPricingUtil.isInPeakWindow(gioTra, p.getGioCaoDiemTu(), p.getGioCaoDiemDen())) {
+                demPeak++;
+            }
+        }
+        StringBuilder note = new StringBuilder();
+        if (demLe > 0) {
+            note.append(String.format(Locale.getDefault(),
+                    "• %d đêm là ngày lễ (giá riêng). ", demLe));
+        }
+        if (demPeak > 0) {
+            note.append(String.format(Locale.getDefault(),
+                    "• %d đêm rơi vào khung giờ cao điểm.", demPeak));
+        }
+        return note.toString().trim();
+    }
+
+    private static String congNgayYmd(String ymd, int offsetDays) {
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+            sdf.setLenient(false);
+            Date d = sdf.parse(ymd);
+            if (d == null) return ymd;
+            Calendar c = Calendar.getInstance(Locale.US);
+            c.setTime(d);
+            c.add(Calendar.DAY_OF_MONTH, offsetDays);
+            return sdf.format(c.getTime());
+        } catch (Exception e) {
+            return ymd;
+        }
     }
 
     private static int computeSoDem(String d1, String d2) {
@@ -947,6 +1021,153 @@ public class PhongAdapter extends BaseAdapter {
         } catch (Exception e) {
             return -1;
         }
+    }
+
+    private static void hidePriceBreakdown(android.view.View card) {
+        if (card != null) card.setVisibility(View.GONE);
+    }
+
+    /**
+     * Render bảng chi tiết: mỗi đêm 1 dòng (ngày, loại, đơn giá, thành tiền) + danh sách dịch vụ +
+     * tổng phòng + tổng DV + tổng cộng + cọc 20% + còn lại.
+     */
+    private void renderPriceBreakdown(
+            android.view.View card,
+            android.widget.LinearLayout layoutNights,
+            android.widget.LinearLayout layoutServices,
+            android.view.View divServices,
+            TextView txtRoomTotal,
+            TextView txtServicesTotal,
+            android.widget.LinearLayout rowServicesTotal,
+            TextView txtGrandTotal,
+            TextView txtDeposit,
+            TextView txtRemain,
+            PhongFull p, String nhanYmd, String traYmd,
+            String gioNhan, String gioTra, Set<String> ngayLeSet /* chỉ dùng cho breakdown note; ngày lễ luôn query lại để đảm bảo fresh */,
+            List<DichVuRow> dvRows) {
+        if (card == null || layoutNights == null) return;
+
+        // Luôn query fresh ngày lễ từ DB — tránh cache cũ khi dialog đã mở.
+        Set<String> freshNgayLeSet = new PhongGiaLeDAO(context).getNgayLeSetByPhongId(p.getPhongID());
+
+        int soDem = computeSoDem(nhanYmd, traYmd);
+        if (soDem < 1) {
+            hidePriceBreakdown(card);
+            return;
+        }
+        card.setVisibility(View.VISIBLE);
+        LayoutInflater inf = LayoutInflater.from(context);
+
+        // Từng đêm.
+        layoutNights.removeAllViews();
+        double tongPhong = 0;
+        SimpleDateFormat inYmd = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+        SimpleDateFormat outDmy = new SimpleDateFormat("dd/MM", Locale.getDefault());
+        for (int i = 0; i < soDem; i++) {
+            String ngayDem = congNgayYmd(nhanYmd, i);
+            double giaDem = PeakPricingUtil.demGiaMotDem(p, gioNhan, gioTra, ngayDem, freshNgayLeSet, 1.0);
+            tongPhong += giaDem;
+
+            // Loại đêm.
+            int kindLabel;
+            if (freshNgayLeSet != null && freshNgayLeSet.contains(ngayDem)) {
+                kindLabel = R.string.dat_phong_breakdown_night_kind_le;
+            } else if (PeakPricingUtil.isInPeakWindow(gioNhan, p.getGioCaoDiemTu(), p.getGioCaoDiemDen())
+                    || PeakPricingUtil.isInPeakWindow(gioTra, p.getGioCaoDiemTu(), p.getGioCaoDiemDen())) {
+                kindLabel = R.string.dat_phong_breakdown_night_kind_peak;
+            } else {
+                kindLabel = R.string.dat_phong_breakdown_night_kind_thuong;
+            }
+            String dmy = ngayDem;
+            try {
+                Date d = inYmd.parse(ngayDem);
+                if (d != null) dmy = outDmy.format(d);
+            } catch (Exception ignored) {}
+
+            android.widget.LinearLayout row = new android.widget.LinearLayout(context);
+            row.setOrientation(android.widget.LinearLayout.HORIZONTAL);
+            android.widget.LinearLayout.LayoutParams rowLp = new android.widget.LinearLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            rowLp.topMargin = dp(2);
+            row.setLayoutParams(rowLp);
+
+            TextView left = new TextView(context);
+            android.widget.LinearLayout.LayoutParams leftLp = new android.widget.LinearLayout.LayoutParams(
+                    0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f);
+            left.setLayoutParams(leftLp);
+            left.setText(context.getString(R.string.dat_phong_breakdown_night_fmt, dmy, context.getString(kindLabel)));
+            left.setTextSize(13);
+
+            TextView right = new TextView(context);
+            right.setLayoutParams(new android.widget.LinearLayout.LayoutParams(
+                    ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+            right.setText(String.format(Locale.getDefault(), "%,.0f đ", giaDem));
+            right.setTextSize(13);
+
+            row.addView(left);
+            row.addView(right);
+            layoutNights.addView(row);
+        }
+
+        // Dịch vụ thêm.
+        double tongDv = 0;
+        boolean coDv = false;
+        if (layoutServices != null) layoutServices.removeAllViews();
+        for (DichVuRow r : dvRows) {
+            if (r.cb == null || !r.cb.isChecked() || !(r.cb.getTag() instanceof DichVu)) continue;
+            DichVu dv = (DichVu) r.cb.getTag();
+            int q = Math.max(1, r.qty);
+            double tien = dv.getGia() * q;
+            tongDv += tien;
+            coDv = true;
+            if (layoutServices == null) continue;
+            android.widget.LinearLayout row = new android.widget.LinearLayout(context);
+            row.setOrientation(android.widget.LinearLayout.HORIZONTAL);
+            row.setLayoutParams(new android.widget.LinearLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+            TextView left = new TextView(context);
+            android.widget.LinearLayout.LayoutParams leftLp = new android.widget.LinearLayout.LayoutParams(
+                    0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f);
+            left.setLayoutParams(leftLp);
+            left.setText(String.format(Locale.getDefault(), "%s × %d", dv.getTenDichVu(), q));
+            left.setTextSize(13);
+            TextView right = new TextView(context);
+            right.setLayoutParams(new android.widget.LinearLayout.LayoutParams(
+                    ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+            right.setText(String.format(Locale.getDefault(), "%,.0f đ", tien));
+            right.setTextSize(13);
+            row.addView(left);
+            row.addView(right);
+            layoutServices.addView(row);
+        }
+        int dvVis = coDv ? View.VISIBLE : View.GONE;
+        if (layoutServices != null) layoutServices.setVisibility(dvVis);
+        if (divServices != null) divServices.setVisibility(dvVis);
+        if (rowServicesTotal != null) rowServicesTotal.setVisibility(dvVis);
+
+        // Tổng.
+        double tong = tongPhong + tongDv;
+        double coc = tong * 0.2;
+        if (txtRoomTotal != null) {
+            txtRoomTotal.setText(String.format(Locale.getDefault(), "%,.0f đ", tongPhong));
+        }
+        if (txtServicesTotal != null) {
+            txtServicesTotal.setText(String.format(Locale.getDefault(), "%,.0f đ", tongDv));
+        }
+        if (txtGrandTotal != null) {
+            txtGrandTotal.setText(String.format(Locale.getDefault(), "%,.0f đ", tong));
+        }
+        if (txtDeposit != null) {
+            txtDeposit.setText(String.format(Locale.getDefault(), "%,.0f đ", coc));
+        }
+        if (txtRemain != null) {
+            txtRemain.setText(String.format(Locale.getDefault(), "%,.0f đ", Math.max(0, tong - coc)));
+        }
+    }
+
+    private int dp(int v) {
+        float d = context.getResources().getDisplayMetrics().density;
+        return (int) (v * d + 0.5f);
     }
 
     private static String formatShortDayLabel(long utcMillis) {
@@ -1039,6 +1260,8 @@ public class PhongAdapter extends BaseAdapter {
         EditText edtGia = view.findViewById(R.id.edtGia);
         com.google.android.material.textfield.TextInputEditText edtGiaCaoDiem =
                 view.findViewById(R.id.edtGiaCaoDiem);
+        com.google.android.material.textfield.TextInputEditText edtHeSoCaoDiem =
+                view.findViewById(R.id.edtHeSoCaoDiem);
         TextView txtGioCaoDiemTu = view.findViewById(R.id.txtGioCaoDiemTu);
         TextView txtGioCaoDiemDen = view.findViewById(R.id.txtGioCaoDiemDen);
         EditText edtMoTa = view.findViewById(R.id.edtMoTa);
@@ -1049,6 +1272,7 @@ public class PhongAdapter extends BaseAdapter {
         LinearLayout layoutAnhPreview = view.findViewById(R.id.layoutAnhPreview);
         View btnChonAnh = view.findViewById(R.id.btnChonAnh);
         View btnXoaHetAnh = view.findViewById(R.id.btnXoaHetAnh);
+        View btnQuanLyNgayLe = view.findViewById(R.id.btnQuanLyNgayLe);
 
         Button btnUpdate = view.findViewById(R.id.btnUpdate);
         Button btnDelete = view.findViewById(R.id.btnDelete);
@@ -1061,6 +1285,7 @@ public class PhongAdapter extends BaseAdapter {
             edtTen.setText("");
             edtGia.setText("");
             edtGiaCaoDiem.setText("");
+            edtHeSoCaoDiem.setText("1.0");
             txtGioCaoDiemTu.setText("—");
             txtGioCaoDiemDen.setText("—");
             edtMoTa.setText("");
@@ -1070,9 +1295,15 @@ public class PhongAdapter extends BaseAdapter {
             }
             btnUpdate.setVisibility(View.GONE);
             btnDelete.setVisibility(View.GONE);
+            if (btnQuanLyNgayLe != null) {
+                btnQuanLyNgayLe.setVisibility(View.GONE);
+            }
         } else {
             btnUpdate.setVisibility(View.VISIBLE);
             btnDelete.setVisibility(View.VISIBLE);
+            if (btnQuanLyNgayLe != null) {
+                btnQuanLyNgayLe.setVisibility(View.VISIBLE);
+            }
             pendingAdminPaths = new ArrayList<>(dao.getAnhUrlsByPhongId(p.getPhongID()));
             if (pendingAdminPaths.isEmpty() && p.getUrlAnh() != null && !p.getUrlAnh().trim().isEmpty()) {
                 pendingAdminPaths.add(p.getUrlAnh().trim());
@@ -1086,6 +1317,7 @@ public class PhongAdapter extends BaseAdapter {
             } else {
                 edtGiaCaoDiem.setText("");
             }
+            edtHeSoCaoDiem.setText(String.format(Locale.getDefault(), "%.2f", p.getHeSoCaoDiem()));
             String tu = p.getGioCaoDiemTu() != null ? p.getGioCaoDiemTu() : "";
             String den = p.getGioCaoDiemDen() != null ? p.getGioCaoDiemDen() : "";
             txtGioCaoDiemTu.setText(tu.isEmpty() ? "—" : tu);
@@ -1134,6 +1366,9 @@ public class PhongAdapter extends BaseAdapter {
                 }
             });
         }
+        if (btnQuanLyNgayLe != null && p != null) {
+            btnQuanLyNgayLe.setOnClickListener(v -> openHolidayManagerDialog(p));
+        }
 
         dialog.setOnDismissListener(d -> {
             pendingAdminPreview = null;
@@ -1170,6 +1405,17 @@ public class PhongAdapter extends BaseAdapter {
             } catch (NumberFormatException ignored) {
                 giaCd = 0;
             }
+            double heSoCd = 1.0;
+            try {
+                String hs = edtHeSoCaoDiem.getText().toString().trim().replace(",", ".");
+                if (!hs.isEmpty()) {
+                    heSoCd = Double.parseDouble(hs);
+                }
+            } catch (NumberFormatException ignored) {
+                heSoCd = 1.0;
+            }
+            if (heSoCd < 1.0) heSoCd = 1.0;
+            if (heSoCd > 10.0) heSoCd = 10.0;
             String gTu = txtGioCaoDiemTu.getText().toString().trim();
             String gDen = txtGioCaoDiemDen.getText().toString().trim();
             if ("—".equals(gTu)) {
@@ -1178,7 +1424,7 @@ public class PhongAdapter extends BaseAdapter {
             if ("—".equals(gDen)) {
                 gDen = "";
             }
-            if (giaCd <= 0) {
+            if (giaCd <= 0 && heSoCd <= 1.0) {
                 gTu = "";
                 gDen = "";
             }
@@ -1223,7 +1469,8 @@ public class PhongAdapter extends BaseAdapter {
                         anhLuu,
                         giaCd,
                         gTu,
-                        gDen
+                        gDen,
+                        heSoCd
                 );
 
                 Toast.makeText(context, "Đã cập nhật", Toast.LENGTH_SHORT).show();
@@ -1239,7 +1486,8 @@ public class PhongAdapter extends BaseAdapter {
                         anhLuu,
                         giaCd,
                         gTu,
-                        gDen
+                        gDen,
+                        heSoCd
                 );
 
                 Toast.makeText(context, "Đã thêm", Toast.LENGTH_SHORT).show();
@@ -1290,5 +1538,185 @@ public class PhongAdapter extends BaseAdapter {
         list.clear();
         list.addAll(dao.getAllPhongFull());
         notifyDataSetChanged();
+    }
+
+    // ============== QUẢN LÝ NGÀY LỄ ==============
+
+    /**
+     * Mở dialog quản lý ngày lễ (chỉ admin): liệt kê, thêm, xoá các ngày lễ áp giá riêng cho 1 phòng.
+     */
+    private void openHolidayManagerDialog(PhongFull phong) {
+        if (phong == null) return;
+        PhongGiaLeDAO leDao = new PhongGiaLeDAO(context);
+        View v = LayoutInflater.from(context).inflate(R.layout.dialog_phong_holiday, null, false);
+        RecyclerView recycler = v.findViewById(R.id.recyclerHoliday);
+        TextView txtEmpty = v.findViewById(R.id.txtHolidayEmpty);
+        com.google.android.material.textfield.TextInputEditText edtNgay = v.findViewById(R.id.edtHolidayNgay);
+        com.google.android.material.textfield.TextInputEditText edtHeSo = v.findViewById(R.id.edtHolidayHeSo);
+        com.google.android.material.textfield.TextInputEditText edtNote = v.findViewById(R.id.edtHolidayNote);
+        View btnAdd = v.findViewById(R.id.btnHolidayAdd);
+        View btnClose = v.findViewById(R.id.btnHolidayClose);
+
+        java.util.List<PhongGiaLe> data = new ArrayList<>(leDao.getByPhongId(phong.getPhongID()));
+        HolidayAdapter adapter = new HolidayAdapter(data);
+        adapter.setOnDelete(item -> {
+            leDao.deleteById(item.getId());
+            data.remove(item);
+            adapter.notifyDataSetChanged();
+            if (data.isEmpty() && txtEmpty != null) txtEmpty.setVisibility(View.VISIBLE);
+        });
+        recycler.setLayoutManager(new LinearLayoutManager(context));
+        recycler.setAdapter(adapter);
+        if (txtEmpty != null) txtEmpty.setVisibility(data.isEmpty() ? View.VISIBLE : View.GONE);
+
+        edtNgay.setOnClickListener(x -> {
+            if (!(context instanceof FragmentActivity)) return;
+            java.util.Calendar cal = java.util.Calendar.getInstance();
+            com.example.doan.util.DatePickerHelper.showPickDateUnbounded(
+                    (FragmentActivity) context,
+                    context.getString(R.string.phong_holiday_pick_date_title),
+                    null,
+                    cal.getTimeInMillis(),
+                    sel -> {
+                        edtNgay.setText(DatePickerHelper.formatYmdLocal(sel));
+                    });
+        });
+        edtNgay.setFocusable(false);
+
+        btnAdd.setOnClickListener(x -> {
+            String ngay = edtNgay.getText() != null ? edtNgay.getText().toString().trim() : "";
+            if (ngay.isEmpty()) {
+                Toast.makeText(context, R.string.phong_holiday_err_need_date, Toast.LENGTH_SHORT).show();
+                return;
+            }
+            double heSo = 1.5;
+            try {
+                String hs = edtHeSo.getText() != null ? edtHeSo.getText().toString().trim().replace(",", ".") : "";
+                if (!hs.isEmpty()) heSo = Double.parseDouble(hs);
+            } catch (NumberFormatException ignored) {
+                heSo = 1.5;
+            }
+            if (heSo < 1.0) heSo = 1.0;
+            if (heSo > 10.0) heSo = 10.0;
+            String note = edtNote.getText() != null ? edtNote.getText().toString().trim() : "";
+            PhongGiaLe g = new PhongGiaLe(phong.getPhongID(), ngay, heSo, note);
+            long id = leDao.upsert(g);
+            if (id == -1) {
+                Toast.makeText(context, R.string.phong_holiday_err_save, Toast.LENGTH_SHORT).show();
+                return;
+            }
+            g.setId(id);
+            // Cập nhật list: thay thế nếu đã có cùng ngày.
+            int found = -1;
+            for (int i = 0; i < data.size(); i++) {
+                if (ngay.equals(data.get(i).getNgayLe())) { found = i; break; }
+            }
+            if (found >= 0) {
+                data.set(found, g);
+            } else {
+                java.util.Collections.sort(data, (a, b) -> {
+                    String aa = a.getNgayLe() != null ? a.getNgayLe() : "";
+                    String bb = b.getNgayLe() != null ? b.getNgayLe() : "";
+                    return aa.compareTo(bb);
+                });
+                data.add(g);
+                java.util.Collections.sort(data, (a, b) -> {
+                    String aa = a.getNgayLe() != null ? a.getNgayLe() : "";
+                    String bb = b.getNgayLe() != null ? b.getNgayLe() : "";
+                    return aa.compareTo(bb);
+                });
+            }
+            adapter.notifyDataSetChanged();
+            if (txtEmpty != null) txtEmpty.setVisibility(View.GONE);
+            edtNgay.setText("");
+            edtNote.setText("");
+            Toast.makeText(context, R.string.phong_holiday_added, Toast.LENGTH_SHORT).show();
+        });
+
+        AlertDialog dialog = new MaterialAlertDialogBuilder(context)
+                .setTitle(context.getString(R.string.phong_holiday_dialog_title, phong.getTenPhong()))
+                .setView(v)
+                .create();
+        btnClose.setOnClickListener(x -> dialog.dismiss());
+        dialog.show();
+    }
+
+    /** Adapter nhỏ cho danh sách ngày lễ trong dialog. */
+    private static class HolidayAdapter extends RecyclerView.Adapter<HolidayAdapter.VH> {
+        interface OnDelete { void onDelete(PhongGiaLe item); }
+        private final java.util.List<PhongGiaLe> data;
+        private OnDelete onDelete;
+        HolidayAdapter(java.util.List<PhongGiaLe> data) {
+            this.data = data;
+        }
+        void setOnDelete(OnDelete onDelete) {
+            this.onDelete = onDelete;
+        }
+        @Override
+        public VH onCreateViewHolder(android.view.ViewGroup parent, int viewType) {
+            View v = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.item_phong_holiday, parent, false);
+            return new VH(v);
+        }
+        @Override
+        public void onBindViewHolder(VH h, int position) {
+            PhongGiaLe g = data.get(position);
+            String ngay = g.getNgayLe() != null ? g.getNgayLe() : "—";
+            // Hiển thị ngày dạng dd/MM/yyyy cho dễ đọc.
+            String hien = ngay;
+            try {
+                SimpleDateFormat in = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+                SimpleDateFormat out = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+                Date d = in.parse(ngay);
+                if (d != null) hien = out.format(d);
+            } catch (Exception ignored) {}
+            h.txtNgay.setText(hien);
+            h.txtHeSo.setText(String.format(Locale.getDefault(), "Hệ số: x%.2f", g.getHeSoNhan()));
+            String note = g.getGhiChu() != null && !g.getGhiChu().isEmpty() ? g.getGhiChu() : "—";
+            h.txtNote.setText("Ghi chú: " + note);
+            h.btnDelete.setOnClickListener(x -> {
+                if (onDelete != null) onDelete.onDelete(g);
+            });
+        }
+        @Override
+        public int getItemCount() { return data.size(); }
+        static class VH extends RecyclerView.ViewHolder {
+            final TextView txtNgay, txtHeSo, txtNote;
+            final com.google.android.material.button.MaterialButton btnDelete;
+            VH(View itemView) {
+                super(itemView);
+                txtNgay = itemView.findViewById(R.id.txtHolidayItemNgay);
+                txtHeSo = itemView.findViewById(R.id.txtHolidayItemHeSo);
+                txtNote = itemView.findViewById(R.id.txtHolidayItemNote);
+                btnDelete = itemView.findViewById(R.id.btnHolidayItemDelete);
+            }
+        }
+    }
+
+    /** Hàng dịch vụ trong dialog đặt phòng — static để các helper cùng file tham chiếu được. */
+    static class DichVuRow {
+        final View root;
+        final CheckBox cb;
+        final View qtyWrap;
+        final TextView txtQty;
+        final View btnMinus;
+        final View btnPlus;
+        int qty = 0;
+
+        DichVuRow(View root) {
+            this.root = root;
+            this.cb = root.findViewById(R.id.cbDichVuBooking);
+            this.qtyWrap = root.findViewById(R.id.layoutSoLuongDichVu);
+            this.txtQty = root.findViewById(R.id.txtSoLuongDichVu);
+            this.btnMinus = root.findViewById(R.id.btnGiamSoLuongDichVu);
+            this.btnPlus = root.findViewById(R.id.btnTangSoLuongDichVu);
+        }
+
+        void setQty(int newQty) {
+            qty = Math.max(0, newQty);
+            if (txtQty != null) {
+                txtQty.setText(String.valueOf(Math.max(1, qty)));
+            }
+        }
     }
 }

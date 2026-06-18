@@ -155,6 +155,17 @@
     <string name="dat_phong_peak_night_note">Đêm tính theo giá cao điểm.</string>
     <string name="dat_phong_success_title">Đặt phòng thành công</string>
     <string name="dat_phong_deposit_hint_default">Lưu ý: Để hoàn tất giữ chỗ, khách cần cọc trước 20% tổng đơn. Lễ tân sẽ xác nhận sau khi đã nhận cọc.</string>
+    <string name="dat_phong_breakdown_title">Chi tiết giá</string>
+    <string name="dat_phong_breakdown_hint">Từng đêm × giá áp dụng + dịch vụ thêm.</string>
+    <string name="dat_phong_breakdown_night_fmt">%1$s · %2$s</string>
+    <string name="dat_phong_breakdown_night_kind_thuong">thường</string>
+    <string name="dat_phong_breakdown_night_kind_peak">cao điểm</string>
+    <string name="dat_phong_breakdown_night_kind_le">ngày lễ</string>
+    <string name="dat_phong_breakdown_room">Tổng tiền phòng</string>
+    <string name="dat_phong_breakdown_services">Tổng dịch vụ thêm</string>
+    <string name="dat_phong_breakdown_grand">TỔNG CỘNG</string>
+    <string name="dat_phong_breakdown_deposit">Cọc tối thiểu (20%%)</string>
+    <string name="dat_phong_breakdown_remain">Còn lại phải thanh toán</string>
     <string name="dat_phong_success_logged_in">Mã đặt: %1$s\n\nTổng cần thanh toán: %2$.0f đ\nCọc tối thiểu (20%%): %3$.0f đ\n\nĐơn sẽ được xác nhận sau khi lễ tân nhận cọc.</string>
     <string name="dat_phong_success_new_account">Mã đặt: %1$s\nTổng cần thanh toán: %2$.0f đ\nCọc tối thiểu (20%%): %3$.0f đ\n\nĐã tạo tài khoản và đăng nhập tự động.\n• Tên đăng nhập: %4$s\n• Mật khẩu mặc định: 123\n• Họ tên: %5$s\n• SĐT: %6$s</string>
     <string name="dat_phong_success_linked_account">Mã đặt: %1$s\nTổng cần thanh toán: %2$.0f đ\nCọc tối thiểu (20%%): %3$.0f đ\n\nĐơn đã gắn tài khoản: %4$s (%5$s).\nĐơn sẽ được xác nhận sau khi lễ tân nhận cọc.</string>
@@ -393,4 +404,25 @@
     <string name="phong_guest_result_none">Không có phòng phù hợp</string>
     <string name="phong_guest_filters_collapse">Ẩn bộ lọc giá và sắp xếp</string>
     <string name="phong_guest_filters_expand">Hiện bộ lọc giá và sắp xếp</string>
+
+    <!-- Hệ số giờ cao điểm -->
+    <string name="phong_peak_factor_hint">Hệ số giờ cao điểm (x lần giá ngày)</string>
+    <string name="phong_peak_factor_helper">1.0 = không cộng. 1.3 = +30%. Mỗi đêm rơi vào khung giờ cao điểm sẽ lấy giá cao nhất giữa (giá ngày × hệ số) và giá cao điểm cố định.</string>
+
+    <!-- Quản lý ngày lễ -->
+    <string name="phong_btn_holiday_manager">Quản lý giá ngày lễ</string>
+    <string name="phong_holiday_dialog_title">Giá ngày lễ — %1$s</string>
+    <string name="phong_holiday_section_existing">Danh sách ngày lễ đã cấu hình</string>
+    <string name="phong_holiday_empty">Chưa có ngày lễ nào. Thêm ngày bên dưới.</string>
+    <string name="phong_holiday_section_add">Thêm ngày lễ mới</string>
+    <string name="phong_holiday_add_hint">Đêm rơi vào ngày lễ sẽ áp giá = giá ngày × hệ số (kể cả khi cũng nằm trong giờ cao điểm).</string>
+    <string name="phong_holiday_pick_date">Ngày lễ (yyyy-MM-dd)</string>
+    <string name="phong_holiday_pick_date_title">Chọn ngày lễ</string>
+    <string name="phong_holiday_pick_factor">Hệ số nhân giá</string>
+    <string name="phong_holiday_pick_note">Ghi chú (Tết, 30/4, lễ …)</string>
+    <string name="phong_holiday_btn_add">Thêm ngày lễ</string>
+    <string name="phong_holiday_btn_delete">Xoá</string>
+    <string name="phong_holiday_added">Đã thêm ngày lễ</string>
+    <string name="phong_holiday_err_need_date">Vui lòng chọn ngày</string>
+    <string name="phong_holiday_err_save">Không thể lưu ngày lễ</string>
 </resources>

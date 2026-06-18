@@ -118,6 +118,55 @@ public final class DatePickerHelper {
         picker.show(activity.getSupportFragmentManager(), "pick_date_" + title);
     }
 
+    /**
+     * Chọn ngày **không giới hạn** (mọi năm từ 1970 trở đi). Dùng cho các tình huống cần chọn ngày trong
+     * quá khứ / tương lai xa, ví dụ {@code openHolidayManagerDialog}. Không dùng cho đặt phòng (giữ giới
+     * hạn 730 ngày tới).
+     */
+    public static void showPickDateUnbounded(
+            FragmentActivity activity,
+            String title,
+            @Nullable Long initialUtcMillis,
+            @Nullable Long openAtUtcMillis,
+            OnDatePicked callback) {
+        long minUtcMillis = 0L;
+        long sel = initialUtcMillis != null && initialUtcMillis >= minUtcMillis
+                ? initialUtcMillis
+                : System.currentTimeMillis();
+        long openAt = openAtUtcMillis != null && openAtUtcMillis >= minUtcMillis
+                ? openAtUtcMillis
+                : sel;
+
+        // Đặt giới hạn trên 2100-01-01 để MaterialDatePicker không ép về 1 vài năm.
+        long maxUtcMillis = 4102444800000L;
+        if (sel > maxUtcMillis) {
+            sel = maxUtcMillis;
+        }
+        if (openAt > maxUtcMillis) {
+            openAt = maxUtcMillis;
+        }
+
+        CalendarConstraints constraints = new CalendarConstraints.Builder()
+                .setStart(minUtcMillis)
+                .setEnd(maxUtcMillis)
+                .setOpenAt(openAt)
+                .setValidator(DateValidatorPointForward.from(minUtcMillis))
+                .build();
+
+        MaterialDatePicker<Long> picker = MaterialDatePicker.Builder.datePicker()
+                .setTitleText(title)
+                .setCalendarConstraints(constraints)
+                .setSelection(sel)
+                .build();
+
+        picker.addOnPositiveButtonClickListener(selection -> {
+            if (callback != null) {
+                callback.onDatePicked(selection);
+            }
+        });
+        picker.show(activity.getSupportFragmentManager(), "pick_date_unbounded_" + title);
+    }
+
     public static void showPickDateRange(
             FragmentActivity activity,
             String title,
